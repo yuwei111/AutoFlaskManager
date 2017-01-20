@@ -1,0 +1,11 @@
+{
+  "Flasks": [
+    {
+      "FlaskName": "Quicksilver Flask",
+      "FlaskEffectName": "",
+      "FlaskAction": 1,
+      "UseCharges": 0,
+      "MaxCharges": 0
+    }
+  ]
+}
