@@ -9,52 +9,56 @@ using Newtonsoft.Json;
 using System.Windows.Forms;
 using System.Threading;
 using System;
-using PoeHUD.Framework;
-using PoeHUD.Framework.Helpers;
-using PoeHUD.Hud.UI;
-using SharpDX;
-using SharpDX.Direct3D9;
 using System.Linq;
-using PoeHUD.Hud.Settings;
 using PoeHUD.Poe.EntityComponents;
-using PoeHUD.Hud.Menu;
 using PoeHUD.Poe.Elements;
-using PoeHUD.Hud.UI.Vertexes;
-using PoeHUD.Poe.RemoteMemoryObjects;
-using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Diagnostics;
 
 namespace FlaskManager
 {
     public class FlaskManagerCorePlugin : BaseSettingsPlugin<FlaskManagerSettings>
     {
         private const string FlaskEffectsFile = "FlaskEffects.txt";
+        private bool isThreadEnabled = false;
         private FlasksConfig FlasksCfg;
-        private readonly GameController gameController;
-        private bool getForegroundWindow;
+        //private bool getForegroundWindow;
         private long FlaskRootAddress = 0;
-        private Thread flaskThread;
         private IntPtr gameHandle;
-        private static GameController Entity;
-        private readonly Random random;
-        public static FlaskManagerCorePlugin Instance;
+        //private static GameController Entity;
+        //private readonly Random random;
         private Element FlasksRoot;
         private List<PlayerFlask> PlayerFlasks = new List<PlayerFlask>();
 
-
-        public void MainWindow(GameController gameController)
+        private void onFlaskManagerToggle()
         {
-            gameHandle = gameController.Window.Process.MainWindowHandle;
+            try
+            {
+                if (Settings.Enable.Value)
+                {
+                    LogMessage("Enabling FlaskManager.",1);
+                    //We are creating our plugin thread inside PoEHUD!
+                    Thread flaskThread = new Thread(FlaskThread) { IsBackground = true };
+                    isThreadEnabled = true;
+                    flaskThread.Start();
+                }
+                else
+                {
+                    LogMessage("Disabling FlaskManager.",1);
+                    isThreadEnabled = false;
+                }
+            }
+            catch (Exception)
+            {
+
+                LogError("Error Starting FlaskManager Thread.", 4);
+            }
         }
 
         public override void Initialise()
         {
-
-            MainWindow(GameController); //We must get the MainWindowHandle to send the keys to the game.
-            flaskThread = new Thread(FlaskThread) { IsBackground = true }; //We are creating our thread inside PoEHUD!
-            flaskThread.Start();
-            Instance = this; //For our settings in the future.
+            gameHandle = GameController.Window.Process.MainWindowHandle;
+            onFlaskManagerToggle();
+            Settings.Enable.OnValueChanged += onFlaskManagerToggle;
             ReadConfig(); //Reading the Flask Config File
         }
 
@@ -79,6 +83,7 @@ namespace FlaskManager
                 InitPlayerFlasks();
 
                 if (PlayerFlasks.Count == 0)
+                    
                     LogMessage($"=================NO PLAYER FLASKS!!! NOT FIXED!!!!!!!!!! Addr: {FlaskRootAddress}===========================", 3);
                 else
                     LogMessage("=================NO PLAYER FLASKS!!! FIXED!!!!!!!!!!===========================", 3);
@@ -95,7 +100,7 @@ namespace FlaskManager
                 }
                 else
                 {
-                    //LogMessage($"Ignore flask in slot: {flask.Slot}", 3);
+                    LogMessage($"Ignore flask in slot: {flask.Slot}", 3);
                 }
             }
             InitPlayerFlasks();
@@ -197,7 +202,7 @@ namespace FlaskManager
                     {
                         FlasksRoot = child.Parent;
                         FlaskRootAddress = elm.Address;
-                        // LogMessage("================================Flasks Found!!=============================", 10);
+                        LogMessage("================================Flasks Found!!=============================", 10);
                         return;
                     }
                 }
@@ -299,7 +304,7 @@ namespace FlaskManager
         #region Threading, do not touch
         private void FlaskThread()
         {
-            while (true)
+            while (isThreadEnabled)
             {
                     FlaskMain();
                     Thread.Sleep(1000);
