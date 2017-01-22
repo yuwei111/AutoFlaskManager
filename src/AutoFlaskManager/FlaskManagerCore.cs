@@ -22,10 +22,10 @@ namespace FlaskManager
         private bool isThreadEnabled = false;
         private FlasksConfig FlasksCfg;
         //private bool getForegroundWindow;
-        private long FlaskRootAddress = 0;
-        private IntPtr gameHandle;
         //private static GameController Entity;
         //private readonly Random random;
+        private long FlaskRootAddress = 0;
+        private IntPtr gameHandle;
         private Element FlasksRoot;
         private List<PlayerFlask> PlayerFlasks = new List<PlayerFlask>();
 
@@ -56,10 +56,10 @@ namespace FlaskManager
 
         public override void Initialise()
         {
+            ReadConfig(); //Reading the Flask Config File
             gameHandle = GameController.Window.Process.MainWindowHandle;
             onFlaskManagerToggle();
             Settings.Enable.OnValueChanged += onFlaskManagerToggle;
-            ReadConfig(); //Reading the Flask Config File
         }
 
         private void FlaskMain()
@@ -380,13 +380,21 @@ namespace FlaskManager
 
     public enum FlaskAction : int
     {
-        None = 0,
-        BeforeFight = 1,
-        SpeedRun = 2,
-        LowLife = 3,
-        RemoveFreeze = 4
+        LIFE = 0, //life, hybrid
+        MANA, //mana, hybrid
+        DEFENSE, //bismuth, jade, stibnite, granite,
+                 //amethyst, ruby, sapphire, topaz,
+                 // aquamarine, quartz
+                 //MODS: iron skin, reflexes, gluttony,
+                 // craving, resistance
+        SPEEDRUN, //quicksilver, adrenaline,
+        OFFENSE, //silver, sulphur, basalt, diamond
+        POISON_IMMUNE,// MOD: curing
+        FREEZE_IMMUNE,// MOD: heat
+        IGNITE_IMMUNE,// MOD: dousing
+        SHOCK_IMMUNE,// MOD: grounding
+        BLEED_IMMUNE,// MOD: staunching
+        CURSE_IMMUNE, // MOD: warding
+        UNIQUE_FLASK
     }
-
-
-
     }
