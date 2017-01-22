@@ -4,6 +4,7 @@ This is a flaskmanager plugin for POEHUD.
 #Setting Up POEHUD in plugin Development environment
 
 - Download x64 POEHUD version as only x64 support plugins.
+ - git clone https://github.com/TehCheat/PoEHUD.git -b x64
 - Open ExileHUD.sln and select "Debug" from top menu.
 - Run Build-all (Build->Build-all). Note: This will create the require folders in PoEHUD\src\bin\x64\Debug
 - Now copy paste the following folders in Debug folder.
