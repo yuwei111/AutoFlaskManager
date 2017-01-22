@@ -16,7 +16,7 @@ using System.Runtime.InteropServices;
 
 namespace FlaskManager
 {
-    public class FlaskManagerCorePlugin : BaseSettingsPlugin<FlaskManagerSettings>
+    public class FlaskManagerCore : BaseSettingsPlugin<FlaskManagerSettings>
     {
         private const string FlaskEffectsFile = "FlaskEffects.txt";
         private bool isThreadEnabled = false;
@@ -56,6 +56,7 @@ namespace FlaskManager
 
         public override void Initialise()
         {
+            PluginName = "Flask Manager";
             ReadConfig(); //Reading the Flask Config File
             gameHandle = GameController.Window.Process.MainWindowHandle;
             onFlaskManagerToggle();
@@ -252,7 +253,7 @@ namespace FlaskManager
                 {
                     FlaskName = "Quicksilver Flask",
                     FlaskEffectName = "",
-                    FlaskAction = FlaskAction.BeforeFight
+                    //FlaskAction = FlaskAction.BeforeFight
                 });
 
                 using (var stream = new StreamWriter(File.Create(FlaskCFGPath)))
