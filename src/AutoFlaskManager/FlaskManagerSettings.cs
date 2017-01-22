@@ -1,7 +1,11 @@
 ﻿using PoeHUD.Hud.Settings;
-using SharpDX;
-using System.Collections.Generic;
 using PoeHUD.Plugins;
+using SharpDX;
+using System;
+using System.Linq;
+using System.Text;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace FlaskManager
 {
@@ -12,11 +16,11 @@ namespace FlaskManager
             //plugin
             Enable = false;
             //Auto Quit
-            minPrecentQuit = false;
-            precentHPQuit = new RangeNode<float>(35f, 0f, 100f);
-            maxHitprecHPQuit = new RangeNode<int>(50, 0, 100);
-            precentESQuit = new RangeNode<int>(35, 0, 100);
-            maxHitprecESQuit = new RangeNode<int>(50, 0, 100);
+            minPercentQuit = false;
+            percentHPQuit = new RangeNode<float>(35f, 0f, 100f);
+            maxHitpercentHPQuit = new RangeNode<int>(50, 0, 100);
+            percentESQuit = new RangeNode<int>(35, 0, 100);
+            maxHitpercentESQuit = new RangeNode<int>(50, 0, 100);
             //HP/MANA
             autoFlask = false;
             perHPFlask = new RangeNode<int>(60, 0, 100);
@@ -47,22 +51,28 @@ namespace FlaskManager
             offFlaskEnable = false;
             offFlaskDur = new RangeNode<float>(4f, 0f, 10f);
             //Unique Flask
-            uniqlaskEnable = false;
+            uniqFlaskEnable = false;
             // Settings
+            flaskSlot1Enable = true;
+            flaskSlot2Enable = true;
+            flaskSlot3Enable = true;
+            flaskSlot4Enable = true;
+            flaskSlot5Enable = true;
             lagComp = new RangeNode<int>(30, 0, 250);
-        }
+            }
+
         /*Menu to configure Auto Quit Thresholds
         */
         [Menu("Auto % HP/ES to Quit", 1)]
-        public ToggleNode minPrecentQuit { get; set; }
+        public ToggleNode minPercentQuit { get; set; }
         [Menu("Min % Life to Auto Quit", 2, 1)]
-        public RangeNode<float> precentHPQuit { get; set; }
+        public RangeNode<float> percentHPQuit { get; set; }
         [Menu("Max % Life Per Hit to Auto Quit", 3, 1)]
-        public RangeNode<int> maxHitprecHPQuit { get; set; }
+        public RangeNode<int> maxHitpercentHPQuit { get; set; }
         [Menu("Min % ES Auto Quit", 4, 1)]
-        public RangeNode<int> precentESQuit { get; set; }
+        public RangeNode<int> percentESQuit { get; set; }
         [Menu("Max % ES Per Hit to Auto Quit", 5, 1)]
-        public RangeNode<int> maxHitprecESQuit { get; set; }
+        public RangeNode<int> maxHitpercentESQuit { get; set; }
         /*Menu to configure HP/MANA Auto Flask Thresholds
         */
         [Menu("HP/MANA % Auto Flask", 6)]
@@ -124,20 +134,22 @@ namespace FlaskManager
         /* Unique Flask
         */
         [Menu("Unique Flask", 30)]
-        public ToggleNode uniqlaskEnable { get; set; }
-
-
+        public ToggleNode uniqFlaskEnable { get; set; }
         /*Settings
         */
-        [Menu("Flask Manager Settings", 99)]
-        public EmptyNode settHolder { get; set; }
-        [Menu("Lag Compensation (ms)", 100,99)]
+        [Menu("Flask Manager Settings", 100)]
+        public EmptyNode settingsHolder { get; set; }
+        [Menu("Use Flask Slot 1", 101 , 100)]
+        public ToggleNode flaskSlot1Enable { get; set; }
+        [Menu("Use Flask Slot 2", 102 , 100)]
+        public ToggleNode flaskSlot2Enable { get; set; }
+        [Menu("Use Flask Slot 3", 103 , 100)]
+        public ToggleNode flaskSlot3Enable { get; set; }
+        [Menu("Use Flask Slot 4", 104 , 100)]
+        public ToggleNode flaskSlot4Enable { get; set; }
+        [Menu("Use Flask Slot 5", 105 , 100)]
+        public ToggleNode flaskSlot5Enable { get; set; }
+        [Menu("Lag Compensation (ms)", 106 , 100)]
         public RangeNode<int> lagComp { get; set; }
     }
 }
-/*Comments Credits
- Gurud - for witch this is based on
- TheCheat - for pointing  me in the right direction about HP elements
- Stridemann - For making the plugin support and helping me with making this plugin
- Treasure_Box - Creator of this plugin
- */
