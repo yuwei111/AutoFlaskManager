@@ -23,6 +23,54 @@ namespace FlaskManager
         private Entity playerInfo;
         private List<PlayerFlask> PlayerFlasks;
 
+        #region FlaskInformations
+        private FlaskAction flask_name_to_action(string flaskname)
+        {
+            flaskname = flaskname.ToLower();
+            FlaskAction ret = FlaskAction.NONE;
+            String defense_pattern = @"bismuth|jade|stibnite|granite|
+                amethyst|ruby|sapphire|topaz|aquamarinequartz";
+            String offense_pattern = @"silver|sulphur|basalt|diamond";
+            if (flaskname.Contains("life"))
+                ret = FlaskAction.LIFE;
+            else if (flaskname.Contains("mana"))
+                ret = FlaskAction.MANA;
+            else if (flaskname.Contains("hybrid"))
+                ret = FlaskAction.HYBRID;
+            else if (flaskname.Contains("quicksilver"))
+                ret = FlaskAction.SPEEDRUN;
+            else if (System.Text.RegularExpressions.Regex.IsMatch(flaskname, defense_pattern))
+                ret = FlaskAction.DEFENSE;
+            else if (System.Text.RegularExpressions.Regex.IsMatch(flaskname, offense_pattern))
+                ret = FlaskAction.OFFENSE;
+            return ret;
+        }
+        private FlaskAction flask_mod_to_action(string flaskmodRawName)
+        {
+            flaskmodRawName = flaskmodRawName.ToLower();
+            FlaskAction ret = FlaskAction.NONE;
+            String defense_pattern = @"armour|evasion|lifeleech|manaleech|resistance";
+            if (flaskmodRawName.Contains("poison"))
+                ret = FlaskAction.POISON_IMMUNE;
+            else if (flaskmodRawName.Contains("chill"))
+                ret = FlaskAction.FREEZE_IMMUNE;
+            else if (flaskmodRawName.Contains("burning"))
+                ret = FlaskAction.IGNITE_IMMUNE;
+            else if (flaskmodRawName.Contains("shock"))
+                ret = FlaskAction.SHOCK_IMMUNE;
+            else if (flaskmodRawName.Contains("bleeding"))
+                ret = FlaskAction.BLEED_IMMUNE;
+            else if (flaskmodRawName.Contains("curse"))
+                ret = FlaskAction.CURSE_IMMUNE;
+            else if (flaskmodRawName.Contains("knockback"))
+                ret = FlaskAction.OFFENSE;
+            else if (flaskmodRawName.Contains("movementspeed"))
+                ret = FlaskAction.SPEEDRUN;
+            else if (System.Text.RegularExpressions.Regex.IsMatch(flaskmodRawName, defense_pattern))
+                ret = FlaskAction.DEFENSE;
+                return ret;
+        }
+        #endregion
         public override void Initialise()
         {
             PlayerFlasks = new List<PlayerFlask>();
@@ -107,8 +155,22 @@ namespace FlaskManager
                         newFLask.MaxCharges = flaskCharges.ChargesMax;
                         newFLask.UseCharges = flaskCharges.ChargesPerUse;
                         newFLask.CurrentCharges = flaskCharges.NumCharges;
-                        newFLask.FlaskAction1 = FlaskAction.NONE;
-                        newFLask.FlaskAction2 = FlaskAction.NONE;
+
+                        FlaskAction action1 = flask_name_to_action(flaskName);
+                        if (action1 == FlaskAction.NONE)
+                            LogError("Error: " + flaskName + " not found", errmsg_time);
+                        else
+                            newFLask.FlaskAction1 = action1;
+                        FlaskAction action2 = FlaskAction.NONE;
+                        foreach (var mod in mods.ItemMods)
+                        {
+                            action2 = flask_mod_to_action(mod.RawName);
+                            if (action2 == FlaskAction.NONE)
+                                LogError("Error: " + mod.RawName + " not found", errmsg_time);
+                            else
+                                newFLask.FlaskAction2 = action2;
+                        }
+
                         PlayerFlasks.Add(newFLask);
                     }
                 }
@@ -147,6 +209,10 @@ namespace FlaskManager
         }
         private void FlaskMain()
         {
+            foreach (var flask in PlayerFlasks)
+            {
+                LogMessage(flask.Slot + ": " + flask.FlaskName + " ActionA=" + flask.FlaskAction1 + " ActionB=" + flask.FlaskAction2, logmsg_time);
+            }
             /*            var isplayer = localPlayer.IsValid;
                         var life = localPlayer.GetComponent<Life>();
                         int hp = localPlayer.IsValid ? life.CurHP + life.CurES : 0;
@@ -299,15 +365,16 @@ namespace FlaskManager
     public enum FlaskAction : int
     {
         NONE = 0,
-        LIFE, //life, hybrid
-        MANA, //mana, hybrid
+        LIFE, //life
+        MANA, //mana
+        HYBRID,
         DEFENSE, //bismuth, jade, stibnite, granite,
                  //amethyst, ruby, sapphire, topaz,
                  // aquamarine, quartz
                  //MODS: iron skin, reflexes, gluttony,
                  // craving, resistance
-        SPEEDRUN, //quicksilver, adrenaline,
-        OFFENSE, //silver, sulphur, basalt, diamond
+        SPEEDRUN, //quicksilver, MOD: adrenaline,
+        OFFENSE, //silver, sulphur, basalt, diamond, MOD: Fending
         POISON_IMMUNE,// MOD: curing
         FREEZE_IMMUNE,// MOD: heat
         IGNITE_IMMUNE,// MOD: dousing
