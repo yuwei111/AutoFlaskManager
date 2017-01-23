@@ -9,6 +9,7 @@ using System;
 using PoeHUD.Poe.EntityComponents;
 using PoeHUD.Poe.Elements;
 using System.Runtime.InteropServices;
+using SharpDX;
 
 namespace FlaskManager
 {
@@ -74,6 +75,20 @@ namespace FlaskManager
             return ret;
         }
         #endregion
+        public override void Render()
+        {
+            base.Render();
+            if ( Settings.Enable.Value )
+            {
+                Vector2 position = new Vector2(0, 0);
+                foreach (var flasks in PlayerFlasks)
+                {
+                    Color textColor = (flasks.isEnabled) ? Color.White : Color.Red;
+                    Graphics.DrawText(flasks.FlaskName, 10, position, textColor);
+                    position.Y += 15;
+                }
+            }
+        }
         public override void Initialise()
         {
             PlayerFlasks = new List<PlayerFlask>();
@@ -214,11 +229,11 @@ namespace FlaskManager
         }
         private void FlaskMain()
         {
-            foreach (var flask in PlayerFlasks)
+            /*foreach (var flask in PlayerFlasks)
             {
                 LogMessage(flask.Slot + ": " + flask.FlaskName + " ActionA=" + flask.FlaskAction1 + " ActionB=" + flask.FlaskAction2, logmsg_time);
             }
-            /*            var isplayer = localPlayer.IsValid;
+                        var isplayer = localPlayer.IsValid;
                         var life = localPlayer.GetComponent<Life>();
                         int hp = localPlayer.IsValid ? life.CurHP + life.CurES : 0;
                         //if(isplayer != false) LogMessage($"Our Current Health is {life.CurHP.ToString()} !!", 2); //Example code given, this is our own thread. 
@@ -321,28 +336,23 @@ namespace FlaskManager
             {
                 case 0:
                     isEnabled = Settings.flaskSlot1Enable.Value;
-                    if (Settings.flaskSlot1Enable.OnValueChanged == null)
-                        Settings.flaskSlot1Enable.OnValueChanged += this.EnableDisableFlask;
+                    Settings.flaskSlot1Enable.OnValueChanged += this.EnableDisableFlask;
                     break;
                 case 1:
                     isEnabled = Settings.flaskSlot2Enable.Value;
-                    if (Settings.flaskSlot2Enable.OnValueChanged == null)
-                        Settings.flaskSlot2Enable.OnValueChanged += this.EnableDisableFlask;
+                    Settings.flaskSlot2Enable.OnValueChanged += this.EnableDisableFlask;
                     break;
                 case 2:
                     isEnabled = Settings.flaskSlot3Enable.Value;
-                    if (Settings.flaskSlot3Enable.OnValueChanged == null)
-                        Settings.flaskSlot3Enable.OnValueChanged += this.EnableDisableFlask;
+                    Settings.flaskSlot3Enable.OnValueChanged += this.EnableDisableFlask;
                     break;
                 case 3:
                     isEnabled = Settings.flaskSlot4Enable.Value;
-                    if (Settings.flaskSlot4Enable.OnValueChanged == null)
-                        Settings.flaskSlot4Enable.OnValueChanged += this.EnableDisableFlask;
+                    Settings.flaskSlot4Enable.OnValueChanged += this.EnableDisableFlask;
                     break;
                 case 4:
                     isEnabled = Settings.flaskSlot5Enable.Value;
-                    if (Settings.flaskSlot5Enable.OnValueChanged == null)
-                        Settings.flaskSlot5Enable.OnValueChanged += this.EnableDisableFlask;
+                    Settings.flaskSlot5Enable.OnValueChanged += this.EnableDisableFlask;
                     break;
                 default:
                     break;
