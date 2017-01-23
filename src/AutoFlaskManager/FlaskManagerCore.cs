@@ -50,6 +50,7 @@ namespace FlaskManager
             flaskmodRawName = flaskmodRawName.ToLower();
             FlaskAction ret = FlaskAction.NONE;
             String defense_pattern = @"armour|evasion|lifeleech|manaleech|resistance";
+            String ignore_pattern = @"levelrequirement|duration|charges|recharge|recovery|extramana|extralife";
             if (flaskmodRawName.Contains("poison"))
                 ret = FlaskAction.POISON_IMMUNE;
             else if (flaskmodRawName.Contains("chill"))
@@ -68,7 +69,9 @@ namespace FlaskManager
                 ret = FlaskAction.SPEEDRUN;
             else if (System.Text.RegularExpressions.Regex.IsMatch(flaskmodRawName, defense_pattern))
                 ret = FlaskAction.DEFENSE;
-                return ret;
+            else if (System.Text.RegularExpressions.Regex.IsMatch(flaskmodRawName, ignore_pattern))
+                ret = FlaskAction.IGNORE;
+            return ret;
         }
         #endregion
         public override void Initialise()
@@ -135,17 +138,6 @@ namespace FlaskManager
                         var flaskCharges = item.GetComponent<Charges>();
                         var mods = item.GetComponent<Mods>();
                         var flaskName = GameController.Files.BaseItemTypes.Translate(item.Path).BaseName;
-                        #region UniqueFlaskNotImplemented
-                        var isUnique = false;
-                        foreach (var mod in mods.ItemMods)
-                            if ( mod.RawName.ToLower().Contains("unique") )
-                                isUnique = true;
-                        if (isUnique)
-                        {
-                            LogError("Unique Flasks are not implemented.", errmsg_time);
-                            continue;
-                        }
-                        #endregion
                         PlayerFlask newFLask = new PlayerFlask();
                         newFLask.FlaskName = flaskName;
                         newFLask.Slot = PlayerFlasks.Count;
@@ -155,11 +147,24 @@ namespace FlaskManager
                         newFLask.MaxCharges = flaskCharges.ChargesMax;
                         newFLask.UseCharges = flaskCharges.ChargesPerUse;
                         newFLask.CurrentCharges = flaskCharges.NumCharges;
-
+                        #region UniqueFlaskNotImplemented
+                        var isUnique = false;
+                        foreach (var mod in mods.ItemMods)
+                            if (mod.RawName.ToLower().Contains("unique"))
+                                isUnique = true;
+                        if (isUnique)
+                        {
+                            LogError("Unique Flasks are not implemented yet. Disable this flask slot manually.", errmsg_time);
+                            newFLask.FlaskAction1 = FlaskAction.UNIQUE_FLASK;
+                            newFLask.FlaskAction2 = FlaskAction.UNIQUE_FLASK;
+                            PlayerFlasks.Add(newFLask);
+                            continue;
+                        }
+                        #endregion
                         FlaskAction action1 = flask_name_to_action(flaskName);
                         if (action1 == FlaskAction.NONE)
                             LogError("Error: " + flaskName + " not found", errmsg_time);
-                        else
+                        else if (action1 != FlaskAction.IGNORE)
                             newFLask.FlaskAction1 = action1;
                         FlaskAction action2 = FlaskAction.NONE;
                         foreach (var mod in mods.ItemMods)
@@ -167,7 +172,7 @@ namespace FlaskManager
                             action2 = flask_mod_to_action(mod.RawName);
                             if (action2 == FlaskAction.NONE)
                                 LogError("Error: " + mod.RawName + " not found", errmsg_time);
-                            else
+                            else if (action2 != FlaskAction.IGNORE)
                                 newFLask.FlaskAction2 = action2;
                         }
 
@@ -316,23 +321,28 @@ namespace FlaskManager
             {
                 case 0:
                     isEnabled = Settings.flaskSlot1Enable.Value;
-                    Settings.flaskSlot1Enable.OnValueChanged += EnableDisableFlask;
+                    if (Settings.flaskSlot1Enable.OnValueChanged == null)
+                        Settings.flaskSlot1Enable.OnValueChanged += this.EnableDisableFlask;
                     break;
                 case 1:
                     isEnabled = Settings.flaskSlot2Enable.Value;
-                    Settings.flaskSlot2Enable.OnValueChanged += EnableDisableFlask;
+                    if (Settings.flaskSlot2Enable.OnValueChanged == null)
+                        Settings.flaskSlot2Enable.OnValueChanged += this.EnableDisableFlask;
                     break;
                 case 2:
                     isEnabled = Settings.flaskSlot3Enable.Value;
-                    Settings.flaskSlot3Enable.OnValueChanged += EnableDisableFlask;
+                    if (Settings.flaskSlot3Enable.OnValueChanged == null)
+                        Settings.flaskSlot3Enable.OnValueChanged += this.EnableDisableFlask;
                     break;
                 case 3:
                     isEnabled = Settings.flaskSlot4Enable.Value;
-                    Settings.flaskSlot4Enable.OnValueChanged += EnableDisableFlask;
+                    if (Settings.flaskSlot4Enable.OnValueChanged == null)
+                        Settings.flaskSlot4Enable.OnValueChanged += this.EnableDisableFlask;
                     break;
                 case 4:
                     isEnabled = Settings.flaskSlot5Enable.Value;
-                    Settings.flaskSlot5Enable.OnValueChanged += EnableDisableFlask;
+                    if (Settings.flaskSlot5Enable.OnValueChanged == null)
+                        Settings.flaskSlot5Enable.OnValueChanged += this.EnableDisableFlask;
                     break;
                 default:
                     break;
@@ -343,19 +353,24 @@ namespace FlaskManager
             switch (Slot)
             {
                 case 0:
-                    Settings.flaskSlot1Enable.OnValueChanged -= EnableDisableFlask;
+                    if (Settings.flaskSlot1Enable.OnValueChanged != null)
+                        Settings.flaskSlot1Enable.OnValueChanged -= this.EnableDisableFlask;
                     break;
                 case 1:
-                    Settings.flaskSlot2Enable.OnValueChanged -= EnableDisableFlask;
+                    if (Settings.flaskSlot2Enable.OnValueChanged != null)
+                        Settings.flaskSlot2Enable.OnValueChanged -= this.EnableDisableFlask;
                     break;
                 case 2:
-                    Settings.flaskSlot3Enable.OnValueChanged -= EnableDisableFlask;
+                    if (Settings.flaskSlot3Enable.OnValueChanged != null)
+                        Settings.flaskSlot3Enable.OnValueChanged -= this.EnableDisableFlask;
                     break;
                 case 3:
-                    Settings.flaskSlot4Enable.OnValueChanged -= EnableDisableFlask;
+                    if (Settings.flaskSlot4Enable.OnValueChanged != null)
+                        Settings.flaskSlot4Enable.OnValueChanged -= this.EnableDisableFlask;
                     break;
                 case 4:
-                    Settings.flaskSlot5Enable.OnValueChanged -= EnableDisableFlask;
+                    if (Settings.flaskSlot5Enable.OnValueChanged != null)
+                        Settings.flaskSlot5Enable.OnValueChanged -= this.EnableDisableFlask;
                     break;
                 default:
                     break;
@@ -364,10 +379,11 @@ namespace FlaskManager
     }
     public enum FlaskAction : int
     {
-        NONE = 0,
+        IGNORE = 0, // ignore mods and don't give error
+        NONE, // flask isn't initilized.
         LIFE, //life
         MANA, //mana
-        HYBRID,
+        HYBRID, //hybrid flasks
         DEFENSE, //bismuth, jade, stibnite, granite,
                  //amethyst, ruby, sapphire, topaz,
                  // aquamarine, quartz
