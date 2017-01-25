@@ -1,11 +1,5 @@
 ﻿using PoeHUD.Hud.Settings;
 using PoeHUD.Plugins;
-using SharpDX;
-using System;
-using System.Linq;
-using System.Text;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace FlaskManager
 {

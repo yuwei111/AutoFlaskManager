@@ -15,14 +15,19 @@ namespace FlaskManager
 {
     public class FlaskManagerCore : BaseSettingsPlugin<FlaskManagerSettings>
     {
-        private bool DEBUG = true;
-        private int logmsg_time = 3;
+        private bool DEBUG = false;
+        private int logmsg_time = 1;
         private int errmsg_time = 10;
         private bool isThreadEnabled;
         private Element FlasksRoot;
         private IntPtr gameHandle;
-        private Entity playerInfo;
-        private List<PlayerFlask> PlayerFlasks;
+
+        private Entity localPlayer;
+        private Life playerHealth;
+        private Actor playerMovement;
+
+        private float moveCounter;
+        private List<PlayerFlask> playerFlaskList;
 
         #region FlaskInformations
         private FlaskAction flask_name_to_action(string flaskname)
@@ -86,7 +91,7 @@ namespace FlaskManager
                 float X = position.X;
                 float Y = position.Y;
 
-                foreach (var flasks in PlayerFlasks)
+                foreach (var flasks in playerFlaskList)
                 {
                     Color textColor = (flasks.isEnabled) ? Color.White : Color.Red;
                     var size = Graphics.DrawText(flasks.FlaskName, Settings.textSize, position, textColor);
@@ -100,11 +105,21 @@ namespace FlaskManager
         }
         public override void Initialise()
         {
-            PlayerFlasks = new List<PlayerFlask>();
+            playerFlaskList = new List<PlayerFlask>();
             onFlaskManagerToggle();
             GameController.Area.OnAreaChange += area => onAreaChange();
             Settings.Enable.OnValueChanged +=  onFlaskManagerToggle;
         }
+        /*
+         * public override void InitialiseMenu(RootButton mainMenu)
+{
+var menu = MenuPlugin.AddChild(mainMenu, PluginName, Settings.Enable);//Plugin menu root
+forerach(var tNode in MyToggleNodeArray)
+{
+MenuPlugin.AddChild(menu, "My toggle name", tNode);
+}
+}
+         */
         private void onFlaskManagerToggle()
         {
             try
@@ -113,11 +128,14 @@ namespace FlaskManager
                 {
                     if (DEBUG)
                         LogMessage("Enabling FlaskManager.",logmsg_time);
+                    moveCounter = 0;
                     isThreadEnabled = true;
                     PluginName = "Flask Manager";
                     gameHandle = GameController.Window.Process.MainWindowHandle;
                     ScanForFlaskAddress(GameController.Game.IngameState.UIRoot);
-                    playerInfo = GameController.Game.IngameState.Data.LocalPlayer;
+                    localPlayer = GameController.Game.IngameState.Data.LocalPlayer;
+                    playerHealth = localPlayer.GetComponent<Life>();
+                    playerMovement = localPlayer.GetComponent<Actor>();
                     searchFlasksInventory();
                     //We are creating our plugin thread inside PoEHUD!
                     Thread flaskThread = new Thread(FlaskThread) { IsBackground = true };
@@ -129,7 +147,7 @@ namespace FlaskManager
                         LogMessage("Disabling FlaskManager.",logmsg_time);
                     FlasksRoot = null;
                     gameHandle = IntPtr.Zero;
-                    PlayerFlasks.Clear();
+                    playerFlaskList.Clear();
                     isThreadEnabled = false;
                 }
             }
@@ -151,7 +169,7 @@ namespace FlaskManager
         {
             if (DEBUG)
                 LogMessage("Searching for flasks in inventory.", logmsg_time);
-            PlayerFlasks = new List<PlayerFlask>();
+            playerFlaskList = new List<PlayerFlask>();
             if (FlasksRoot != null)
             {
                 foreach (Element flaskElem in FlasksRoot.Children)
@@ -164,7 +182,7 @@ namespace FlaskManager
                         var flaskName = GameController.Files.BaseItemTypes.Translate(item.Path).BaseName;
                         PlayerFlask newFLask = new PlayerFlask();
                         newFLask.FlaskName = flaskName;
-                        newFLask.Slot = PlayerFlasks.Count;
+                        newFLask.Slot = playerFlaskList.Count;
                         newFLask.setSettings(Settings);
                         newFLask.EnableDisableFlask();
                         newFLask.Item = item;
@@ -178,10 +196,11 @@ namespace FlaskManager
                                 isUnique = true;
                         if (isUnique)
                         {
-                            LogError("Unique Flasks are not implemented yet. Disable this flask slot manually.", errmsg_time);
+                            if (newFLask.isEnabled)
+                                LogError("Unique Flasks are not implemented yet. Disable this flask slot manually.", errmsg_time);
                             newFLask.FlaskAction1 = FlaskAction.UNIQUE_FLASK;
                             newFLask.FlaskAction2 = FlaskAction.UNIQUE_FLASK;
-                            PlayerFlasks.Add(newFLask);
+                            playerFlaskList.Add(newFLask);
                             continue;
                         }
                         #endregion
@@ -200,7 +219,7 @@ namespace FlaskManager
                                 newFLask.FlaskAction2 = action2;
                         }
 
-                        PlayerFlasks.Add(newFLask);
+                        playerFlaskList.Add(newFLask);
                     }
                 }
             }
@@ -223,30 +242,63 @@ namespace FlaskManager
                 ScanForFlaskAddress(child);
             }
         }
-        public void UseFlask(PlayerFlask flask)
+        private void updateFlask(PlayerFlask flask)
         {
-            if (flask.Slot == 1)
+            flask.CurrentCharges = flask.Item.GetComponent<Charges>().NumCharges;
+        } 
+        private void UseFlask(PlayerFlask flask)
+        {
+            if (flask.Slot == 0)
                 KeyPressRelease(Keys.D1);
-            else if (flask.Slot == 2)
+            else if (flask.Slot == 1)
                 KeyPressRelease(Keys.D2);
-            else if (flask.Slot == 3)
+            else if (flask.Slot == 2)
                 KeyPressRelease(Keys.D3);
-            else if (flask.Slot == 4)
+            else if (flask.Slot == 3)
                 KeyPressRelease(Keys.D4);
-            else if (flask.Slot == 5)
+            else if (flask.Slot == 4)
                 KeyPressRelease(Keys.D5);
+        }
+        private void updatePlayerVariables()
+        {
+            localPlayer = GameController.Game.IngameState.Data.LocalPlayer;
+            playerHealth = localPlayer.GetComponent<Life>();
+            playerMovement = localPlayer.GetComponent<Actor>();
         }
         private void FlaskMain()
         {
-            /*foreach (var flask in PlayerFlasks)
+            if (DEBUG)
+                foreach (var item in playerHealth.Buffs)
+                    LogMessage("buffs:" + item.Name, 0.05f);
+            if (!localPlayer.IsValid)
+                updatePlayerVariables();
+            if( playerFlaskList != null && playerFlaskList.Count > 0 )
             {
-                LogMessage(flask.Slot + ": " + flask.FlaskName + " ActionA=" + flask.FlaskAction1 + " ActionB=" + flask.FlaskAction2, logmsg_time);
+                var tmpFlask = playerFlaskList[0];
+                if (!tmpFlask.Item.IsValid)
+                {
+                    ScanForFlaskAddress(GameController.Game.IngameState.UIRoot);
+                    searchFlasksInventory();
+                }
             }
-                        var isplayer = localPlayer.IsValid;
-                        var life = localPlayer.GetComponent<Life>();
-                        int hp = localPlayer.IsValid ? life.CurHP + life.CurES : 0;
-                        //if(isplayer != false) LogMessage($"Our Current Health is {life.CurHP.ToString()} !!", 2); //Example code given, this is our own thread. 
-                        */
+            moveCounter = playerMovement.isMoving ? moveCounter += 0.1f : 0;
+            if(Settings.qSEnable && moveCounter >= Settings.qSDur.Value &&
+                !playerHealth.HasBuff("flask_bonus_movement_speed") &&
+                !playerHealth.HasBuff("flask_utility_sprint"))
+            {
+                var flaskList = playerFlaskList.FindAll(x => x.FlaskAction1 == FlaskAction.SPEEDRUN
+                || x.FlaskAction2 == FlaskAction.SPEEDRUN);
+                foreach (var flask in flaskList)
+                {
+                    if (flask.isEnabled && flask.CurrentCharges >= 1)
+                    {
+                        UseFlask(flask);
+                        updateFlask(flask);
+                        // if there are multiple flasks, drinking 1 of them at a time is enough.
+                        break;
+                    }
+                }
+            }
             return;
         }
 
@@ -266,10 +318,11 @@ namespace FlaskManager
         {
             SendMessage(gameHandle, 0x101, (int)Key, 0);
         }
-        public void KeyPressRelease(Keys key, int delay = 50)
+        public void KeyPressRelease(Keys key, int delay = 10)
         {
-            KeyDown(key);
-            Thread.Sleep(delay);
+            //KeyDown(key);
+            //Thread.Sleep(delay);
+            // working as a double key.
             KeyUp(key);
         }
         private void Write(string text, params object[] args)
@@ -286,7 +339,7 @@ namespace FlaskManager
             while (isThreadEnabled)
             {
                     FlaskMain();
-                    Thread.Sleep(1000);
+                    Thread.Sleep(100);
             }
        }
         #endregion
