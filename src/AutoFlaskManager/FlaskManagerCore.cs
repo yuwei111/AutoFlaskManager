@@ -56,7 +56,7 @@ namespace FlaskManager
             flaskmodRawName = flaskmodRawName.ToLower();
             FlaskAction ret = FlaskAction.NONE;
             String defense_pattern = @"armour|evasion|lifeleech|manaleech|resistance";
-            String ignore_pattern = @"levelrequirement|duration|charges|recharge|recovery|extramana|extralife|consecrate|smoke";
+            String ignore_pattern = @"levelrequirement|duration|charges|recharge|recovery|extramana|extralife|consecrate|smoke|ground";
             if (flaskmodRawName.Contains("poison"))
                 ret = FlaskAction.POISON_IMMUNE;
             else if (flaskmodRawName.Contains("chill") && !flaskmodRawName.Contains("ground"))
@@ -85,11 +85,11 @@ namespace FlaskManager
             base.Render();
             if ( Settings.Enable.Value && Settings.uiEnable )
             {
-                Vector2 position = new Vector2(Settings.positionX * 10, Settings.positionY * 10);
+                float X = GameController.Window.GetWindowRectangle().Width * Settings.positionX * .01f;
+                float Y = GameController.Window.GetWindowRectangle().Height * Settings.positionY * .01f;
+                Vector2 position = new Vector2(X, Y);
                 int maxWidth = 0;
                 int maxheight = 0;
-                float X = position.X;
-                float Y = position.Y;
 
                 foreach (var flasks in playerFlaskList)
                 {
@@ -107,7 +107,7 @@ namespace FlaskManager
         {
             playerFlaskList = new List<PlayerFlask>();
             onFlaskManagerToggle();
-            GameController.Area.OnAreaChange += area => onAreaChange();
+            GameController.Area.OnAreaChange += area => updateFlasksList();
             Settings.Enable.OnValueChanged +=  onFlaskManagerToggle;
         }
         /*
@@ -157,7 +157,8 @@ MenuPlugin.AddChild(menu, "My toggle name", tNode);
                 LogError("Error Starting FlaskManager Thread.", errmsg_time);
             }
         }
-        private void onAreaChange()
+
+        private void updateFlasksList()
         {
             if (Settings.Enable.Value)
             {
@@ -175,7 +176,7 @@ MenuPlugin.AddChild(menu, "My toggle name", tNode);
                 foreach (Element flaskElem in FlasksRoot.Children)
                 {
                     Entity item = flaskElem.AsObject<InventoryItemIcon>().Item;
-                    if (item != null && item.HasComponent<Flask>())
+                    if (item != null && item.HasComponent<Charges>())
                     {
                         var flaskCharges = item.GetComponent<Charges>();
                         var mods = item.GetComponent<Mods>();
@@ -242,7 +243,7 @@ MenuPlugin.AddChild(menu, "My toggle name", tNode);
                 ScanForFlaskAddress(child);
             }
         }
-        private void updateFlask(PlayerFlask flask)
+        private void updateFlaskChargesInfo(PlayerFlask flask)
         {
             flask.CurrentCharges = flask.Item.GetComponent<Charges>().NumCharges;
         } 
@@ -259,30 +260,18 @@ MenuPlugin.AddChild(menu, "My toggle name", tNode);
             else if (flask.Slot == 4)
                 KeyPressRelease(Keys.D5);
         }
+
         private void updatePlayerVariables()
         {
             localPlayer = GameController.Game.IngameState.Data.LocalPlayer;
             playerHealth = localPlayer.GetComponent<Life>();
             playerMovement = localPlayer.GetComponent<Actor>();
         }
-        private void FlaskMain()
+
+        private void speedFlaskLogic()
         {
-            if (DEBUG)
-                foreach (var item in playerHealth.Buffs)
-                    LogMessage("buffs:" + item.Name, 0.05f);
-            if (!localPlayer.IsValid)
-                updatePlayerVariables();
-            if( playerFlaskList != null && playerFlaskList.Count > 0 )
-            {
-                var tmpFlask = playerFlaskList[0];
-                if (!tmpFlask.Item.IsValid)
-                {
-                    ScanForFlaskAddress(GameController.Game.IngameState.UIRoot);
-                    searchFlasksInventory();
-                }
-            }
             moveCounter = playerMovement.isMoving ? moveCounter += 0.1f : 0;
-            if(Settings.qSEnable && moveCounter >= Settings.qSDur.Value &&
+            if (Settings.qSEnable && moveCounter >= Settings.qSDur.Value &&
                 !playerHealth.HasBuff("flask_bonus_movement_speed") &&
                 !playerHealth.HasBuff("flask_utility_sprint"))
             {
@@ -293,12 +282,27 @@ MenuPlugin.AddChild(menu, "My toggle name", tNode);
                     if (flask.isEnabled && flask.CurrentCharges >= 1)
                     {
                         UseFlask(flask);
-                        updateFlask(flask);
+                        updateFlaskChargesInfo(flask);
                         // if there are multiple flasks, drinking 1 of them at a time is enough.
                         break;
                     }
                 }
             }
+        }
+        private void FlaskMain()
+        {
+            if (DEBUG)
+                foreach (var item in playerHealth.Buffs)
+                    LogMessage("buffs:" + item.Name, 0.05f);
+
+            if (!localPlayer.IsValid)
+                updatePlayerVariables();
+
+            foreach (var flask in playerFlaskList)
+                if (!flask.Item.IsValid)
+                    updateFlasksList();
+
+            speedFlaskLogic();
             return;
         }
 
@@ -320,10 +324,10 @@ MenuPlugin.AddChild(menu, "My toggle name", tNode);
         }
         public void KeyPressRelease(Keys key, int delay = 10)
         {
-            //KeyDown(key);
+            KeyDown(key);
             //Thread.Sleep(delay);
             // working as a double key.
-            KeyUp(key);
+            //KeyUp(key);
         }
         private void Write(string text, params object[] args)
         {
