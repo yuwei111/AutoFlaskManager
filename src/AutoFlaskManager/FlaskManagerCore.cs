@@ -17,7 +17,7 @@ namespace FlaskManager
     {
         private bool DEBUG = true;
         private int logmsg_time = 3;
-        private int errmsg_time = 5;
+        private int errmsg_time = 10;
         private bool isThreadEnabled;
         private Element FlasksRoot;
         private IntPtr gameHandle;
@@ -78,15 +78,24 @@ namespace FlaskManager
         public override void Render()
         {
             base.Render();
-            if ( Settings.Enable.Value )
+            if ( Settings.Enable.Value && Settings.uiEnable )
             {
-                Vector2 position = new Vector2(0, 0);
+                Vector2 position = new Vector2(Settings.positionX * 10, Settings.positionY * 10);
+                int maxWidth = 0;
+                int maxheight = 0;
+                float X = position.X;
+                float Y = position.Y;
+
                 foreach (var flasks in PlayerFlasks)
                 {
                     Color textColor = (flasks.isEnabled) ? Color.White : Color.Red;
-                    Graphics.DrawText(flasks.FlaskName, 10, position, textColor);
-                    position.Y += 15;
+                    var size = Graphics.DrawText(flasks.FlaskName, Settings.textSize, position, textColor);
+                    position.Y += size.Height;
+                    maxWidth = Math.Max(maxWidth, size.Width);
+                    maxheight += size.Height;
                 }
+                var background = new RectangleF(X, Y, maxWidth, maxheight);
+                Graphics.DrawImage("healthbar_bg.png", background);
             }
         }
         public override void Initialise()

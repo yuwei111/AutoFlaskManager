@@ -53,6 +53,10 @@ namespace FlaskManager
             //Unique Flask
             uniqFlaskEnable = false;
             // Settings
+            uiEnable = false;
+            positionX = new RangeNode<float>(28.0f, 0.0f, 100.0f);
+            positionY = new RangeNode<float>(83.0f, 0.0f, 100.0f);
+            textSize = new RangeNode<int>(10, 1, 30);
             flaskSlot1Enable = true;
             flaskSlot2Enable = true;
             flaskSlot3Enable = true;
@@ -139,17 +143,25 @@ namespace FlaskManager
         */
         [Menu("Flask Manager Settings", 100)]
         public EmptyNode settingsHolder { get; set; }
-        [Menu("Use Flask Slot 1", 101 , 100)]
+        [Menu("UI Enable", 101, 100)]
+        public ToggleNode uiEnable { get; set; }
+        [Menu("Position: X", 102, 100)]
+        public RangeNode<float> positionX { get; set; }
+        [Menu("Position: Y", 103, 100)]
+        public RangeNode<float> positionY { get; set; }
+        [Menu("Text Size", 104, 100)]
+        public RangeNode<int> textSize { get; set; }
+        [Menu("Use Flask Slot 1", 105 , 100)]
         public ToggleNode flaskSlot1Enable { get; set; }
-        [Menu("Use Flask Slot 2", 102 , 100)]
+        [Menu("Use Flask Slot 2", 106 , 100)]
         public ToggleNode flaskSlot2Enable { get; set; }
-        [Menu("Use Flask Slot 3", 103 , 100)]
+        [Menu("Use Flask Slot 3", 107 , 100)]
         public ToggleNode flaskSlot3Enable { get; set; }
-        [Menu("Use Flask Slot 4", 104 , 100)]
+        [Menu("Use Flask Slot 4", 108 , 100)]
         public ToggleNode flaskSlot4Enable { get; set; }
-        [Menu("Use Flask Slot 5", 105 , 100)]
+        [Menu("Use Flask Slot 5", 109 , 100)]
         public ToggleNode flaskSlot5Enable { get; set; }
-        [Menu("Lag Compensation (ms)", 106 , 100)]
+        [Menu("Lag Compensation (ms)", 110 , 100)]
         public RangeNode<int> lagComp { get; set; }
     }
 }
