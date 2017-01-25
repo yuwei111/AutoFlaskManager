@@ -30,7 +30,7 @@ namespace FlaskManager
             flaskname = flaskname.ToLower();
             FlaskAction ret = FlaskAction.NONE;
             String defense_pattern = @"bismuth|jade|stibnite|granite|
-                amethyst|ruby|sapphire|topaz|aquamarinequartz";
+                amethyst|ruby|sapphire|topaz|aquamarine|quartz";
             String offense_pattern = @"silver|sulphur|basalt|diamond";
             if (flaskname.Contains("life"))
                 ret = FlaskAction.LIFE;
@@ -51,10 +51,10 @@ namespace FlaskManager
             flaskmodRawName = flaskmodRawName.ToLower();
             FlaskAction ret = FlaskAction.NONE;
             String defense_pattern = @"armour|evasion|lifeleech|manaleech|resistance";
-            String ignore_pattern = @"levelrequirement|duration|charges|recharge|recovery|extramana|extralife";
+            String ignore_pattern = @"levelrequirement|duration|charges|recharge|recovery|extramana|extralife|consecrate|smoke";
             if (flaskmodRawName.Contains("poison"))
                 ret = FlaskAction.POISON_IMMUNE;
-            else if (flaskmodRawName.Contains("chill"))
+            else if (flaskmodRawName.Contains("chill") && !flaskmodRawName.Contains("ground"))
                 ret = FlaskAction.FREEZE_IMMUNE;
             else if (flaskmodRawName.Contains("burning"))
                 ret = FlaskAction.IGNITE_IMMUNE;
@@ -178,7 +178,7 @@ namespace FlaskManager
                         #endregion
                         FlaskAction action1 = flask_name_to_action(flaskName);
                         if (action1 == FlaskAction.NONE)
-                            LogError("Error: " + flaskName + " not found", errmsg_time);
+                            LogError("Error: " + flaskName + " name not found", errmsg_time);
                         else if (action1 != FlaskAction.IGNORE)
                             newFLask.FlaskAction1 = action1;
                         FlaskAction action2 = FlaskAction.NONE;
@@ -186,7 +186,7 @@ namespace FlaskManager
                         {
                             action2 = flask_mod_to_action(mod.RawName);
                             if (action2 == FlaskAction.NONE)
-                                LogError("Error: " + mod.RawName + " not found", errmsg_time);
+                                LogError("Error: " + mod.RawName + "mod not found", errmsg_time);
                             else if (action2 != FlaskAction.IGNORE)
                                 newFLask.FlaskAction2 = action2;
                         }
