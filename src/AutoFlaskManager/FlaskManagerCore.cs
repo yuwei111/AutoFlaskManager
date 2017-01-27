@@ -359,12 +359,15 @@ MenuPlugin.AddChild(menu, "My toggle name", tNode);
                 || x.FlaskAction2 == FlaskAction.SPEEDRUN);
                 foreach (var flask in flaskList)
                 {
-                    if (flask.isEnabled && flask.CurrentCharges >= 1)
+                    if (flask.isEnabled && flask.CurrentCharges >= flask.UseCharges)
                     {
                         UseFlask(flask);
                         updateFlaskChargesInfo(flask);
                         // if there are multiple flasks, drinking 1 of them at a time is enough.
                         break;
+                    } else
+                    {
+                        updateFlaskChargesInfo(flask);
                     }
                 }
             }
@@ -404,10 +407,10 @@ MenuPlugin.AddChild(menu, "My toggle name", tNode);
         {
             SendMessage(gameHandle, 0x101, (int)Key, 0);
         }
-        public void KeyPressRelease(Keys key, int delay = 100)
+        public void KeyPressRelease(Keys key)
         {
             KeyDown(key);
-            Thread.Sleep(delay);
+            Thread.Sleep(Settings.lagComp.Value);
             // working as a double key.
             //KeyUp(key);
         }
