@@ -80,6 +80,86 @@ namespace FlaskManager
             return ret;
         }
         #endregion
+
+        #region FlaskSlotHack
+        private void searchFlasksInventoryHack()
+        {
+            if (FlasksRoot != null)
+            {
+                foreach (Element flaskElem in FlasksRoot.Children)
+                {
+                    Entity item = flaskElem.AsObject<InventoryItemIcon>().Item;
+                    if (item != null && item.HasComponent<Charges>())
+                    {
+                        var flaskCharges = item.GetComponent<Charges>();
+                        var mods = item.GetComponent<Mods>();
+                        var flaskName = GameController.Files.BaseItemTypes.Translate(item.Path).BaseName;
+                        PlayerFlask newFLask = new PlayerFlask();
+                        newFLask.FlaskName = flaskName;
+                        newFLask.Slot = playerFlaskList.Count;
+                        newFLask.setSettings(Settings);
+                        newFLask.Item = item;
+                        newFLask.MaxCharges = flaskCharges.ChargesMax;
+                        newFLask.UseCharges = flaskCharges.ChargesPerUse;
+                        newFLask.CurrentCharges = flaskCharges.NumCharges;
+                        #region UniqueFlaskNotImplemented
+                        var isUnique = false;
+                        foreach (var mod in mods.ItemMods)
+                            if (mod.RawName.ToLower().Contains("unique"))
+                                isUnique = true;
+                        if (isUnique)
+                        {
+                            if (newFLask.isEnabled)
+                                LogError("Unique Flasks are not implemented yet. Disable this flask slot manually.", errmsg_time);
+                            newFLask.FlaskAction1 = FlaskAction.UNIQUE_FLASK;
+                            newFLask.FlaskAction2 = FlaskAction.UNIQUE_FLASK;
+                            try
+                            {
+                                int tmpIndex = playerFlaskList.FindIndex(x => x.FlaskName == newFLask.FlaskName && x.FlaskAction1 == newFLask.FlaskAction1
+                                && x.FlaskAction2 == newFLask.FlaskAction2);
+                                playerFlaskList[tmpIndex] = newFLask;
+                                playerFlaskList[tmpIndex].Slot = tmpIndex;
+                                playerFlaskList[tmpIndex].EnableDisableFlask();
+                            }
+                            catch (Exception)
+                            {
+                                LogMessage("Error adding flask to the list", errmsg_time);
+                            }
+                            continue;
+                        }
+                        #endregion
+                        FlaskAction action1 = flask_name_to_action(flaskName);
+                        if (action1 == FlaskAction.NONE)
+                            LogError("Error: " + flaskName + " name not found", errmsg_time);
+                        else if (action1 != FlaskAction.IGNORE)
+                            newFLask.FlaskAction1 = action1;
+                        FlaskAction action2 = FlaskAction.NONE;
+                        foreach (var mod in mods.ItemMods)
+                        {
+                            action2 = flask_mod_to_action(mod.RawName);
+                            if (action2 == FlaskAction.NONE)
+                                LogError("Error: " + mod.RawName + "mod not found", errmsg_time);
+                            else if (action2 != FlaskAction.IGNORE)
+                                newFLask.FlaskAction2 = action2;
+                        }
+                        try
+                        {
+                            int tmp = playerFlaskList.FindIndex(x => x.FlaskName == newFLask.FlaskName && x.FlaskAction1 == newFLask.FlaskAction1
+                            && x.FlaskAction2 == newFLask.FlaskAction2);
+                            playerFlaskList[tmp] = newFLask;
+                            playerFlaskList[tmp].Slot = tmp;
+                            playerFlaskList[tmp].EnableDisableFlask();
+                        }
+                        catch (Exception)
+                        {
+                            LogMessage("Error adding flask to the list", errmsg_time);
+                        }
+                    }
+                }
+            }
+        }
+        #endregion
+
         public override void Render()
         {
             base.Render();
@@ -297,10 +377,12 @@ MenuPlugin.AddChild(menu, "My toggle name", tNode);
 
             if (!localPlayer.IsValid)
                 updatePlayerVariables();
-
-            foreach (var flask in playerFlaskList)
+            foreach (var flask in playerFlaskList.ToArray())
                 if (!flask.Item.IsValid)
-                    updateFlasksList();
+                {
+                    ScanForFlaskAddress(GameController.Game.IngameState.UIRoot);
+                    searchFlasksInventoryHack();
+                }
 
             speedFlaskLogic();
             return;
@@ -322,10 +404,10 @@ MenuPlugin.AddChild(menu, "My toggle name", tNode);
         {
             SendMessage(gameHandle, 0x101, (int)Key, 0);
         }
-        public void KeyPressRelease(Keys key, int delay = 10)
+        public void KeyPressRelease(Keys key, int delay = 100)
         {
             KeyDown(key);
-            //Thread.Sleep(delay);
+            Thread.Sleep(delay);
             // working as a double key.
             //KeyUp(key);
         }
