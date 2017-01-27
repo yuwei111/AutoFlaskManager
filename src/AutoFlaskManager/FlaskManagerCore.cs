@@ -82,7 +82,7 @@ namespace FlaskManager
         #endregion
 
         #region FlaskSlotHack
-        private void searchFlasksInventoryHack()
+        private void SearchFlasksInventoryHack()
         {
             if (FlasksRoot != null)
             {
@@ -97,7 +97,7 @@ namespace FlaskManager
                         PlayerFlask newFLask = new PlayerFlask();
                         newFLask.FlaskName = flaskName;
                         newFLask.Slot = playerFlaskList.Count;
-                        newFLask.setSettings(Settings);
+                        newFLask.SetSettings(Settings);
                         newFLask.Item = item;
                         newFLask.MaxCharges = flaskCharges.ChargesMax;
                         newFLask.UseCharges = flaskCharges.ChargesPerUse;
@@ -186,21 +186,23 @@ namespace FlaskManager
         public override void Initialise()
         {
             playerFlaskList = new List<PlayerFlask>();
-            onFlaskManagerToggle();
-            GameController.Area.OnAreaChange += area => updateFlasksList();
-            Settings.Enable.OnValueChanged +=  onFlaskManagerToggle;
+            OnFlaskManagerToggle();
+            GameController.Area.OnAreaChange += area => UpdateFlasksList();
+            Settings.Enable.OnValueChanged +=  OnFlaskManagerToggle;
         }
+        
         /*
-         * public override void InitialiseMenu(RootButton mainMenu)
-{
-var menu = MenuPlugin.AddChild(mainMenu, PluginName, Settings.Enable);//Plugin menu root
-forerach(var tNode in MyToggleNodeArray)
-{
-MenuPlugin.AddChild(menu, "My toggle name", tNode);
-}
-}
-         */
-        private void onFlaskManagerToggle()
+        public override void InitialiseMenu(RootButton mainMenu)
+        {
+         var menu = MenuPlugin.AddChild(mainMenu, PluginName, Settings.Enable);//Plugin menu root
+        forerach(var tNode in MyToggleNodeArray)
+            {
+             MenuPlugin.AddChild(menu, "My toggle name", tNode);
+            }
+        }
+        */
+
+        private void OnFlaskManagerToggle()
         {
             try
             {
@@ -216,7 +218,7 @@ MenuPlugin.AddChild(menu, "My toggle name", tNode);
                     localPlayer = GameController.Game.IngameState.Data.LocalPlayer;
                     playerHealth = localPlayer.GetComponent<Life>();
                     playerMovement = localPlayer.GetComponent<Actor>();
-                    searchFlasksInventory();
+                    SearchFlasksInventory();
                     //We are creating our plugin thread inside PoEHUD!
                     Thread flaskThread = new Thread(FlaskThread) { IsBackground = true };
                     flaskThread.Start();
@@ -238,15 +240,15 @@ MenuPlugin.AddChild(menu, "My toggle name", tNode);
             }
         }
 
-        private void updateFlasksList()
+        private void UpdateFlasksList()
         {
             if (Settings.Enable.Value)
             {
                 ScanForFlaskAddress(GameController.Game.IngameState.UIRoot);
-                searchFlasksInventory();
+                SearchFlasksInventory();
             }
         }
-        private void searchFlasksInventory()
+        private void SearchFlasksInventory()
         {
             if (DEBUG)
                 LogMessage("Searching for flasks in inventory.", logmsg_time);
@@ -264,7 +266,7 @@ MenuPlugin.AddChild(menu, "My toggle name", tNode);
                         PlayerFlask newFLask = new PlayerFlask();
                         newFLask.FlaskName = flaskName;
                         newFLask.Slot = playerFlaskList.Count;
-                        newFLask.setSettings(Settings);
+                        newFLask.SetSettings(Settings);
                         newFLask.EnableDisableFlask();
                         newFLask.Item = item;
                         newFLask.MaxCharges = flaskCharges.ChargesMax;
@@ -323,7 +325,7 @@ MenuPlugin.AddChild(menu, "My toggle name", tNode);
                 ScanForFlaskAddress(child);
             }
         }
-        private void updateFlaskChargesInfo(PlayerFlask flask)
+        private void UpdateFlaskChargesInfo(PlayerFlask flask)
         {
             flask.CurrentCharges = flask.Item.GetComponent<Charges>().NumCharges;
         } 
@@ -341,14 +343,14 @@ MenuPlugin.AddChild(menu, "My toggle name", tNode);
                 KeyPressRelease(Keys.D5);
         }
 
-        private void updatePlayerVariables()
+        private void UpdatePlayerVariables()
         {
             localPlayer = GameController.Game.IngameState.Data.LocalPlayer;
             playerHealth = localPlayer.GetComponent<Life>();
             playerMovement = localPlayer.GetComponent<Actor>();
         }
 
-        private void speedFlaskLogic()
+        private void SpeedFlaskLogic()
         {
             moveCounter = playerMovement.isMoving ? moveCounter += 0.1f : 0;
             if (Settings.qSEnable && moveCounter >= Settings.qSDur.Value &&
@@ -362,12 +364,12 @@ MenuPlugin.AddChild(menu, "My toggle name", tNode);
                     if (flask.isEnabled && flask.CurrentCharges >= flask.UseCharges)
                     {
                         UseFlask(flask);
-                        updateFlaskChargesInfo(flask);
+                        UpdateFlaskChargesInfo(flask);
                         // if there are multiple flasks, drinking 1 of them at a time is enough.
                         break;
                     } else
                     {
-                        updateFlaskChargesInfo(flask);
+                        UpdateFlaskChargesInfo(flask);
                     }
                 }
             }
@@ -379,15 +381,15 @@ MenuPlugin.AddChild(menu, "My toggle name", tNode);
                     LogMessage("buffs:" + item.Name, 0.05f);
 
             if (!localPlayer.IsValid)
-                updatePlayerVariables();
+                UpdatePlayerVariables();
             foreach (var flask in playerFlaskList.ToArray())
                 if (!flask.Item.IsValid)
                 {
                     ScanForFlaskAddress(GameController.Game.IngameState.UIRoot);
-                    searchFlasksInventoryHack();
+                    SearchFlasksInventoryHack();
                 }
 
-            speedFlaskLogic();
+            SpeedFlaskLogic();
             return;
         }
 
@@ -434,34 +436,6 @@ MenuPlugin.AddChild(menu, "My toggle name", tNode);
         #endregion
     }
 
-    public class AutoHPManaFlask
-    {
-
-    }
-    public class RemoveAilmentsFlask
-    {
-
-    }
-    public class QuickSilverFlask
-    {
-
-    }
-    public class DefenssiveFlask
-    {
-
-    }
-    public class OffensiveFlask
-    {
-
-    }
-    public class UniqueFlask
-    {
-
-    }
-    public class AutoQuit
-    {
-    }
-
     public class PlayerFlask
     {
         public string FlaskName;
@@ -477,7 +451,7 @@ MenuPlugin.AddChild(menu, "My toggle name", tNode);
         public int MaxCharges;
 
         private FlaskManagerSettings Settings;
-        public void setSettings(FlaskManagerSettings s)
+        public void SetSettings(FlaskManagerSettings s)
         {
             Settings = s;
         }
@@ -560,4 +534,35 @@ MenuPlugin.AddChild(menu, "My toggle name", tNode);
         CURSE_IMMUNE, // MOD: warding
         UNIQUE_FLASK
     }
+}
+#region Unused classes
+/*
+   public class AutoHPManaFlask
+    {
+
     }
+    public class RemoveAilmentsFlask
+    {
+
+    }
+    public class QuickSilverFlask
+    {
+
+    }
+    public class DefenssiveFlask
+    {
+
+    }
+    public class OffensiveFlask
+    {
+
+    }
+    public class UniqueFlask
+    {
+
+    }
+    public class AutoQuit
+    {
+    }
+ */
+#endregion

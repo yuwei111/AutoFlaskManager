@@ -7,6 +7,7 @@ namespace FlaskManager
     {
         public FlaskManagerSettings()
         {
+            #region Flask Manager Settings Var
             //plugin
             Enable = false;
             //Auto Quit
@@ -55,11 +56,11 @@ namespace FlaskManager
             flaskSlot2Enable = true;
             flaskSlot3Enable = true;
             flaskSlot4Enable = true;
-            flaskSlot5Enable = true;
-            }
+            flaskSlot5Enable = true; 
+            #endregion
+        }
 
-        /*Menu to configure Auto Quit Thresholds
-        */
+        #region Auto Quit Menu
         [Menu("Auto % HP/ES to Quit", 1)]
         public ToggleNode minPercentQuit { get; set; }
         [Menu("Min % Life to Auto Quit", 2, 1)]
@@ -69,9 +70,10 @@ namespace FlaskManager
         [Menu("Min % ES Auto Quit", 4, 1)]
         public RangeNode<int> percentESQuit { get; set; }
         [Menu("Max % ES Per Hit to Auto Quit", 5, 1)]
-        public RangeNode<int> maxHitpercentESQuit { get; set; }
-        /*Menu to configure HP/MANA Auto Flask Thresholds
-        */
+        public RangeNode<int> maxHitpercentESQuit { get; set; } 
+        #endregion
+
+        #region HP Mana Flask Menu
         [Menu("HP/MANA % Auto Flask", 6)]
         public ToggleNode autoFlask { get; set; }
         [Menu("Min Life % Auto HP Flask", 7, 6)]
@@ -81,9 +83,10 @@ namespace FlaskManager
         [Menu("Instant HP Flask Delay", 9, 6)]
         public RangeNode<float> instHPDelay { get; set; }
         [Menu("Min Mana % Auto Mana Flask", 10, 6)]
-        public RangeNode<int> PerManFlask { get; set; }
-        /*Status Ailment Flask
-        */
+        public RangeNode<int> PerManFlask { get; set; } 
+        #endregion
+
+        #region Ailment Flask Menu
         [Menu("Remove Ailment Flask", 11)]
         public ToggleNode remAilment { get; set; }
         [Menu("Remove Frozen Ailment", 12, 11)]
@@ -99,9 +102,10 @@ namespace FlaskManager
         [Menu("Corrupting Blood Stacks", 17, 11)]
         public RangeNode<int> corrptCount { get; set; }
         [Menu("Remove Ailment Post Duration (s)", 18, 11)]
-        public RangeNode<int> ailmentDur { get; set; }
-        /*Utility Flask
-        */
+        public RangeNode<int> ailmentDur { get; set; } 
+        #endregion
+
+        #region Quick Sivler Flask Menu
         [Menu("QuickSilver Flask", 19)]
         public ToggleNode qSEnable { get; set; }
         [Menu("Use QickSilver @20+ Charges", 20, 19)]
@@ -109,9 +113,10 @@ namespace FlaskManager
         [Menu("Use QickSilver @40+ Charges", 21, 19)]
         public ToggleNode qS40 { get; set; }
         [Menu("Use After Moving Post (s)", 22, 19)]
-        public RangeNode<float> qSDur { get; set; }
-        /*DefensiveFlask
-        */
+        public RangeNode<float> qSDur { get; set; } 
+        #endregion
+
+        #region Defensive Flask Menu
         [Menu("Defensive Flask", 23)]
         public ToggleNode defFlaskEnable { get; set; }
         [Menu("Min Life % Auto Defensive Flask", 24, 23)]
@@ -122,18 +127,21 @@ namespace FlaskManager
         public RangeNode<int> eSDefensive { get; set; }
         [Menu("Min ES % Auto Elemental Flask", 27, 23)]
         public RangeNode<int> eSElement { get; set; }
-        /* Offensive Flask
-         */
+        #endregion
+
+        #region Offensive Flask Menu
         [Menu("Offensive Flask", 28)]
         public ToggleNode offFlaskEnable { get; set; }
         [Menu("Use Offensive Flask Post (s)", 29, 28)]
-        public RangeNode<float> offFlaskDur { get; set; }
-        /* Unique Flask
-        */
+        public RangeNode<float> offFlaskDur { get; set; } 
+        #endregion
+
+        #region Unnique Flask Menu
         [Menu("Unique Flask", 30)]
-        public ToggleNode uniqFlaskEnable { get; set; }
-        /*Settings
-        */
+        public ToggleNode uniqFlaskEnable { get; set; } 
+        #endregion
+
+        #region Settings Menu
         [Menu("Flask Manager Settings", 100)]
         public EmptyNode settingsHolder { get; set; }
         [Menu("UI Enable", 101, 100)]
@@ -144,15 +152,16 @@ namespace FlaskManager
         public RangeNode<float> positionY { get; set; }
         [Menu("Text Size", 104, 100)]
         public RangeNode<int> textSize { get; set; }
-        [Menu("Use Flask Slot 1", 105 , 100)]
+        [Menu("Use Flask Slot 1", 105, 100)]
         public ToggleNode flaskSlot1Enable { get; set; }
-        [Menu("Use Flask Slot 2", 106 , 100)]
+        [Menu("Use Flask Slot 2", 106, 100)]
         public ToggleNode flaskSlot2Enable { get; set; }
-        [Menu("Use Flask Slot 3", 107 , 100)]
+        [Menu("Use Flask Slot 3", 107, 100)]
         public ToggleNode flaskSlot3Enable { get; set; }
-        [Menu("Use Flask Slot 4", 108 , 100)]
+        [Menu("Use Flask Slot 4", 108, 100)]
         public ToggleNode flaskSlot4Enable { get; set; }
-        [Menu("Use Flask Slot 5", 109 , 100)]
-        public ToggleNode flaskSlot5Enable { get; set; }
+        [Menu("Use Flask Slot 5", 109, 100)]
+        public ToggleNode flaskSlot5Enable { get; set; } 
+        #endregion
     }
 }
