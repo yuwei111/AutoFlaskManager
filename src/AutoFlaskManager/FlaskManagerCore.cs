@@ -410,7 +410,7 @@ MenuPlugin.AddChild(menu, "My toggle name", tNode);
         public void KeyPressRelease(Keys key)
         {
             KeyDown(key);
-            Thread.Sleep(Settings.lagComp.Value);
+            Thread.Sleep(Convert.ToInt32(GameController.Game.IngameState.CurLatency));
             // working as a double key.
             //KeyUp(key);
         }

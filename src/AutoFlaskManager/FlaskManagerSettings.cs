@@ -56,7 +56,6 @@ namespace FlaskManager
             flaskSlot3Enable = true;
             flaskSlot4Enable = true;
             flaskSlot5Enable = true;
-            lagComp = new RangeNode<int>(30, 0, 250);
             }
 
         /*Menu to configure Auto Quit Thresholds
@@ -155,7 +154,5 @@ namespace FlaskManager
         public ToggleNode flaskSlot4Enable { get; set; }
         [Menu("Use Flask Slot 5", 109 , 100)]
         public ToggleNode flaskSlot5Enable { get; set; }
-        [Menu("Lag Compensation (ms)", 110 , 100)]
-        public RangeNode<int> lagComp { get; set; }
     }
 }
