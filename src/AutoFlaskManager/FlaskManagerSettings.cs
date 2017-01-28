@@ -11,11 +11,10 @@ namespace FlaskManager
             //plugin
             Enable = false;
             //Auto Quit
-            minPercentQuit = false;
+            isPercentQuit = false;
             percentHPQuit = new RangeNode<float>(35f, 0f, 100f);
-            maxHitpercentHPQuit = new RangeNode<int>(50, 0, 100);
-            percentESQuit = new RangeNode<int>(35, 0, 100);
-            maxHitpercentESQuit = new RangeNode<int>(50, 0, 100);
+            percentESQuit = new RangeNode<float>(35f, 0, 100);
+
             //HP/MANA
             autoFlask = false;
             perHPFlask = new RangeNode<int>(60, 0, 100);
@@ -62,15 +61,11 @@ namespace FlaskManager
 
         #region Auto Quit Menu
         [Menu("Auto % HP/ES to Quit", 1)]
-        public ToggleNode minPercentQuit { get; set; }
+        public ToggleNode isPercentQuit { get; set; }
         [Menu("Min % Life to Auto Quit", 2, 1)]
         public RangeNode<float> percentHPQuit { get; set; }
-        [Menu("Max % Life Per Hit to Auto Quit", 3, 1)]
-        public RangeNode<int> maxHitpercentHPQuit { get; set; }
         [Menu("Min % ES Auto Quit", 4, 1)]
-        public RangeNode<int> percentESQuit { get; set; }
-        [Menu("Max % ES Per Hit to Auto Quit", 5, 1)]
-        public RangeNode<int> maxHitpercentESQuit { get; set; } 
+        public RangeNode<float> percentESQuit { get; set; }
         #endregion
 
         #region HP Mana Flask Menu

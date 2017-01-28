@@ -10,6 +10,7 @@ using PoeHUD.Poe.EntityComponents;
 using PoeHUD.Poe.Elements;
 using System.Runtime.InteropServices;
 using SharpDX;
+using System.Diagnostics;
 
 namespace FlaskManager
 {
@@ -171,7 +172,7 @@ namespace FlaskManager
                 int maxWidth = 0;
                 int maxheight = 0;
 
-                foreach (var flasks in playerFlaskList)
+                foreach (var flasks in playerFlaskList.ToArray())
                 {
                     Color textColor = (flasks.isEnabled) ? Color.White : Color.Red;
                     var size = Graphics.DrawText(flasks.FlaskName, Settings.textSize, position, textColor);
@@ -258,7 +259,7 @@ namespace FlaskManager
                 foreach (Element flaskElem in FlasksRoot.Children)
                 {
                     Entity item = flaskElem.AsObject<InventoryItemIcon>().Item;
-                    if (item != null && item.HasComponent<Charges>())
+                    if (item != null && item.HasComponent<Flask>())
                     {
                         var flaskCharges = item.GetComponent<Charges>();
                         var mods = item.GetComponent<Mods>();
@@ -349,6 +350,30 @@ namespace FlaskManager
             playerHealth = localPlayer.GetComponent<Life>();
             playerMovement = localPlayer.GetComponent<Actor>();
         }
+        private int ExitPoe(string ExeName, string arguments)
+        {
+            // Prepare the process to run
+            ProcessStartInfo start = new ProcessStartInfo();
+            // Enter in the command line arguments, everything you would enter after the executable name itself
+            start.Arguments = arguments;
+            // Enter the executable to run, including the complete path
+            start.FileName = ExeName;
+            // Do you want to show a console window?
+            start.WindowStyle = ProcessWindowStyle.Hidden;
+            start.CreateNoWindow = true;
+            int exitCode;
+
+
+            // Run the external process & wait for it to finish
+            using (Process proc = Process.Start(start))
+            {
+                proc.WaitForExit();
+
+                // Retrieve the app's exit code
+                exitCode = proc.ExitCode;
+            }
+            return exitCode;
+        }
 
         private void SpeedFlaskLogic()
         {
@@ -374,6 +399,36 @@ namespace FlaskManager
                 }
             }
         }
+        private void AutoChicken()
+        {
+            if (Settings.isPercentQuit.Value && localPlayer.IsValid)
+            {
+                if ( playerHealth.HPPercentage * 100 <= Settings.percentHPQuit.Value )
+                {
+                    try
+                    {
+                        ExitPoe("cports.exe", "/close * * * * " + GameController.Window.Process.ProcessName + ".exe");
+                    }
+                    catch (Exception)
+                    {
+                        LogError("Error: Cannot find cports.exe, you must die now!", errmsg_time);
+                    }
+
+                }
+                if ( playerHealth.ESPercentage * 100 <= Settings.percentESQuit.Value )
+                {
+                    try
+                    {
+                        ExitPoe("cports.exe", "/close * * * * " + GameController.Window.Process.ProcessName + ".exe");
+                    }
+                    catch (Exception)
+                    {
+                        LogError("Error: Cannot find cports.exe, you must die now!", errmsg_time);
+                    }
+                }
+            }
+            return;
+        }
         private void FlaskMain()
         {
             if (DEBUG)
@@ -387,6 +442,7 @@ namespace FlaskManager
                 {
                     ScanForFlaskAddress(GameController.Game.IngameState.UIRoot);
                     SearchFlasksInventoryHack();
+                    break;
                 }
 
             SpeedFlaskLogic();
@@ -429,8 +485,12 @@ namespace FlaskManager
         {
             while (isThreadEnabled)
             {
-                    FlaskMain();
-                    Thread.Sleep(100);
+                FlaskMain();
+                for (int j=0; j< 10; j++)
+                {
+                    AutoChicken();
+                    Thread.Sleep(10);
+                }
             }
        }
         #endregion
