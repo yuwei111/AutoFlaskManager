@@ -312,7 +312,12 @@ namespace FlaskManager
         {
             foreach (var child in elm.Children)
             {
-                var item = child.AsObject<InventoryItemIcon>().Item;
+                Entity item = null;
+                try
+                {
+                    item = child.AsObject<InventoryItemIcon>().Item;
+                }
+                catch (Exception){ }
                 if (item != null)
                 {
                     if (item.HasComponent<Flask>())
@@ -378,7 +383,7 @@ namespace FlaskManager
         private void SpeedFlaskLogic()
         {
             moveCounter = playerMovement.isMoving ? moveCounter += 0.1f : 0;
-            if (Settings.qSEnable && moveCounter >= Settings.qSDur.Value &&
+            if (localPlayer.IsValid && Settings.qSEnable && moveCounter >= Settings.qSDur.Value &&
                 !playerHealth.HasBuff("flask_bonus_movement_speed") &&
                 !playerHealth.HasBuff("flask_utility_sprint"))
             {
@@ -429,6 +434,28 @@ namespace FlaskManager
             }
             return;
         }
+        private void LowMana()
+        {
+            if (Settings.autoFlask.Value && localPlayer.IsValid)
+            {
+                if (playerHealth.MPPercentage * 100 <= Settings.PerManaFlask)
+                {
+                    var flaskList = playerFlaskList.FindAll(x => x.FlaskAction1 == FlaskAction.MANA);
+                    foreach (var flask in flaskList)
+                    {
+                        if (flask.isEnabled && flask.CurrentCharges >= flask.UseCharges)
+                        {
+                            UseFlask(flask);
+                            UpdateFlaskChargesInfo(flask);
+                            break;
+                        } else
+                        {
+                            UpdateFlaskChargesInfo(flask);
+                        }
+                    }
+                }
+            }
+        }
         private void FlaskMain()
         {
             if (DEBUG)
@@ -446,6 +473,7 @@ namespace FlaskManager
                 }
 
             SpeedFlaskLogic();
+            LowMana();
             return;
         }
 

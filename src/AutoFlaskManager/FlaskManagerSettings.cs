@@ -20,7 +20,7 @@ namespace FlaskManager
             perHPFlask = new RangeNode<int>(60, 0, 100);
             instHPFlask = new RangeNode<int>(35, 0, 100);
             instHPDelay = new RangeNode<float>(.3f, 0f, 1f);
-            PerManFlask = new RangeNode<int>(25, 0, 100);
+            PerManaFlask = new RangeNode<float>(25f, 0, 100);
             //Ailment Flask
             remAilment = false;
             remFrozen = false;
@@ -78,7 +78,7 @@ namespace FlaskManager
         [Menu("Instant HP Flask Delay", 9, 6)]
         public RangeNode<float> instHPDelay { get; set; }
         [Menu("Min Mana % Auto Mana Flask", 10, 6)]
-        public RangeNode<int> PerManFlask { get; set; } 
+        public RangeNode<float> PerManaFlask { get; set; } 
         #endregion
 
         #region Ailment Flask Menu
