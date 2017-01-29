@@ -32,8 +32,6 @@ namespace FlaskManager
             ailmentDur = new RangeNode<int>(0, 0, 5);
             //QuickSilver
             qSEnable = false;
-            qS20 = false;
-            qS40 = false;
             qSDur = new RangeNode<float>(1.5f, 0f, 10f);
             //Defensive Flask
             defFlaskEnable = false;
@@ -103,10 +101,6 @@ namespace FlaskManager
         #region Quick Sivler Flask Menu
         [Menu("QuickSilver Flask", 19)]
         public ToggleNode qSEnable { get; set; }
-        [Menu("Use QickSilver @20+ Charges", 20, 19)]
-        public ToggleNode qS20 { get; set; }
-        [Menu("Use QickSilver @40+ Charges", 21, 19)]
-        public ToggleNode qS40 { get; set; }
         [Menu("Use After Moving Post (s)", 22, 19)]
         public RangeNode<float> qSDur { get; set; } 
         #endregion
