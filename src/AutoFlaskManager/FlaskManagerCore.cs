@@ -32,6 +32,7 @@ namespace FlaskManager
         private DebuffPanelConfig debuffInfo;
 
         private float moveCounter;
+        private float lastManaUsed;
         private List<PlayerFlask> playerFlaskList;
 
         #region FlaskInformations
@@ -220,6 +221,7 @@ namespace FlaskManager
                     moveCounter = 0;
                     isThreadEnabled = true;
                     PluginName = "Flask Manager";
+                    lastManaUsed = 100f;
                     gameHandle = GameController.Window.Process.MainWindowHandle;
                     ScanForFlaskAddress(GameController.Game.IngameState.UIRoot);
                     localPlayer = GameController.Game.IngameState.Data.LocalPlayer;
@@ -449,8 +451,11 @@ namespace FlaskManager
             }
             return;
         }
-        private void LowMana()
+        private void ManaLogic()
         {
+            lastManaUsed += 0.1f;
+            if (lastManaUsed < Settings.ManaDelay.Value)
+                return;
             if (Settings.autoFlask.Value && localPlayer.IsValid)
             {
                 if (playerHealth.MPPercentage * 100 <= Settings.PerManaFlask)
@@ -461,6 +466,7 @@ namespace FlaskManager
                         if (flask.isEnabled && flask.CurrentCharges >= 1)
                         {
                             UseFlask(flask);
+                            lastManaUsed = 0f;
                             UpdateFlaskChargesInfo(flask);
                             break;
                         } else
@@ -506,7 +512,7 @@ namespace FlaskManager
                 }
 
             SpeedFlaskLogic();
-            LowMana();
+            ManaLogic();
             AilmentLogic();
             return;
         }

@@ -18,8 +18,8 @@ namespace FlaskManager
             //HP/MANA
             autoFlask = false;
             perHPFlask = new RangeNode<int>(60, 0, 100);
-            instHPFlask = new RangeNode<int>(35, 0, 100);
-            instHPDelay = new RangeNode<float>(.3f, 0f, 1f);
+            HPDelay = new RangeNode<float>(1f, 0f, 4f);
+            ManaDelay = new RangeNode<float>(1f, 0f, 4f);
             PerManaFlask = new RangeNode<float>(25f, 0, 100);
             //Ailment Flask
             remAilment = false;
@@ -64,7 +64,7 @@ namespace FlaskManager
         public ToggleNode isPercentQuit { get; set; }
         [Menu("Min % Life to Auto Quit", 2, 1)]
         public RangeNode<float> percentHPQuit { get; set; }
-        [Menu("Min % ES Auto Quit", 4, 1)]
+        [Menu("Min % ES Auto Quit", 3, 1)]
         public RangeNode<float> percentESQuit { get; set; }
         #endregion
 
@@ -73,12 +73,12 @@ namespace FlaskManager
         public ToggleNode autoFlask { get; set; }
         [Menu("Min Life % Auto HP Flask", 7, 6)]
         public RangeNode<int> perHPFlask { get; set; }
-        [Menu("Min Life % Auto Instant HP Flask", 8, 6)]
-        public RangeNode<int> instHPFlask { get; set; }
-        [Menu("Instant HP Flask Delay", 9, 6)]
-        public RangeNode<float> instHPDelay { get; set; }
-        [Menu("Min Mana % Auto Mana Flask", 10, 6)]
-        public RangeNode<float> PerManaFlask { get; set; } 
+        [Menu("HP Flask Delay", 8, 6)]
+        public RangeNode<float> HPDelay { get; set; }
+        [Menu("Min Mana % Auto Mana Flask", 9, 6)]
+        public RangeNode<float> PerManaFlask { get; set; }
+        [Menu("Mana Flask Delay", 10, 6)]
+        public RangeNode<float> ManaDelay { get; set; }
         #endregion
 
         #region Ailment Flask Menu
