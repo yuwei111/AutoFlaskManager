@@ -11,6 +11,9 @@ using PoeHUD.Poe.Elements;
 using System.Runtime.InteropServices;
 using SharpDX;
 using System.Diagnostics;
+using PoeHUD.Hud.Health;
+using System.IO;
+using Newtonsoft.Json;
 
 namespace FlaskManager
 {
@@ -26,6 +29,7 @@ namespace FlaskManager
         private Entity localPlayer;
         private Life playerHealth;
         private Actor playerMovement;
+        private DebuffPanelConfig debuffInfo;
 
         private float moveCounter;
         private List<PlayerFlask> playerFlaskList;
@@ -187,6 +191,8 @@ namespace FlaskManager
         public override void Initialise()
         {
             playerFlaskList = new List<PlayerFlask>();
+            string json = File.ReadAllText("config/debuffPanel.json");
+            debuffInfo = JsonConvert.DeserializeObject<DebuffPanelConfig>(json);
             OnFlaskManagerToggle();
             GameController.Area.OnAreaChange += area => UpdateFlasksList();
             Settings.Enable.OnValueChanged +=  OnFlaskManagerToggle;
@@ -379,6 +385,15 @@ namespace FlaskManager
             }
             return exitCode;
         }
+        private bool HasDebuff(Dictionary<string, int> dictionary, string buffName, bool isHostile)
+        {
+            int filterId;
+            if (dictionary.TryGetValue(buffName, out filterId))
+            {
+                return filterId == 0 || isHostile == (filterId == 1);
+            }
+            return false;
+        }
 
         private void SpeedFlaskLogic()
         {
@@ -443,7 +458,7 @@ namespace FlaskManager
                     var flaskList = playerFlaskList.FindAll(x => x.FlaskAction1 == FlaskAction.MANA);
                     foreach (var flask in flaskList)
                     {
-                        if (flask.isEnabled && flask.CurrentCharges >= flask.UseCharges)
+                        if (flask.isEnabled && flask.CurrentCharges >= 1)
                         {
                             UseFlask(flask);
                             UpdateFlaskChargesInfo(flask);
@@ -456,11 +471,29 @@ namespace FlaskManager
                 }
             }
         }
+        private void AilmentLogic()
+        {
+            foreach (var buff in playerHealth.Buffs)
+            {
+                if (DEBUG)
+                    LogMessage("buffs:" + buff.Name + "time:" + buff.Timer, 0.05f);
+                var buffName = buff.Name;
+                if (!float.IsInfinity(buff.Timer) && HasDebuff(debuffInfo.Bleeding, buffName, false))
+                    LogMessage("Found Bleeding in you.", logmsg_time);
+                else if (!float.IsInfinity(buff.Timer) && HasDebuff(debuffInfo.Poisoned, buffName, false))
+                    LogMessage("Found Poisoned in you.", logmsg_time);
+                else if (!float.IsInfinity(buff.Timer) && HasDebuff(debuffInfo.ChilledFrozen, buffName, false))
+                    LogMessage("Found Frozen in you.", logmsg_time);
+                else if (!float.IsInfinity(buff.Timer) && HasDebuff(debuffInfo.Burning, buffName, false))
+                    LogMessage("Found burning in you.", logmsg_time);
+                else if (!float.IsInfinity(buff.Timer) && HasDebuff(debuffInfo.Shocked, buffName, false))
+                    LogMessage("Found shocked in you.", logmsg_time);
+                else if (!float.IsInfinity(buff.Timer) && HasDebuff(debuffInfo.WeakenedSlowed, buffName, false))
+                    LogMessage("Found weakened in you.", logmsg_time);
+            }
+        }
         private void FlaskMain()
         {
-            if (DEBUG)
-                foreach (var item in playerHealth.Buffs)
-                    LogMessage("buffs:" + item.Name, 0.05f);
 
             if (!localPlayer.IsValid)
                 UpdatePlayerVariables();
@@ -474,6 +507,7 @@ namespace FlaskManager
 
             SpeedFlaskLogic();
             LowMana();
+            AilmentLogic();
             return;
         }
 
