@@ -169,10 +169,10 @@ namespace FlaskManager
         public override void Render()
         {
             base.Render();
-            if ( Settings.Enable.Value && Settings.uiEnable )
+            if ( Settings.Enable.Value && Settings.uiEnable.Value )
             {
-                float X = GameController.Window.GetWindowRectangle().Width * Settings.positionX * .01f;
-                float Y = GameController.Window.GetWindowRectangle().Height * Settings.positionY * .01f;
+                float X = GameController.Window.GetWindowRectangle().Width * Settings.positionX.Value * .01f;
+                float Y = GameController.Window.GetWindowRectangle().Height * Settings.positionY.Value * .01f;
                 Vector2 position = new Vector2(X, Y);
                 int maxWidth = 0;
                 int maxheight = 0;
@@ -180,7 +180,7 @@ namespace FlaskManager
                 foreach (var flasks in playerFlaskList.ToArray())
                 {
                     Color textColor = (flasks.isEnabled) ? Color.White : Color.Red;
-                    var size = Graphics.DrawText(flasks.FlaskName, Settings.textSize, position, textColor);
+                    var size = Graphics.DrawText(flasks.FlaskName, Settings.textSize.Value, position, textColor);
                     position.Y += size.Height;
                     maxWidth = Math.Max(maxWidth, size.Width);
                     maxheight += size.Height;
@@ -400,7 +400,7 @@ namespace FlaskManager
         private void SpeedFlaskLogic()
         {
             moveCounter = playerMovement.isMoving ? moveCounter += 0.1f : 0;
-            if (localPlayer.IsValid && Settings.qSEnable && moveCounter >= Settings.qSDur.Value &&
+            if (localPlayer.IsValid && Settings.qSEnable.Value && moveCounter >= Settings.qSDur.Value &&
                 !playerHealth.HasBuff("flask_bonus_movement_speed") &&
                 !playerHealth.HasBuff("flask_utility_sprint"))
             {
@@ -458,7 +458,7 @@ namespace FlaskManager
                 return;
             if (Settings.autoFlask.Value && localPlayer.IsValid)
             {
-                if (playerHealth.MPPercentage * 100 <= Settings.PerManaFlask)
+                if (playerHealth.MPPercentage * 100 <= Settings.PerManaFlask.Value)
                 {
                     var flaskList = playerFlaskList.FindAll(x => x.FlaskAction1 == FlaskAction.MANA);
                     foreach (var flask in flaskList)
@@ -484,17 +484,19 @@ namespace FlaskManager
                 if (DEBUG)
                     LogMessage("buffs:" + buff.Name + "time:" + buff.Timer, 0.05f);
                 var buffName = buff.Name;
+                if (!Settings.remAilment.Value)
+                    return;
                 if (!float.IsInfinity(buff.Timer) && HasDebuff(debuffInfo.Bleeding, buffName, false))
                     LogMessage("Found Bleeding in you.", logmsg_time);
                 else if (!float.IsInfinity(buff.Timer) && HasDebuff(debuffInfo.Poisoned, buffName, false))
                     LogMessage("Found Poisoned in you.", logmsg_time);
-                else if (!float.IsInfinity(buff.Timer) && HasDebuff(debuffInfo.ChilledFrozen, buffName, false))
+                else if (Settings.remFrozen.Value && !float.IsInfinity(buff.Timer) && HasDebuff(debuffInfo.ChilledFrozen, buffName, false))
                     LogMessage("Found Frozen in you.", logmsg_time);
-                else if (!float.IsInfinity(buff.Timer) && HasDebuff(debuffInfo.Burning, buffName, false))
+                else if (Settings.remBurning.Value && !float.IsInfinity(buff.Timer) && HasDebuff(debuffInfo.Burning, buffName, false))
                     LogMessage("Found burning in you.", logmsg_time);
-                else if (!float.IsInfinity(buff.Timer) && HasDebuff(debuffInfo.Shocked, buffName, false))
+                else if (Settings.remShocked.Value && !float.IsInfinity(buff.Timer) && HasDebuff(debuffInfo.Shocked, buffName, false))
                     LogMessage("Found shocked in you.", logmsg_time);
-                else if (!float.IsInfinity(buff.Timer) && HasDebuff(debuffInfo.WeakenedSlowed, buffName, false))
+                else if (Settings.remCurse.Value && !float.IsInfinity(buff.Timer) && HasDebuff(debuffInfo.WeakenedSlowed, buffName, false))
                     LogMessage("Found weakened in you.", logmsg_time);
             }
         }
