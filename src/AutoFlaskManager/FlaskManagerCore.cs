@@ -358,6 +358,26 @@ namespace FlaskManager
             else if (flask.Slot == 4)
                 KeyPressRelease(Keys.D5);
         }
+        private bool FindDrinkFlask(FlaskAction type1, FlaskAction type2)
+        {
+            var flaskList = playerFlaskList.FindAll(x => x.FlaskAction1 == type1 || x.FlaskAction2 == type2);
+            foreach (var flask in flaskList)
+            {
+                if (flask.isEnabled && flask.CurrentCharges >= flask.UseCharges)
+                {
+                    UseFlask(flask);
+                    UpdateFlaskChargesInfo(flask);
+                    // if there are multiple flasks, drinking 1 of them at a time is enough.
+                    return true;
+                }
+                else
+                {
+                    UpdateFlaskChargesInfo(flask);
+                }
+
+            }
+            return false;
+        }
 
         private void UpdatePlayerVariables()
         {
@@ -399,35 +419,11 @@ namespace FlaskManager
             return false;
         }
 
-        private void SpeedFlaskLogic()
-        {
-            moveCounter = playerMovement.isMoving ? moveCounter += 0.1f : 0;
-            if (localPlayer.IsValid && Settings.qSEnable.Value && moveCounter >= Settings.qSDur.Value &&
-                !playerHealth.HasBuff("flask_bonus_movement_speed") &&
-                !playerHealth.HasBuff("flask_utility_sprint"))
-            {
-                var flaskList = playerFlaskList.FindAll(x => x.FlaskAction1 == FlaskAction.SPEEDRUN
-                || x.FlaskAction2 == FlaskAction.SPEEDRUN);
-                foreach (var flask in flaskList)
-                {
-                    if (flask.isEnabled && flask.CurrentCharges >= flask.UseCharges)
-                    {
-                        UseFlask(flask);
-                        UpdateFlaskChargesInfo(flask);
-                        // if there are multiple flasks, drinking 1 of them at a time is enough.
-                        break;
-                    } else
-                    {
-                        UpdateFlaskChargesInfo(flask);
-                    }
-                }
-            }
-        }
         private void AutoChicken()
         {
             if (Settings.isPercentQuit.Value && localPlayer.IsValid)
             {
-                if ( playerHealth.HPPercentage * 100 <= Settings.percentHPQuit.Value )
+                if (playerHealth.HPPercentage * 100 <= Settings.percentHPQuit.Value)
                 {
                     try
                     {
@@ -439,7 +435,7 @@ namespace FlaskManager
                     }
 
                 }
-                if ( playerHealth.ESPercentage * 100 <= Settings.percentESQuit.Value )
+                if (playerHealth.ESPercentage * 100 <= Settings.percentESQuit.Value)
                 {
                     try
                     {
@@ -453,6 +449,16 @@ namespace FlaskManager
             }
             return;
         }
+        private void SpeedFlaskLogic()
+        {
+            moveCounter = playerMovement.isMoving ? moveCounter += 0.1f : 0;
+            if (localPlayer.IsValid && Settings.qSEnable.Value && moveCounter >= Settings.qSDur.Value &&
+                !playerHealth.HasBuff("flask_bonus_movement_speed") &&
+                !playerHealth.HasBuff("flask_utility_sprint"))
+            {
+                FindDrinkFlask(FlaskAction.SPEEDRUN, FlaskAction.SPEEDRUN);
+            }
+        }
         private void ManaLogic()
         {
             lastManaUsed += 0.1f;
@@ -462,20 +468,10 @@ namespace FlaskManager
             {
                 if (playerHealth.MPPercentage * 100 <= Settings.PerManaFlask.Value)
                 {
-                    var flaskList = playerFlaskList.FindAll(x => x.FlaskAction1 == FlaskAction.MANA || x.FlaskAction1 == FlaskAction.HYBRID);
-                    foreach (var flask in flaskList)
-                    {
-                        if (flask.isEnabled && flask.CurrentCharges >= 1)
-                        {
-                            UseFlask(flask);
-                            lastManaUsed = 0f;
-                            UpdateFlaskChargesInfo(flask);
-                            break;
-                        } else
-                        {
-                            UpdateFlaskChargesInfo(flask);
-                        }
-                    }
+                    if (FindDrinkFlask(FlaskAction.MANA, FlaskAction.IGNORE))
+                        lastManaUsed = 0f;
+                    else if (FindDrinkFlask(FlaskAction.HYBRID, FlaskAction.IGNORE))
+                        lastManaUsed = 0f;
                 }
             }
         }
@@ -488,21 +484,10 @@ namespace FlaskManager
             {
                 if (playerHealth.HPPercentage * 100 <= Settings.perHPFlask.Value)
                 {
-                    var flaskList = playerFlaskList.FindAll(x => x.FlaskAction1 == FlaskAction.LIFE || x.FlaskAction1 == FlaskAction.HYBRID);
-                    foreach (var flask in flaskList)
-                    {
-                        if (flask.isEnabled && flask.CurrentCharges >= 1)
-                        {
-                            UseFlask(flask);
-                            lastLifeUsed = 0f;
-                            UpdateFlaskChargesInfo(flask);
-                            break;
-                        }
-                        else
-                        {
-                            UpdateFlaskChargesInfo(flask);
-                        }
-                    }
+                    if (FindDrinkFlask(FlaskAction.LIFE, FlaskAction.IGNORE))
+                        lastLifeUsed = 0f;
+                    else if (FindDrinkFlask(FlaskAction.LIFE, FlaskAction.IGNORE))
+                        lastLifeUsed = 0f;
                 }
             }
         }
@@ -516,17 +501,17 @@ namespace FlaskManager
                 if (!Settings.remAilment.Value)
                     return;
                 if (Settings.remCorrupt.Value && !float.IsInfinity(buff.Timer) && HasDebuff(debuffInfo.Bleeding, buffName, false))
-                    LogMessage("Found Bleeding in you.", logmsg_time);
+                    LogMessage("Bleeding -> hasDrunkFlask:" + FindDrinkFlask(FlaskAction.IGNORE,FlaskAction.BLEED_IMMUNE), logmsg_time);
                 else if (Settings.remPoison.Value && !float.IsInfinity(buff.Timer) && HasDebuff(debuffInfo.Poisoned, buffName, false))
-                    LogMessage("Found Poisoned in you.", logmsg_time);
+                    LogMessage("Poison -> hasDrunkFlask:" + FindDrinkFlask(FlaskAction.IGNORE, FlaskAction.POISON_IMMUNE), logmsg_time);
                 else if (Settings.remFrozen.Value && !float.IsInfinity(buff.Timer) && HasDebuff(debuffInfo.ChilledFrozen, buffName, false))
-                    LogMessage("Found Frozen in you.", logmsg_time);
+                    LogMessage("Frozen -> hasDrunkFlask:" + FindDrinkFlask(FlaskAction.IGNORE, FlaskAction.FREEZE_IMMUNE), logmsg_time);
                 else if (Settings.remBurning.Value && !float.IsInfinity(buff.Timer) && HasDebuff(debuffInfo.Burning, buffName, false))
-                    LogMessage("Found burning in you.", logmsg_time);
+                    LogMessage("Burning -> hasDrunkFlask:" + FindDrinkFlask(FlaskAction.IGNORE, FlaskAction.IGNITE_IMMUNE), logmsg_time);
                 else if (Settings.remShocked.Value && !float.IsInfinity(buff.Timer) && HasDebuff(debuffInfo.Shocked, buffName, false))
-                    LogMessage("Found shocked in you.", logmsg_time);
+                    LogMessage("Shock -> hasDrunkFlask:" + FindDrinkFlask(FlaskAction.IGNORE, FlaskAction.SHOCK_IMMUNE), logmsg_time);
                 else if (Settings.remCurse.Value && !float.IsInfinity(buff.Timer) && HasDebuff(debuffInfo.WeakenedSlowed, buffName, false))
-                    LogMessage("Found weakened in you.", logmsg_time);
+                    LogMessage("Curse -> hasDrunkFlask:" + FindDrinkFlask(FlaskAction.IGNORE, FlaskAction.CURSE_IMMUNE), logmsg_time);
             }
         }
         private void FlaskMain()
@@ -694,34 +679,3 @@ namespace FlaskManager
         UNIQUE_FLASK
     }
 }
-#region Unused classes
-/*
-   public class AutoHPManaFlask
-    {
-
-    }
-    public class RemoveAilmentsFlask
-    {
-
-    }
-    public class QuickSilverFlask
-    {
-
-    }
-    public class DefenssiveFlask
-    {
-
-    }
-    public class OffensiveFlask
-    {
-
-    }
-    public class UniqueFlask
-    {
-
-    }
-    public class AutoQuit
-    {
-    }
- */
-#endregion
