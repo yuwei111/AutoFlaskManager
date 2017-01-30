@@ -200,17 +200,6 @@ namespace FlaskManager
             Settings.Enable.OnValueChanged +=  OnFlaskManagerToggle;
         }
         
-        /*
-        public override void InitialiseMenu(RootButton mainMenu)
-        {
-         var menu = MenuPlugin.AddChild(mainMenu, PluginName, Settings.Enable);//Plugin menu root
-        forerach(var tNode in MyToggleNodeArray)
-            {
-             MenuPlugin.AddChild(menu, "My toggle name", tNode);
-            }
-        }
-        */
-
         private void OnFlaskManagerToggle()
         {
             try
