@@ -27,6 +27,7 @@ namespace FlaskManager
             remShocked = false;
             remBurning = false;
             remCurse = false;
+            remPoison = false;
             remCorrupt = false;
             corrptCount = new RangeNode<int>(10, 1, 20);
             ailmentDur = new RangeNode<int>(0, 0, 5);
@@ -90,11 +91,13 @@ namespace FlaskManager
         public ToggleNode remBurning { get; set; }
         [Menu("Remove Curse Ailment", 15, 11)]
         public ToggleNode remCurse { get; set; }
-        [Menu("Remove Corrupting Ailment", 16, 11)]
+        [Menu("Remove Poison Ailment", 16, 11)]
+        public ToggleNode remPoison { get; set; }
+        [Menu("Remove Corrupting/Bleed Ailment", 17, 11)]
         public ToggleNode remCorrupt { get; set; }
-        [Menu("Corrupting Blood Stacks", 17, 11)]
+        [Menu("Corrupting Blood Stacks", 18, 11)]
         public RangeNode<int> corrptCount { get; set; }
-        [Menu("Remove Ailment Post Duration (s)", 18, 11)]
+        [Menu("Remove Ailment Post Duration (s)", 19, 11)]
         public RangeNode<int> ailmentDur { get; set; } 
         #endregion
 

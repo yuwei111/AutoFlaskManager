@@ -33,6 +33,7 @@ namespace FlaskManager
 
         private float moveCounter;
         private float lastManaUsed;
+        private float lastLifeUsed;
         private List<PlayerFlask> playerFlaskList;
 
         #region FlaskInformations
@@ -222,6 +223,7 @@ namespace FlaskManager
                     isThreadEnabled = true;
                     PluginName = "Flask Manager";
                     lastManaUsed = 100f;
+                    lastLifeUsed = 100f;
                     gameHandle = GameController.Window.Process.MainWindowHandle;
                     ScanForFlaskAddress(GameController.Game.IngameState.UIRoot);
                     localPlayer = GameController.Game.IngameState.Data.LocalPlayer;
@@ -460,7 +462,7 @@ namespace FlaskManager
             {
                 if (playerHealth.MPPercentage * 100 <= Settings.PerManaFlask.Value)
                 {
-                    var flaskList = playerFlaskList.FindAll(x => x.FlaskAction1 == FlaskAction.MANA);
+                    var flaskList = playerFlaskList.FindAll(x => x.FlaskAction1 == FlaskAction.MANA || x.FlaskAction1 == FlaskAction.HYBRID);
                     foreach (var flask in flaskList)
                     {
                         if (flask.isEnabled && flask.CurrentCharges >= 1)
@@ -477,6 +479,33 @@ namespace FlaskManager
                 }
             }
         }
+        private void LifeLogic()
+        {
+            lastLifeUsed += 0.1f;
+            if (lastLifeUsed < Settings.HPDelay.Value)
+                return;
+            if (Settings.autoFlask.Value && localPlayer.IsValid)
+            {
+                if (playerHealth.HPPercentage * 100 <= Settings.perHPFlask.Value)
+                {
+                    var flaskList = playerFlaskList.FindAll(x => x.FlaskAction1 == FlaskAction.LIFE || x.FlaskAction1 == FlaskAction.HYBRID);
+                    foreach (var flask in flaskList)
+                    {
+                        if (flask.isEnabled && flask.CurrentCharges >= 1)
+                        {
+                            UseFlask(flask);
+                            lastLifeUsed = 0f;
+                            UpdateFlaskChargesInfo(flask);
+                            break;
+                        }
+                        else
+                        {
+                            UpdateFlaskChargesInfo(flask);
+                        }
+                    }
+                }
+            }
+        }
         private void AilmentLogic()
         {
             foreach (var buff in playerHealth.Buffs)
@@ -486,9 +515,9 @@ namespace FlaskManager
                 var buffName = buff.Name;
                 if (!Settings.remAilment.Value)
                     return;
-                if (!float.IsInfinity(buff.Timer) && HasDebuff(debuffInfo.Bleeding, buffName, false))
+                if (Settings.remCorrupt.Value && !float.IsInfinity(buff.Timer) && HasDebuff(debuffInfo.Bleeding, buffName, false))
                     LogMessage("Found Bleeding in you.", logmsg_time);
-                else if (!float.IsInfinity(buff.Timer) && HasDebuff(debuffInfo.Poisoned, buffName, false))
+                else if (Settings.remPoison.Value && !float.IsInfinity(buff.Timer) && HasDebuff(debuffInfo.Poisoned, buffName, false))
                     LogMessage("Found Poisoned in you.", logmsg_time);
                 else if (Settings.remFrozen.Value && !float.IsInfinity(buff.Timer) && HasDebuff(debuffInfo.ChilledFrozen, buffName, false))
                     LogMessage("Found Frozen in you.", logmsg_time);
@@ -515,6 +544,7 @@ namespace FlaskManager
 
             SpeedFlaskLogic();
             ManaLogic();
+            LifeLogic();
             AilmentLogic();
             return;
         }
@@ -565,7 +595,6 @@ namespace FlaskManager
        }
         #endregion
     }
-
     public class PlayerFlask
     {
         public string FlaskName;
