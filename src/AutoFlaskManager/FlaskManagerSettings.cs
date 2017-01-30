@@ -102,9 +102,9 @@ namespace FlaskManager
         #endregion
 
         #region Quick Sivler Flask Menu
-        [Menu("QuickSilver Flask", 19)]
+        [Menu("QuickSilver Flask", 20)]
         public ToggleNode qSEnable { get; set; }
-        [Menu("Use After Moving Post (s)", 22, 19)]
+        [Menu("Use After Moving Post (s)", 21, 20)]
         public RangeNode<float> qSDur { get; set; } 
         #endregion
 

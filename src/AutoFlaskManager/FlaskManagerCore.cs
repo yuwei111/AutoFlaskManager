@@ -487,7 +487,7 @@ namespace FlaskManager
                 if (DEBUG)
                     LogMessage("buffs:" + buff.Name + "time:" + buff.Timer, 0.05f);
                 var buffName = buff.Name;
-                if (!Settings.remAilment.Value)
+                if (!Settings.remAilment.Value || !localPlayer.IsValid)
                     return;
                 if (Settings.remCorrupt.Value && !float.IsInfinity(buff.Timer) && HasDebuff(debuffInfo.Bleeding, buffName, false))
                     LogMessage("Bleeding -> hasDrunkFlask:" + FindDrinkFlask(FlaskAction.IGNORE,FlaskAction.BLEED_IMMUNE), logmsg_time);
