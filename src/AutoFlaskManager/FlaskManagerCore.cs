@@ -35,6 +35,7 @@ namespace FlaskManager
         private float lastManaUsed;
         private float lastLifeUsed;
         private List<PlayerFlask> playerFlaskList;
+        private FlaskKeys keyinfo;
 
         #region FlaskInformations
         private FlaskAction flask_name_to_action(string flaskname)
@@ -192,6 +193,16 @@ namespace FlaskManager
         }
         public override void Initialise()
         {
+
+            if ( File.Exists("config/bind.json") )
+            {
+                string keyfile = File.ReadAllText("config/flaskbind.json");
+                keyinfo = JsonConvert.DeserializeObject<FlaskKeys>(keyfile);
+            } else
+            {
+                keyinfo = new FlaskKeys(Keys.D1, Keys.D2, Keys.D3, Keys.D4, Keys.D5);
+                File.WriteAllText("config/bind.json", JsonConvert.SerializeObject(keyinfo));
+            }
             playerFlaskList = new List<PlayerFlask>();
             string json = File.ReadAllText("config/debuffPanel.json");
             debuffInfo = JsonConvert.DeserializeObject<DebuffPanelConfig>(json);
@@ -336,16 +347,7 @@ namespace FlaskManager
         } 
         private void UseFlask(PlayerFlask flask)
         {
-            if (flask.Slot == 0)
-                KeyPressRelease(Keys.D1);
-            else if (flask.Slot == 1)
-                KeyPressRelease(Keys.D2);
-            else if (flask.Slot == 2)
-                KeyPressRelease(Keys.D3);
-            else if (flask.Slot == 3)
-                KeyPressRelease(Keys.D4);
-            else if (flask.Slot == 4)
-                KeyPressRelease(Keys.D5);
+            KeyPressRelease(keyinfo.k[flask.Slot]);
         }
         private bool FindDrinkFlask(FlaskAction type1, FlaskAction type2)
         {
@@ -666,5 +668,18 @@ namespace FlaskManager
         BLEED_IMMUNE,// MOD: staunching
         CURSE_IMMUNE, // MOD: warding
         UNIQUE_FLASK
+    }
+    public class FlaskKeys
+    {
+        public Keys[] k;
+        public FlaskKeys(Keys k1, Keys k2, Keys k3, Keys k4, Keys k5)
+        {
+            k = new Keys[5];
+            k[0] = k1;
+            k[1] = k2;
+            k[2] = k3;
+            k[3] = k4;
+            k[4] = k5;
+        }
     }
 }
