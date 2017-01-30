@@ -171,24 +171,31 @@ namespace FlaskManager
         public override void Render()
         {
             base.Render();
-            if ( Settings.Enable.Value && Settings.uiEnable.Value )
+            if (Settings.Enable.Value && Settings.uiEnable.Value)
             {
                 float X = GameController.Window.GetWindowRectangle().Width * Settings.positionX.Value * .01f;
                 float Y = GameController.Window.GetWindowRectangle().Height * Settings.positionY.Value * .01f;
                 Vector2 position = new Vector2(X, Y);
-                int maxWidth = 0;
-                int maxheight = 0;
+                float maxWidth = 0;
+                float maxheight = 0;
 
                 foreach (var flasks in playerFlaskList.ToArray())
                 {
                     Color textColor = (flasks.isEnabled) ? Color.White : Color.Red;
                     var size = Graphics.DrawText(flasks.FlaskName, Settings.textSize.Value, position, textColor);
+                    var flaskNameSize = Graphics.MeasureText(flasks.FlaskName, Settings.textSize);
+                    float boxHeight = flaskNameSize.Height;
+                    float boxWidth = MathHepler.Max(flaskNameSize.Width);
+                    var bounds = new RectangleF(position.X, position.Y, boxWidth + 10, boxHeight + 4);
+                    //LogMessage($"Flask Name == {flasks.FlaskName}, flaskheight == {boxHeight.ToString()}, flaskwidth ==  {boxWidth.ToString()}", 10);
+                    Graphics.DrawImage("preload-end.png", bounds);
                     position.Y += size.Height;
-                    maxWidth = Math.Max(maxWidth, size.Width);
+                    maxWidth = boxWidth;
                     maxheight += size.Height;
                 }
-                var background = new RectangleF(X, Y, maxWidth, maxheight);
-                Graphics.DrawImage("healthbar_bg.png", background);
+
+                var background = new RectangleF(X - 10, Y - 17, maxWidth + 45, maxheight + 40);
+                Graphics.DrawImage("menu-background.png", background);
             }
         }
         public override void Initialise()
