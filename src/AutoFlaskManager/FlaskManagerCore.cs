@@ -201,14 +201,14 @@ namespace FlaskManager
         public override void Initialise()
         {
 
-            if ( File.Exists("config/bind.json") )
+            if ( File.Exists("config/flaskbind.json") )
             {
                 string keyfile = File.ReadAllText("config/flaskbind.json");
                 keyinfo = JsonConvert.DeserializeObject<FlaskKeys>(keyfile);
             } else
             {
                 keyinfo = new FlaskKeys(Keys.D1, Keys.D2, Keys.D3, Keys.D4, Keys.D5);
-                File.WriteAllText("config/bind.json", JsonConvert.SerializeObject(keyinfo));
+                File.WriteAllText("config/flaskbind.json", JsonConvert.SerializeObject(keyinfo));
             }
             playerFlaskList = new List<PlayerFlask>();
             string json = File.ReadAllText("config/debuffPanel.json");
