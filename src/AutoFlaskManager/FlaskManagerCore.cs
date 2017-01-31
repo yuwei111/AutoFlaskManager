@@ -181,21 +181,15 @@ namespace FlaskManager
 
                 foreach (var flasks in playerFlaskList.ToArray())
                 {
-                    Color textColor = (flasks.isEnabled) ? Color.White : Color.Red;
+                    Color textColor = (flasks.isEnabled) ? Color.DarkKhaki : Color.Red;
                     var size = Graphics.DrawText(flasks.FlaskName, Settings.textSize.Value, position, textColor);
-                    var flaskNameSize = Graphics.MeasureText(flasks.FlaskName, Settings.textSize);
-                    float boxHeight = flaskNameSize.Height;
-                    float boxWidth = MathHepler.Max(flaskNameSize.Width);
-                    var bounds = new RectangleF(position.X, position.Y, boxWidth + 10, boxHeight + 4);
-                    //LogMessage($"Flask Name == {flasks.FlaskName}, flaskheight == {boxHeight.ToString()}, flaskwidth ==  {boxWidth.ToString()}", 10);
-                    Graphics.DrawImage("preload-end.png", bounds);
                     position.Y += size.Height;
-                    maxWidth = boxWidth;
                     maxheight += size.Height;
+                    maxWidth = Math.Max(maxWidth, size.Width);
                 }
-
-                var background = new RectangleF(X - 10, Y - 17, maxWidth + 45, maxheight + 40);
-                Graphics.DrawImage("menu-background.png", background);
+                var background = new RectangleF(X, Y, maxWidth, maxheight);
+                Graphics.DrawFrame(background, 5, Color.Black);
+                Graphics.DrawImage("lightBackground.png", background);
             }
         }
         public override void Initialise()
