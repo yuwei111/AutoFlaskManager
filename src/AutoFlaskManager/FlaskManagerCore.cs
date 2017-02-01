@@ -20,7 +20,7 @@ namespace FlaskManager
     public class FlaskManagerCore : BaseSettingsPlugin<FlaskManagerSettings>
     {
         private bool DEBUG = false;
-        private int logmsg_time = 1;
+        private int logmsg_time = 3;
         private int errmsg_time = 10;
         private bool isThreadEnabled;
         private Element FlasksRoot;
@@ -159,7 +159,7 @@ namespace FlaskManager
                         }
                         catch (Exception)
                         {
-                            LogMessage("Error adding flask to the list", errmsg_time);
+                            //LogMessage("Error adding flask to the list", errmsg_time);
                         }
                     }
                 }
