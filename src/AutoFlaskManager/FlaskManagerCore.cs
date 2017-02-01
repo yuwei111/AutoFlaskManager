@@ -29,6 +29,7 @@ namespace FlaskManager
         private Entity localPlayer;
         private Life playerHealth;
         private Actor playerMovement;
+        private bool isTownOrHideout;
         private DebuffPanelConfig debuffInfo;
 
         private float moveCounter;
@@ -95,7 +96,10 @@ namespace FlaskManager
             {
                 foreach (Element flaskElem in FlasksRoot.Children)
                 {
-                    Entity item = flaskElem.AsObject<InventoryItemIcon>().Item;
+                    InventoryItemIcon itm = flaskElem.AsObject<InventoryItemIcon>();
+                    if (itm.ToolTipType != ToolTipType.InventoryItem)
+                        continue;
+                    Entity item = itm.Item;
                     if (item != null && item.HasComponent<Charges>())
                     {
                         var flaskCharges = item.GetComponent<Charges>();
@@ -159,7 +163,7 @@ namespace FlaskManager
                         }
                         catch (Exception)
                         {
-                            //LogMessage("Error adding flask to the list", errmsg_time);
+                            LogMessage("Error adding flask to the list", errmsg_time);
                         }
                     }
                 }
@@ -207,10 +211,9 @@ namespace FlaskManager
             string json = File.ReadAllText("config/debuffPanel.json");
             debuffInfo = JsonConvert.DeserializeObject<DebuffPanelConfig>(json);
             OnFlaskManagerToggle();
-            GameController.Area.OnAreaChange += area => UpdateFlasksList();
+            GameController.Area.OnAreaChange += area => UpdateFlasksList(area);
             Settings.Enable.OnValueChanged +=  OnFlaskManagerToggle;
         }
-        
         private void OnFlaskManagerToggle()
         {
             try
@@ -224,6 +227,7 @@ namespace FlaskManager
                     PluginName = "Flask Manager";
                     lastManaUsed = 100f;
                     lastLifeUsed = 100f;
+                    isTownOrHideout = true;
                     gameHandle = GameController.Window.Process.MainWindowHandle;
                     ScanForFlaskAddress(GameController.Game.IngameState.UIRoot);
                     localPlayer = GameController.Game.IngameState.Data.LocalPlayer;
@@ -251,12 +255,16 @@ namespace FlaskManager
             }
         }
 
-        private void UpdateFlasksList()
+        private void UpdateFlasksList(AreaController area)
         {
             if (Settings.Enable.Value)
             {
                 ScanForFlaskAddress(GameController.Game.IngameState.UIRoot);
                 SearchFlasksInventory();
+                if (area.CurrentArea.IsTown || area.CurrentArea.IsHideout)
+                    isTownOrHideout = true;
+                else
+                    isTownOrHideout = false;
             }
         }
         private void SearchFlasksInventory()
@@ -487,7 +495,7 @@ namespace FlaskManager
             foreach (var buff in playerHealth.Buffs)
             {
                 if (DEBUG)
-                    LogMessage("buffs:" + buff.Name + "time:" + buff.Timer, 0.05f);
+                    LogMessage("buffs:" + buff.Name + " time:" + buff.Timer, 0.05f);
                 var buffName = buff.Name;
                 if (!Settings.remAilment.Value || !localPlayer.IsValid)
                     return;
@@ -507,11 +515,11 @@ namespace FlaskManager
         }
         private void FlaskMain()
         {
-            if (GameController.Area.CurrentArea.IsHideout || GameController.Area.CurrentArea.IsTown)
-                return;
-
             if (!localPlayer.IsValid)
                 UpdatePlayerVariables();
+            if (isTownOrHideout || playerHealth.HasBuff("grace_period"))
+                return;
+
             foreach (var flask in playerFlaskList.ToArray())
                 if (!flask.Item.IsValid)
                 {
