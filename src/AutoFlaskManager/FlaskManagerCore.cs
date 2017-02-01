@@ -42,8 +42,7 @@ namespace FlaskManager
         {
             flaskname = flaskname.ToLower();
             FlaskAction ret = FlaskAction.NONE;
-            String defense_pattern = @"bismuth|jade|stibnite|granite|
-                amethyst|ruby|sapphire|topaz|aquamarine|quartz";
+            String defense_pattern = @"bismuth|jade|stibnite|granite|amethyst|ruby|sapphire|topaz|aquamarine|quartz";
             String offense_pattern = @"silver|sulphur|basalt|diamond";
             if (flaskname.Contains("life"))
                 ret = FlaskAction.LIFE;
