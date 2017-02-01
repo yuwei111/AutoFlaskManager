@@ -414,7 +414,7 @@ namespace FlaskManager
         {
             if (Settings.isPercentQuit.Value && localPlayer.IsValid)
             {
-                if (playerHealth.HPPercentage * 100 <= Settings.percentHPQuit.Value)
+                if (playerHealth.HPPercentage * 100 < Settings.percentHPQuit.Value)
                 {
                     try
                     {
@@ -426,7 +426,7 @@ namespace FlaskManager
                     }
 
                 }
-                if (playerHealth.ESPercentage * 100 <= Settings.percentESQuit.Value)
+                if (playerHealth.ESPercentage * 100 < Settings.percentESQuit.Value)
                 {
                     try
                     {
@@ -507,6 +507,8 @@ namespace FlaskManager
         }
         private void FlaskMain()
         {
+            if (GameController.Area.CurrentArea.IsHideout || GameController.Area.CurrentArea.IsTown)
+                return;
 
             if (!localPlayer.IsValid)
                 UpdatePlayerVariables();
