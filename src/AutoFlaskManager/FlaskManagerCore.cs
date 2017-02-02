@@ -201,64 +201,58 @@ namespace FlaskManager
             if(DEBUG)
                 LogMessage("Getting Inventory Flasks info.", logmsg_time);
             playerFlaskList.Clear();
-
-            int totalFlasksEquipped = Convert.ToInt32(flaskRoot.ChildCount);
-            for (int j = 0; j < totalFlasksEquipped; j++)
+            try
             {
-                InventoryItemIcon flask = null;
-                Entity flaskItem = null;
-                Charges flaskCharges = null;
-                Mods flaskMods = null;
-                try
+                int totalFlasksEquipped = Convert.ToInt32(flaskRoot.ChildCount);
+                for (int j = 0; j < totalFlasksEquipped; j++)
                 {
-                    flask = flaskRoot.Children[j].AsObject<InventoryItemIcon>();
-                    flaskItem = flask.Item;
-                    flaskCharges = flaskItem.GetComponent<Charges>();
-                    flaskMods = flaskItem.GetComponent<Mods>();
+                    InventoryItemIcon flask = flaskRoot.Children[j].AsObject<InventoryItemIcon>();
+                    Entity flaskItem = flask.Item;
+                    Charges flaskCharges = flaskItem.GetComponent<Charges>();
+                    Mods flaskMods = flaskItem.GetComponent<Mods>();
+                    PlayerFlask newFlask = new PlayerFlask();
 
-                }
-                catch (Exception)
-                {
-
-                    playerFlaskList.Clear();
-                    return false;
-                }
-                PlayerFlask newFlask = new PlayerFlask();
-
-                newFlask.FlaskName = GameController.Files.BaseItemTypes.Translate(flaskItem.Path).BaseName;
-                newFlask.Slot = flask.InventPosX;
-                newFlask.SetSettings(Settings);
-                newFlask.Item = flaskItem;
-                newFlask.MaxCharges = flaskCharges.ChargesMax;
-                newFlask.UseCharges = flaskCharges.ChargesPerUse;
-                newFlask.CurrentCharges = flaskCharges.NumCharges;
-                newFlask.FlaskAction1 = flask_name_to_action(newFlask.FlaskName);
-                //Checking flask action based on flask name.
-                if (newFlask.FlaskAction1 == FlaskAction.NONE)
-                    LogError("Error: " + newFlask.FlaskName + " name not found. Is it unique flask? If not, report this error message.", errmsg_time);
-                FlaskAction action2 = newFlask.FlaskAction2 = FlaskAction.NONE;
-                //Checking flask action based on flask mods.
-                foreach (var mod in flaskMods.ItemMods)
-                {
-                    action2 = flask_mod_to_action(mod.RawName);
-                    if (action2 == FlaskAction.NONE)
-                        LogError("Error: " + mod.RawName + " mod not found. Is it unique flask? If not, report this error message.", errmsg_time);
-                    else if (action2 == FlaskAction.UNIQUE_FLASK)
+                    newFlask.FlaskName = GameController.Files.BaseItemTypes.Translate(flaskItem.Path).BaseName;
+                    newFlask.Slot = flask.InventPosX;
+                    newFlask.SetSettings(Settings);
+                    newFlask.Item = flaskItem;
+                    newFlask.MaxCharges = flaskCharges.ChargesMax;
+                    newFlask.UseCharges = flaskCharges.ChargesPerUse;
+                    newFlask.CurrentCharges = flaskCharges.NumCharges;
+                    newFlask.FlaskAction1 = flask_name_to_action(newFlask.FlaskName);
+                    //Checking flask action based on flask name.
+                    if (newFlask.FlaskAction1 == FlaskAction.NONE)
+                        LogError("Error: " + newFlask.FlaskName + " name not found. Is it unique flask? If not, report this error message.", errmsg_time);
+                    FlaskAction action2 = newFlask.FlaskAction2 = FlaskAction.NONE;
+                    //Checking flask action based on flask mods.
+                    foreach (var mod in flaskMods.ItemMods)
                     {
-                        newFlask.FlaskAction2 = FlaskAction.UNIQUE_FLASK;
-                        break;
+                        action2 = flask_mod_to_action(mod.RawName);
+                        if (action2 == FlaskAction.NONE)
+                            LogError("Error: " + mod.RawName + " mod not found. Is it unique flask? If not, report this error message.", errmsg_time);
+                        else if (action2 == FlaskAction.UNIQUE_FLASK)
+                        {
+                            newFlask.FlaskAction2 = FlaskAction.UNIQUE_FLASK;
+                            break;
+                        }
+                        else if (action2 != FlaskAction.IGNORE)
+                            newFlask.FlaskAction2 = action2;
                     }
-                    else if (action2 != FlaskAction.IGNORE)
-                        newFlask.FlaskAction2 = action2;
-                }
-                // If it's a unique flask, ignore flask action based on flask name
-                // Depending if user have enabled or disabled unique flask or not.
-                if (newFlask.FlaskAction2 == FlaskAction.UNIQUE_FLASK)
-                    if (!Settings.uniqFlaskEnable.Value)
-                        newFlask.FlaskAction1 = FlaskAction.NONE;
+                    // If it's a unique flask, ignore flask action based on flask name
+                    // Depending if user have enabled or disabled unique flask or not.
+                    if (newFlask.FlaskAction2 == FlaskAction.UNIQUE_FLASK)
+                        if (!Settings.uniqFlaskEnable.Value)
+                            newFlask.FlaskAction1 = FlaskAction.NONE;
 
-                newFlask.EnableDisableFlask();
-                playerFlaskList.Add(newFlask);
+                    newFlask.EnableDisableFlask();
+                    playerFlaskList.Add(newFlask);
+                }
+
+            }
+            catch (Exception)
+            {
+                playerFlaskList.Clear();
+                return false;
             }
             playerFlaskList.Sort((x, y) => x.Slot.CompareTo(y.Slot));
             return true;
