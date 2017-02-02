@@ -1,6 +1,4 @@
-﻿//#define DEBUG
-
-using PoeHUD.Controllers;
+﻿using PoeHUD.Controllers;
 using PoeHUD.Poe.Components;
 using PoeHUD.Plugins;
 using System.Collections.Generic;
@@ -22,6 +20,7 @@ namespace FlaskManager
 {
     public class FlaskManagerCore : BaseSettingsPlugin<FlaskManagerSettings>
     {
+        private readonly bool DEBUG = false;
         private readonly int logmsg_time = 3;
         private readonly int errmsg_time = 10;
         private bool isThreadEnabled;
@@ -139,9 +138,8 @@ namespace FlaskManager
             {
                 if (Settings.Enable.Value)
                 {
-#if (DEBUG)
-                    LogMessage("Enabling FlaskManager.",logmsg_time);
-#endif
+                    if (DEBUG)
+                        LogMessage("Enabling FlaskManager.",logmsg_time);
                     moveCounter = 0;
                     isThreadEnabled = true;
                     lastManaUsed = 100f;
@@ -155,9 +153,8 @@ namespace FlaskManager
                 }
                 else
                 {
-#if (DEBUG)
-                    LogMessage("Disabling FlaskManager.", logmsg_time);
-#endif
+                    if(DEBUG)
+                        LogMessage("Disabling FlaskManager.", logmsg_time);
                     playerFlaskList.Clear();
                     isThreadEnabled = false;
                 }
@@ -199,9 +196,8 @@ namespace FlaskManager
             Element flaskRoot = getFlaskRoot();
             if (flaskRoot == null)
                 return;
-#if (DEBUG)
-            LogMessage("Getting Inventory Flasks info.", logmsg_time);
-#endif
+            if(DEBUG)
+                LogMessage("Getting Inventory Flasks info.", logmsg_time);
             playerFlaskList.Clear();
 
             int totalFlasksEquipped = Convert.ToInt32(flaskRoot.ChildCount);
@@ -403,9 +399,8 @@ namespace FlaskManager
             var PlayerHealth = LocalPlayer.GetComponent<Life>();
             foreach (var buff in PlayerHealth.Buffs)
             {
-#if (DEBUG)
-                LogMessage("buffs:" + buff.Name + " time:" + buff.Timer, 0.05f);
-#endif
+                if(DEBUG)
+                    LogMessage("buffs:" + buff.Name + " time:" + buff.Timer, 0.05f);
                 var buffName = buff.Name;
                 if (!Settings.remAilment.Value)
                     return;
@@ -465,9 +460,8 @@ namespace FlaskManager
 
             if (isAreaChanged)
             {
-#if (DEBUG)
-                LogMessage("Area has been changed. Loading flasks info.", logmsg_time);
-#endif
+                if(DEBUG)
+                    LogMessage("Area has been changed. Loading flasks info.", logmsg_time);
                 if (GameController.Area.CurrentArea.IsHideout || GameController.Area.CurrentArea.IsTown)
                     isTownOrHideout = true;
                 else
@@ -475,14 +469,17 @@ namespace FlaskManager
                 isAreaChanged = false;
                 return;
             }
-            if (isTownOrHideout)
+            if (isTownOrHideout || GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Life>().HasBuff("grace_period"))
                 return;
-            if (GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Life>().HasBuff("grace_period"))
-                return;
-            var totalFlasks = (getFlaskRoot() == null) ? Convert.ToInt32(0) : Convert.ToInt32(getFlaskRoot().ChildCount);
-            if (totalFlasks != playerFlaskList.Count)
+            var totalFlask = (getFlaskRoot() == null) ? Convert.ToInt32(0) : Convert.ToInt32(getFlaskRoot().ChildCount);
+            if (totalFlask > 0 && totalFlask != playerFlaskList.Count)
+            {
+                if(DEBUG)
+                    LogMessage("Invalid Flask Count, Recalculating it.", logmsg_time);
                 GettingAllFlaskInfo();
-            for (int j = 0; j < totalFlasks; j++)
+            }
+
+            for (int j = 0; j < playerFlaskList.Count; j++)
                 if (!playerFlaskList[j].Item.IsValid)
                 {
                     GettingAllFlaskInfo();
