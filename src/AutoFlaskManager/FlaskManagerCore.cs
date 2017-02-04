@@ -244,6 +244,15 @@ namespace FlaskManager
                         if (!Settings.uniqFlaskEnable.Value)
                             newFlask.FlaskAction1 = FlaskAction.NONE;
 
+                    // Speedrun mod on mana/life flask wouldn't work when full mana/life is full respectively,
+                    // So we will ignore speedrun mod from mana/life flask. Other mods
+                    // on mana/life flasks will work.
+                    if ((newFlask.FlaskAction1 == FlaskAction.LIFE || newFlask.FlaskAction1 == FlaskAction.MANA ||
+                        newFlask.FlaskAction1 == FlaskAction.HYBRID) && newFlask.FlaskAction2 == FlaskAction.SPEEDRUN)
+                    {
+                        LogError("Warning: Speed Run mod is ignored on mana/life/hybrid flasks.", errmsg_time);
+                        newFlask.FlaskAction2 = FlaskAction.NONE;
+                    }
                     newFlask.EnableDisableFlask();
                     playerFlaskList.Add(newFlask);
                 }
@@ -276,6 +285,8 @@ namespace FlaskManager
                 {
                     UseFlask(flask);
                     UpdateFlaskChargesInfo(flask);
+                    if (DEBUG)
+                        LogMessage("Just Drank Flask on slot " + flask.Slot, logmsg_time);
                     // if there are multiple flasks, drinking 1 of them at a time is enough.
                     return true;
                 }
