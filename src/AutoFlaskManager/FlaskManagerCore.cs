@@ -476,13 +476,9 @@ namespace FlaskManager
         private void FlaskMain()
         {
             Element flaskRoot = getFlaskRoot();
-            #region Checks
             if (flaskRoot == null || !GameController.Game.IngameState.Data.LocalPlayer.IsValid)
                 return;
 
-            if (isTownOrHideout || GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Life>().HasBuff("grace_period"))
-                return;
-            #endregion
             var totalFlask = Convert.ToInt32(flaskRoot.ChildCount);
             if (totalFlask > 0 && totalFlask != playerFlaskList.Count)
             {
@@ -498,6 +494,9 @@ namespace FlaskManager
                     GettingAllFlaskInfo(flaskRoot);
                     return;
                 }
+
+            if (isTownOrHideout || GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Life>().HasBuff("grace_period"))
+                return;
 
             SpeedFlaskLogic();
             ManaLogic();
