@@ -54,7 +54,8 @@ namespace FlaskManager
             flaskSlot2Enable = true;
             flaskSlot3Enable = true;
             flaskSlot4Enable = true;
-            flaskSlot5Enable = true; 
+            flaskSlot5Enable = true;
+            debugMode = false;
             #endregion
         }
 
@@ -153,7 +154,9 @@ namespace FlaskManager
         [Menu("Use Flask Slot 4", 108, 100)]
         public ToggleNode flaskSlot4Enable { get; set; }
         [Menu("Use Flask Slot 5", 109, 100)]
-        public ToggleNode flaskSlot5Enable { get; set; } 
+        public ToggleNode flaskSlot5Enable { get; set; }
+        [Menu("Debug Mode", 110, 100)]
+        public ToggleNode debugMode { get; set; }
         #endregion
     }
 }

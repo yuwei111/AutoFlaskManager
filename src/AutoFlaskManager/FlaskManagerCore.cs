@@ -20,7 +20,7 @@ namespace FlaskManager
 {
     public class FlaskManagerCore : BaseSettingsPlugin<FlaskManagerSettings>
     {
-        private readonly bool DEBUG = false;
+        private bool DEBUG = false;
         private readonly bool DEBUG_BUFF = false;
         private readonly int logmsg_time = 3;
         private readonly int errmsg_time = 10;
@@ -117,7 +117,7 @@ namespace FlaskManager
         public override void Initialise()
         {
             PluginName = "Flask Manager";
-            if ( File.Exists("config/flaskbind.json") )
+            if (File.Exists("config/flaskbind.json"))
             {
                 string keyfile = File.ReadAllText("config/flaskbind.json");
                 keyinfo = JsonConvert.DeserializeObject<FlaskKeys>(keyfile);
@@ -132,7 +132,12 @@ namespace FlaskManager
             eleQueue = new Queue<Element>();
             OnFlaskManagerToggle();
             GameController.Area.OnAreaChange += area => OnAreaChange(area);
-            Settings.Enable.OnValueChanged +=  OnFlaskManagerToggle;
+            Settings.Enable.OnValueChanged += OnFlaskManagerToggle;
+            Settings.debugMode.OnValueChanged += OnDebugMode;
+        }
+        private void OnDebugMode()
+        {
+            DEBUG = Settings.debugMode.Value;
         }
         private void OnFlaskManagerToggle()
         {
@@ -240,13 +245,13 @@ namespace FlaskManager
                     Mods flaskMods = flaskItem.GetComponent<Mods>();
                     PlayerFlask newFlask = new PlayerFlask();
 
-                    newFlask.FlaskName = GameController.Files.BaseItemTypes.Translate(flaskItem.Path).BaseName;
-                    newFlask.Slot = flask.InventPosX;
                     newFlask.SetSettings(Settings);
+                    newFlask.Slot = flask.InventPosX;
                     newFlask.Item = flaskItem;
                     newFlask.MaxCharges = flaskCharges.ChargesMax;
                     newFlask.UseCharges = flaskCharges.ChargesPerUse;
                     newFlask.CurrentCharges = flaskCharges.NumCharges;
+                    newFlask.FlaskName = GameController.Files.BaseItemTypes.Translate(flaskItem.Path).BaseName;
                     newFlask.FlaskAction1 = flask_name_to_action(newFlask.FlaskName);
                     //Checking flask action based on flask name.
                     if (newFlask.FlaskAction1 == FlaskAction.NONE)
