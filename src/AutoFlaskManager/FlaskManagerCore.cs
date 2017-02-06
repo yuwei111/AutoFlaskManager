@@ -231,7 +231,7 @@ namespace FlaskManager
             playerFlaskList.Clear();
             try
             {
-                int totalFlasksEquipped = Convert.ToInt32(flaskRoot.ChildCount);
+                int totalFlasksEquipped = (int)(flaskRoot.ChildCount);
                 for (int j = 0; j < totalFlasksEquipped; j++)
                 {
                     InventoryItemIcon flask = flaskRoot.Children[j].AsObject<InventoryItemIcon>();
@@ -488,7 +488,7 @@ namespace FlaskManager
         public void KeyPressRelease(Keys key)
         {
             KeyDown(key);
-            Thread.Sleep(Convert.ToInt32(GameController.Game.IngameState.CurLatency));
+            Thread.Sleep((int)(GameController.Game.IngameState.CurLatency));
             // working as a double key.
             //KeyUp(key);
         }
@@ -511,7 +511,7 @@ namespace FlaskManager
             if (flaskRoot == null)
                 return;
 
-            var totalFlask = Convert.ToInt32(flaskRoot.ChildCount);
+            var totalFlask = (int)(flaskRoot.ChildCount);
             if (totalFlask > 0 && totalFlask != playerFlaskList.Count)
             {
                 if(DEBUG)
