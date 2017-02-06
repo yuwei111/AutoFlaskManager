@@ -27,7 +27,7 @@ namespace FlaskManager
         private bool isThreadEnabled;
         private IntPtr gameHandle;
         private Queue<Element> eleQueue;
-        
+
         private bool isTownOrHideout;
         private DebuffPanelConfig debuffInfo;
 
@@ -286,8 +286,13 @@ namespace FlaskManager
                 }
 
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                if (DEBUG)
+                {
+                    LogError("Warning: Error getting all flask Informations.", errmsg_time);
+                    LogError(e.Message + e.StackTrace, errmsg_time);
+                }
                 playerFlaskList.Clear();
                 return false;
             }
