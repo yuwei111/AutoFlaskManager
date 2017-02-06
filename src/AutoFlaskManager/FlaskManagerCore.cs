@@ -26,6 +26,7 @@ namespace FlaskManager
         private readonly int errmsg_time = 10;
         private bool isThreadEnabled;
         private IntPtr gameHandle;
+        private Queue<Element> eleQueue;
         
         private bool isTownOrHideout;
         private DebuffPanelConfig debuffInfo;
@@ -128,6 +129,7 @@ namespace FlaskManager
             playerFlaskList = new List<PlayerFlask>();
             string json = File.ReadAllText("config/debuffPanel.json");
             debuffInfo = JsonConvert.DeserializeObject<DebuffPanelConfig>(json);
+            eleQueue = new Queue<Element>();
             OnFlaskManagerToggle();
             GameController.Area.OnAreaChange += area => OnAreaChange(area);
             Settings.Enable.OnValueChanged +=  OnFlaskManagerToggle;
@@ -177,22 +179,48 @@ namespace FlaskManager
         }
         #endregion
         #region FindingFlasks
+        //Breath First Search for finding flask root.
+        private Element findFlaskRoot()
+        {
+            Element current = null;
+            InventoryItemIcon itm = null;
+            Entity item = null;
+            while (eleQueue.Count > 0)
+            {
+                current = eleQueue.Dequeue();
+                if (current == null)
+                    continue;
+                foreach (var child in current.Children)
+                {
+                    eleQueue.Enqueue(child);
+                }
+
+                itm = current.AsObject<InventoryItemIcon>();
+
+                if (itm.ToolTipType == ToolTipType.InventoryItem)
+                {
+                    item = itm.Item;
+                    if (item != null && item.HasComponent<Flask>())
+                    {
+                        eleQueue.Clear();
+                        return current.Parent;
+                    }
+                }
+            }
+            return null;
+        }
         private Element getFlaskRoot()
         {
             try
             {
-                //Currently it's hard coded for more speed. Will make it generic if required.
-                if (GameController.Game.IngameState.UIRoot.ChildCount > 1)
-                    return GameController.Game.IngameState.UIRoot.Children[1].Children[53].Children[5].Children[1].Children[0];
-                else if (!GameController.Game.IngameState.Data.LocalPlayer.IsValid)
-                    return null;
-                else
-                    LogError("Error: Cannot find flask root. AutoFlaskManager will close.", errmsg_time);
-                isThreadEnabled = false;
-                return null;
+                eleQueue.Clear();
+                eleQueue.Enqueue(GameController.Game.IngameState.UIRoot);
+                return findFlaskRoot();
             }
-            catch (ArgumentOutOfRangeException)
+            catch (Exception e)
             {
+                LogError("Warning: Cannot find Flask list.", errmsg_time);
+                LogError(e.Message + e.StackTrace, errmsg_time);
                 return null;
             }
         }
@@ -475,8 +503,12 @@ namespace FlaskManager
         #region Threading, do not touch
         private void FlaskMain()
         {
+            if (!GameController.Game.IngameState.Data.LocalPlayer.IsValid)
+                return;
+
             Element flaskRoot = getFlaskRoot();
-            if (flaskRoot == null || !GameController.Game.IngameState.Data.LocalPlayer.IsValid)
+
+            if (flaskRoot == null)
                 return;
 
             var totalFlask = Convert.ToInt32(flaskRoot.ChildCount);
