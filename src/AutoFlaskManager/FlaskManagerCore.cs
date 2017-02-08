@@ -109,6 +109,16 @@ namespace FlaskManager
                     maxheight += size.Height;
                     maxWidth = Math.Max(maxWidth, size.Width);
                 }
+                /* Debug Panel for buffs. TODO
+                 * foreach (var buff in GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Life>().Buffs)
+                {
+                    if (float.IsInfinity(buff.Timer) || buff.Name.ToLower().Contains("flask"))
+                        continue;
+                    var size = Graphics.DrawText(buff.Name + ":" + buff.Timer, Settings.textSize.Value, position, Color.WhiteSmoke);
+                    position.Y += size.Height;
+                    maxheight += size.Height;
+                    maxWidth = Math.Max(maxWidth, size.Width);
+                }*/
                 var background = new RectangleF(X, Y, maxWidth, maxheight);
                 Graphics.DrawFrame(background, 5, Color.Black);
                 Graphics.DrawImage("lightBackground.png", background);

@@ -87,9 +87,9 @@ namespace FlaskManager
         [Menu("Remove Frozen Ailment", 12, 11)]
         public ToggleNode remFrozen { get; set; }
         [Menu("Remove Burning Ailment", 13, 11)]
-        public ToggleNode remShocked { get; set; }
-        [Menu("Remove Shocked Ailment", 14, 11)]
         public ToggleNode remBurning { get; set; }
+        [Menu("Remove Shocked Ailment", 14, 11)]
+        public ToggleNode remShocked { get; set; }
         [Menu("Remove Curse Ailment", 15, 11)]
         public ToggleNode remCurse { get; set; }
         [Menu("Remove Poison Ailment", 16, 11)]
