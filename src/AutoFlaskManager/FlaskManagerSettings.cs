@@ -36,13 +36,14 @@ namespace FlaskManager
             qSDur = new RangeNode<float>(1.5f, 0f, 10f);
             //Defensive Flask
             defFlaskEnable = false;
-            hPDefensive = new RangeNode<int>(0, 0, 100);
-            hPElement = new RangeNode<int>(0, 0, 100);
-            eSDefensive = new RangeNode<int>(0, 0, 100);
-            eSElement = new RangeNode<int>(0, 0, 100);
+            hPDefensive = new RangeNode<int>(50, 50, 100);
+            eSDefensive = new RangeNode<int>(50, 50, 100);
+            DefensiveDelay = new RangeNode<float>(3f, 2f, 6f);
             //Offensive Flask
             offFlaskEnable = false;
-            offFlaskDur = new RangeNode<float>(4f, 0f, 10f);
+            hPOffensive = new RangeNode<int>(50, 50, 100);
+            eSOffensive = new RangeNode<int>(50, 50, 100);
+            OffensiveDelay = new RangeNode<float>(3f, 2f, 6f);
             //Unique Flask
             uniqFlaskEnable = false;
             // Settings
@@ -114,19 +115,21 @@ namespace FlaskManager
         public ToggleNode defFlaskEnable { get; set; }
         [Menu("Min Life % Auto Defensive Flask", 24, 23)]
         public RangeNode<int> hPDefensive { get; set; }
-        [Menu("Min Life % Auto Elemental Flask", 25, 23)]
-        public RangeNode<int> hPElement { get; set; }
-        [Menu("Min ES % Auto Defensive Flask", 26, 23)]
+        [Menu("Min ES % Auto Defensive Flask", 25, 23)]
         public RangeNode<int> eSDefensive { get; set; }
-        [Menu("Min ES % Auto Elemental Flask", 27, 23)]
-        public RangeNode<int> eSElement { get; set; }
+        [Menu("Defensive Flask Delay", 10, 6)]
+        public RangeNode<float> DefensiveDelay { get; set; }
         #endregion
 
         #region Offensive Flask Menu
         [Menu("Offensive Flask", 28)]
         public ToggleNode offFlaskEnable { get; set; }
-        [Menu("Use Offensive Flask Post (s)", 29, 28)]
-        public RangeNode<float> offFlaskDur { get; set; } 
+        [Menu("Min Life % Auto Offensive Flask", 24, 23)]
+        public RangeNode<int> hPOffensive { get; set; }
+        [Menu("Min ES % Auto Offensive Flask", 25, 23)]
+        public RangeNode<int> eSOffensive { get; set; }
+        [Menu("Offensive Flask Delay", 10, 6)]
+        public RangeNode<float> OffensiveDelay { get; set; }
         #endregion
 
         #region Unnique Flask Menu

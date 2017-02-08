@@ -34,6 +34,8 @@ namespace FlaskManager
         private float moveCounter;
         private float lastManaUsed;
         private float lastLifeUsed;
+        private float lastDefUsed;
+        private float lastOffUsed;
         private List<PlayerFlask> playerFlaskList;
         private FlaskKeys keyinfo;
 
@@ -172,6 +174,8 @@ namespace FlaskManager
                     isThreadEnabled = true;
                     lastManaUsed = 100f;
                     lastLifeUsed = 100f;
+                    lastDefUsed = 100f;
+                    lastOffUsed = 100f;
                     isTownOrHideout = true;
                     gameHandle = GameController.Window.Process.MainWindowHandle;
                     //We are creating our plugin thread inside PoEHUD!
@@ -335,7 +339,7 @@ namespace FlaskManager
         {
             KeyPressRelease(keyinfo.k[flask.Slot]);
         }
-        private bool FindDrinkFlask(FlaskAction type1, FlaskAction type2)
+        private bool FindDrinkFlask(FlaskAction type1, FlaskAction type2, bool shouldDrinkAll = false)
         {
             var flaskList = playerFlaskList.FindAll(x => x.FlaskAction1 == type1 || x.FlaskAction2 == type2);
             foreach (var flask in flaskList)
@@ -347,13 +351,23 @@ namespace FlaskManager
                     if (DEBUG)
                         LogMessage("Just Drank Flask on slot " + flask.Slot, logmsg_time);
                     // if there are multiple flasks, drinking 1 of them at a time is enough.
-                    return true;
+                    if (!shouldDrinkAll)
+                        return true;
                 }
                 else
                 {
                     UpdateFlaskChargesInfo(flask);
                 }
 
+            }
+            return false;
+        }
+        private bool HasDebuff(Dictionary<string, int> dictionary, string buffName, bool isHostile)
+        {
+            int filterId;
+            if (dictionary.TryGetValue(buffName, out filterId))
+            {
+                return filterId == 0 || isHostile == (filterId == 1);
             }
             return false;
         }
@@ -415,15 +429,6 @@ namespace FlaskManager
             }
             return;
         }
-        private bool HasDebuff(Dictionary<string, int> dictionary, string buffName, bool isHostile)
-        {
-            int filterId;
-            if (dictionary.TryGetValue(buffName, out filterId))
-            {
-                return filterId == 0 || isHostile == (filterId == 1);
-            }
-            return false;
-        }
         private void SpeedFlaskLogic()
         {
             var LocalPlayer = GameController.Game.IngameState.Data.LocalPlayer;
@@ -468,7 +473,7 @@ namespace FlaskManager
                 {
                     if (FindDrinkFlask(FlaskAction.LIFE, FlaskAction.IGNORE))
                         lastLifeUsed = 0f;
-                    else if (FindDrinkFlask(FlaskAction.LIFE, FlaskAction.IGNORE))
+                    else if (FindDrinkFlask(FlaskAction.HYBRID, FlaskAction.IGNORE))
                         lastLifeUsed = 0f;
                 }
             }
@@ -498,6 +503,40 @@ namespace FlaskManager
                     LogMessage("Shock -> hasDrunkFlask:" + FindDrinkFlask(FlaskAction.IGNORE, FlaskAction.SHOCK_IMMUNE), logmsg_time);
                 else if (Settings.remCurse.Value && !float.IsInfinity(buff.Timer) && HasDebuff(debuffInfo.WeakenedSlowed, buffName, false))
                     LogMessage("Curse -> hasDrunkFlask:" + FindDrinkFlask(FlaskAction.IGNORE, FlaskAction.CURSE_IMMUNE), logmsg_time);
+            }
+        }
+        private void DeffensiveFlask()
+        {
+            var LocalPlayer = GameController.Game.IngameState.Data.LocalPlayer;
+            var PlayerHealth = LocalPlayer.GetComponent<Life>();
+            lastDefUsed += 0.1f;
+            if (lastDefUsed < Settings.DefensiveDelay.Value)
+                return;
+            if (Settings.defFlaskEnable.Value && LocalPlayer.IsValid)
+            {
+                if (PlayerHealth.HPPercentage * 100 < Settings.hPDefensive.Value ||
+                    PlayerHealth.ESPercentage * 100 < Settings.eSDefensive.Value)
+                {
+                    if (FindDrinkFlask(FlaskAction.DEFENSE, FlaskAction.DEFENSE,true))
+                        lastDefUsed = 0f;
+                }
+            }
+        }
+        private void OffensiveFlask()
+        {
+            var LocalPlayer = GameController.Game.IngameState.Data.LocalPlayer;
+            var PlayerHealth = LocalPlayer.GetComponent<Life>();
+            lastOffUsed += 0.1f;
+            if (lastOffUsed < Settings.OffensiveDelay.Value)
+                return;
+            if (Settings.offFlaskEnable.Value && LocalPlayer.IsValid)
+            {
+                if (PlayerHealth.HPPercentage * 100 < Settings.hPOffensive.Value ||
+                    PlayerHealth.ESPercentage * 100 < Settings.eSOffensive.Value)
+                {
+                    if (FindDrinkFlask(FlaskAction.OFFENSE, FlaskAction.OFFENSE, true))
+                        lastOffUsed = 0f;
+                }
             }
         }
         #endregion
@@ -567,6 +606,8 @@ namespace FlaskManager
             ManaLogic();
             LifeLogic();
             AilmentLogic();
+            DeffensiveFlask();
+            OffensiveFlask();
             return;
         }
         private void FlaskThread()
