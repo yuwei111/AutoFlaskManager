@@ -21,12 +21,12 @@ namespace FlaskManager
     public class FlaskManagerCore : BaseSettingsPlugin<FlaskManagerSettings>
     {
         private bool DEBUG = false;
-        private readonly bool DEBUG_BUFF = false;
         private readonly int logmsg_time = 3;
         private readonly int errmsg_time = 10;
         private bool isThreadEnabled;
         private IntPtr gameHandle;
         private Queue<Element> eleQueue;
+        private Dictionary<string, float> debugDebuff;
 
         private bool isTownOrHideout;
         private DebuffPanelConfig debuffInfo;
@@ -124,6 +124,15 @@ namespace FlaskManager
                 Graphics.DrawImage("lightBackground.png", background);
             }
         }
+        public override void OnClose()
+        {
+            base.OnClose();
+            if (Settings.debugMode.Value)
+                foreach (var key in debugDebuff)
+                {
+                    File.AppendAllText("autoflaskmanagerDebug.log", key.Key + " : " + key.Value + Environment.NewLine );
+                }
+        }
         public override void Initialise()
         {
             PluginName = "Flask Manager";
@@ -140,6 +149,8 @@ namespace FlaskManager
             string json = File.ReadAllText("config/debuffPanel.json");
             debuffInfo = JsonConvert.DeserializeObject<DebuffPanelConfig>(json);
             eleQueue = new Queue<Element>();
+            DEBUG = Settings.debugMode.Value;
+            debugDebuff = new Dictionary<string, float>();
             OnFlaskManagerToggle();
             GameController.Area.OnAreaChange += area => OnAreaChange(area);
             Settings.Enable.OnValueChanged += OnFlaskManagerToggle;
@@ -468,9 +479,11 @@ namespace FlaskManager
             var PlayerHealth = LocalPlayer.GetComponent<Life>();
             foreach (var buff in PlayerHealth.Buffs)
             {
-                if(DEBUG_BUFF)
-                    LogMessage("buffs:" + buff.Name + " time:" + buff.Timer, 0.05f);
                 var buffName = buff.Name;
+
+                if (DEBUG)
+                    debugDebuff[buffName] = buff.Timer;
+
                 if (!Settings.remAilment.Value)
                     return;
                 if (Settings.remCorrupt.Value && !float.IsInfinity(buff.Timer) && HasDebuff(debuffInfo.Bleeding, buffName, false))
