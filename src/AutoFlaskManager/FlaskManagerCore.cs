@@ -14,6 +14,7 @@ using System.Diagnostics;
 using PoeHUD.Hud.Health;
 using System.IO;
 using Newtonsoft.Json;
+using PoeHUD.Models.Enums;
 
 
 namespace FlaskManager
@@ -285,14 +286,13 @@ namespace FlaskManager
                     //Checking flask action based on flask mods.
                     foreach (var mod in flaskMods.ItemMods)
                     {
+                        if (mod.Name.ToLower().Contains("flaskchargesused"))
+                            newFlask.UseCharges = (int)Math.Floor(newFlask.UseCharges + ((double)(newFlask.UseCharges) * mod.Value1 / 100));
                         action2 = flask_mod_to_action(mod.RawName);
-                        if (action2 == FlaskAction.NONE)
-                            LogError("Error: " + mod.RawName + " mod not found. Is it unique flask? If not, report this error message.", errmsg_time);
-                        else if (action2 == FlaskAction.UNIQUE_FLASK)
-                        {
+                        if (flaskMods.ItemRarity == ItemRarity.Unique)
                             newFlask.FlaskAction2 = FlaskAction.UNIQUE_FLASK;
-                            break;
-                        }
+                        else if (action2 == FlaskAction.NONE)
+                            LogError("Error: " + mod.RawName + " mod not found. Is it unique flask? If not, report this error message.", errmsg_time);
                         else if (action2 != FlaskAction.IGNORE)
                             newFlask.FlaskAction2 = action2;
                     }
