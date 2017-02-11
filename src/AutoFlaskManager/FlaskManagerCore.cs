@@ -55,7 +55,7 @@ namespace FlaskManager
 
                 foreach (var buff in GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Life>().Buffs)
                 {
-                    if (Settings.ignoreFlaskAuraBuff.Value && (float.IsInfinity(buff.Timer) || buff.Name.ToLower().Contains("flask")))
+                    if (!Settings.enableFlaskAuraBuff.Value && (float.IsInfinity(buff.Timer) || buff.Name.ToLower().Contains("flask")))
                         continue;
                     var size = Graphics.DrawText(buff.Name + ":" + buff.Timer, Settings.buff_TextSize.Value, position, Color.WhiteSmoke);
                     position.Y += size.Height;
