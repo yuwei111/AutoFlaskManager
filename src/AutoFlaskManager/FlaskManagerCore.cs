@@ -344,6 +344,7 @@ namespace FlaskManager
         }
         private bool FindDrinkFlask(FlaskAction type1, FlaskAction type2, bool shouldDrinkAll = false)
         {
+            bool hasDrunk = false;
             var flaskList = playerFlaskList.FindAll(x => x.FlaskAction1 == type1 || x.FlaskAction2 == type2);
             foreach (var flask in flaskList)
             {
@@ -354,8 +355,9 @@ namespace FlaskManager
                     if (DEBUG)
                         LogMessage("Just Drank Flask on slot " + flask.Slot, logmsg_time);
                     // if there are multiple flasks, drinking 1 of them at a time is enough.
+                    hasDrunk = true;
                     if (!shouldDrinkAll)
-                        return true;
+                        return hasDrunk;
                 }
                 else
                 {
@@ -363,7 +365,7 @@ namespace FlaskManager
                 }
 
             }
-            return false;
+            return hasDrunk;
         }
         private bool HasDebuff(Dictionary<string, int> dictionary, string buffName, bool isHostile)
         {
