@@ -169,20 +169,20 @@ namespace FlaskManager
         [Menu("Ignore Flask Or Aura Debuff/Buff",109,105)]
         public ToggleNode ignoreFlaskAuraBuff { get; set; }
 
-        [Menu("Debug Mode", 109,100)]
+        [Menu("Debug Mode", 110,100)]
         public ToggleNode debugMode { get; set; }
 
-        [Menu("Enable/Disable Flasks", 110)]
+        [Menu("Enable/Disable Flasks", 120)]
         public EmptyNode flasksettingsHolder { get; set; }
-        [Menu("Use Flask Slot 1", 111, 110)]
+        [Menu("Use Flask Slot 1", 121, 120)]
         public ToggleNode flaskSlot1Enable { get; set; }
-        [Menu("Use Flask Slot 2", 112, 110)]
+        [Menu("Use Flask Slot 2", 122, 120)]
         public ToggleNode flaskSlot2Enable { get; set; }
-        [Menu("Use Flask Slot 3", 113, 110)]
+        [Menu("Use Flask Slot 3", 123, 120)]
         public ToggleNode flaskSlot3Enable { get; set; }
-        [Menu("Use Flask Slot 4", 114, 110)]
+        [Menu("Use Flask Slot 4", 124, 120)]
         public ToggleNode flaskSlot4Enable { get; set; }
-        [Menu("Use Flask Slot 5", 115, 110)]
+        [Menu("Use Flask Slot 5", 125, 120)]
         public ToggleNode flaskSlot5Enable { get; set; }
         #endregion
     }
