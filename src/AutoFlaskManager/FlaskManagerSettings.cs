@@ -56,6 +56,7 @@ namespace FlaskManager
             buff_PositionX = new RangeNode<float>(0.0f, 0.0f, 100.0f);
             buff_PositionY = new RangeNode<float>(10.0f, 0.0f, 100.0f);
             buff_TextSize = new RangeNode<int>(15, 15, 60);
+            ignoreFlaskAuraBuff = true;
             //Debug
             debugMode = false;
             //Flask Slot Enable/Disable
@@ -165,6 +166,8 @@ namespace FlaskManager
         public RangeNode<float> buff_PositionY { get; set; }
         [Menu("Text Size", 108, 105)]
         public RangeNode<int> buff_TextSize { get; set; }
+        [Menu("Ignore Flask Or Aura Debuff/Buff",109,105)]
+        public ToggleNode ignoreFlaskAuraBuff { get; set; }
 
         [Menu("Debug Mode", 109,100)]
         public ToggleNode debugMode { get; set; }
