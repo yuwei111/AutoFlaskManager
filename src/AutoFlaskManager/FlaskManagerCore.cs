@@ -162,7 +162,7 @@ namespace FlaskManager
         #endregion
         #region Finding Flasks
         //Breath First Search for finding flask root.
-        private Element findFlaskRoot()
+        private Element FindFlaskRoot()
         {
             Element current = null;
             InventoryItemIcon itm = null;
@@ -191,13 +191,13 @@ namespace FlaskManager
             }
             return null;
         }
-        private Element getFlaskRoot()
+        private Element GetFlaskRoot()
         {
             try
             {
                 eleQueue.Clear();
                 eleQueue.Enqueue(GameController.Game.IngameState.UIRoot);
-                return findFlaskRoot();
+                return FindFlaskRoot();
             }
             catch (Exception e)
             {
@@ -229,7 +229,7 @@ namespace FlaskManager
                     newFlask.UseCharges = flaskCharges.ChargesPerUse;
                     newFlask.CurrentCharges = flaskCharges.NumCharges;
                     newFlask.FlaskName = GameController.Files.BaseItemTypes.Translate(flaskItem.Path).BaseName;
-                    newFlask.FlaskAction1 = flask_name_to_action(newFlask.FlaskName);
+                    newFlask.FlaskAction1 = Flask_name_to_action(newFlask.FlaskName);
                     //Checking flask action based on flask name.
                     if (newFlask.FlaskAction1 == FlaskAction.NONE)
                         LogError("Error: " + newFlask.FlaskName + " name not found. Is it unique flask? If not, report this error message.", errmsg_time);
@@ -239,7 +239,7 @@ namespace FlaskManager
                     {
                         if (mod.Name.ToLower().Contains("flaskchargesused"))
                             newFlask.UseCharges = (int)Math.Floor(newFlask.UseCharges + ((double)(newFlask.UseCharges) * mod.Value1 / 100));
-                        action2 = flask_mod_to_action(mod.RawName);
+                        action2 = Flask_mod_to_action(mod.RawName);
                         if (flaskMods.ItemRarity == ItemRarity.Unique)
                             newFlask.FlaskAction2 = FlaskAction.UNIQUE_FLASK;
                         else if (action2 == FlaskAction.NONE)
@@ -282,7 +282,7 @@ namespace FlaskManager
         }
         #endregion
         #region Flask Information
-        private FlaskAction flask_name_to_action(string flaskname)
+        private FlaskAction Flask_name_to_action(string flaskname)
         {
             flaskname = flaskname.ToLower();
             FlaskAction ret = FlaskAction.NONE;
@@ -302,7 +302,7 @@ namespace FlaskManager
                 ret = FlaskAction.OFFENSE;
             return ret;
         }
-        private FlaskAction flask_mod_to_action(string flaskmodRawName)
+        private FlaskAction Flask_mod_to_action(string flaskmodRawName)
         {
             flaskmodRawName = flaskmodRawName.ToLower();
             FlaskAction ret = FlaskAction.NONE;
@@ -603,7 +603,7 @@ namespace FlaskManager
             if (!GameController.Game.IngameState.Data.LocalPlayer.IsValid)
                 return;
 
-            Element flaskRoot = getFlaskRoot();
+            Element flaskRoot = GetFlaskRoot();
 
             if (flaskRoot == null)
                 return;
