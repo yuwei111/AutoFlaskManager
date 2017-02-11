@@ -408,6 +408,32 @@ namespace FlaskManager
         }
         #endregion
 
+        #region External Process Handle Helper
+                private int ExitPoe(string ExeName, string arguments)
+                {
+                    // Prepare the process to run
+                    ProcessStartInfo start = new ProcessStartInfo();
+                    // Enter in the command line arguments, everything you would enter after the executable name itself
+                    start.Arguments = arguments;
+                    // Enter the executable to run, including the complete path
+                    start.FileName = ExeName;
+                    // Do you want to show a console window?
+                    start.WindowStyle = ProcessWindowStyle.Hidden;
+                    start.CreateNoWindow = true;
+                    int exitCode;
+
+
+                    // Run the external process & wait for it to finish
+                    using (Process proc = Process.Start(start))
+                    {
+                        proc.WaitForExit();
+
+                        // Retrieve the app's exit code
+                        exitCode = proc.ExitCode;
+                    }
+                    return exitCode;
+                }
+        #endregion
         #region Chicken Auto Quit
         private void AutoChicken()
         {
@@ -421,7 +447,7 @@ namespace FlaskManager
                     {
                        ExitPoe("cports.exe", "/close * * * * " + GameController.Window.Process.ProcessName + ".exe");
                         if (Settings.debugMode.Value)
-                        File.AppendAllText("autoflaskmanagerDebug.log", DateTime.Now + " AUTO QUIT: Your health was at: " + (Math.Round(PlayerHealth.HPPercentage, 3) * 100 + "%" + Environment.NewLine));
+                        File.AppendAllText("autoflaskmanagerDebug.log", DateTime.Now + " AUTO QUIT: Your Health was at: " + (Math.Round(PlayerHealth.HPPercentage, 3) * 100 + "%" + Environment.NewLine));
                     }
                     catch (Exception)
                     {
@@ -446,6 +472,7 @@ namespace FlaskManager
             return;
         }
         #endregion 
+        
         #region Auto Health Flasks
         private void LifeLogic()
         {
@@ -619,32 +646,6 @@ namespace FlaskManager
                 }
             }
         }
-        #endregion
-        #region Debug Log File Handler
-                private int ExitPoe(string ExeName, string arguments)
-                {
-                    // Prepare the process to run
-                    ProcessStartInfo start = new ProcessStartInfo();
-                    // Enter in the command line arguments, everything you would enter after the executable name itself
-                    start.Arguments = arguments;
-                    // Enter the executable to run, including the complete path
-                    start.FileName = ExeName;
-                    // Do you want to show a console window?
-                    start.WindowStyle = ProcessWindowStyle.Hidden;
-                    start.CreateNoWindow = true;
-                    int exitCode;
-
-
-                    // Run the external process & wait for it to finish
-                    using (Process proc = Process.Start(start))
-                    {
-                        proc.WaitForExit();
-
-                        // Retrieve the app's exit code
-                        exitCode = proc.ExitCode;
-                    }
-                    return exitCode;
-                }
         #endregion
     }
         #region Player Flasks
