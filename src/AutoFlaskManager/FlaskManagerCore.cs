@@ -40,11 +40,24 @@ namespace FlaskManager
         private List<PlayerFlask> playerFlaskList;
         private FlaskKeys keyinfo;
         #endregion
-        
+
         #region FlaskManagerInit
-        public override void Render()
+        public void BuffUi()
         {
-            base.Render();
+            /*Debug Panel for buffs
+            foreach (var buff in GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Life>().Buffs)
+            {
+               if (float.IsInfinity(buff.Timer) || buff.Name.ToLower().Contains("flask"))
+                   continue;
+               var size = Graphics.DrawText(buff.Name + ":" + buff.Timer, Settings.flask_TextSize.Value, position, Color.WhiteSmoke);
+               position.Y += size.Height;
+               maxheight += size.Height;
+               maxWidth = Math.Max(maxWidth, size.Width);
+            }*/
+            return;
+        }
+        public void FlaskUi()
+        {
             if (Settings.Enable.Value && Settings.flaskUiEnable.Value)
             {
                 float X = GameController.Window.GetWindowRectangle().Width * Settings.flask_PositionX.Value * .01f;
@@ -61,21 +74,17 @@ namespace FlaskManager
                     maxheight += size.Height;
                     maxWidth = Math.Max(maxWidth, size.Width);
                 }
-                /*Debug Panel for buffs
-                foreach (var buff in GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Life>().Buffs)
-               {
-                   if (float.IsInfinity(buff.Timer) || buff.Name.ToLower().Contains("flask"))
-                       continue;
-                   var size = Graphics.DrawText(buff.Name + ":" + buff.Timer, Settings.flask_TextSize.Value, position, Color.WhiteSmoke);
-                   position.Y += size.Height;
-                   maxheight += size.Height;
-                   maxWidth = Math.Max(maxWidth, size.Width);
-               }*/
 
                 var background = new RectangleF(X, Y, maxWidth, maxheight);
                 Graphics.DrawFrame(background, 5, Color.Black);
                 Graphics.DrawImage("lightBackground.png", background);
             }
+        }
+        public override void Render()
+        {
+            base.Render();
+            FlaskUi();
+            BuffUi();
         }
         public override void OnClose()
         {
