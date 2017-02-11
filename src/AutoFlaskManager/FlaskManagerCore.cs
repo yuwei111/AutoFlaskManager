@@ -45,7 +45,7 @@ namespace FlaskManager
         #region FlaskManagerInit
         public void BuffUi()
         {
-            if (Settings.buffUiEnable.Value)
+            if (Settings.buffUiEnable.Value && !isTown)
             { 
             float X = GameController.Window.GetWindowRectangle().Width * Settings.buff_PositionX.Value * .01f;
             float Y = GameController.Window.GetWindowRectangle().Height * Settings.buff_PositionY.Value * .01f;
