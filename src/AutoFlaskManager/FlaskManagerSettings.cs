@@ -46,16 +46,24 @@ namespace FlaskManager
             //Unique Flask
             uniqFlaskEnable = false;
             // Settings
-            uiEnable = false;
-            positionX = new RangeNode<float>(28.0f, 0.0f, 100.0f);
-            positionY = new RangeNode<float>(83.0f, 0.0f, 100.0f);
-            textSize = new RangeNode<int>(15, 15, 60);
+            // Flask UI Settings
+            flaskUiEnable = false;
+            flask_PositionX = new RangeNode<float>(28.0f, 0.0f, 100.0f);
+            flask_PositionY = new RangeNode<float>(83.0f, 0.0f, 100.0f);
+            flask_TextSize = new RangeNode<int>(15, 15, 60);
+            //Buff UI Settings
+            buffUiEnable = false;
+            buff_PositionX = new RangeNode<float>(28.0f, 0.0f, 100.0f);
+            buff_PositionY = new RangeNode<float>(83.0f, 0.0f, 100.0f);
+            buff_TextSize = new RangeNode<int>(15, 15, 60);
+            //Debug
+            debugMode = false;
+            //Flask Slot Enable/Disable
             flaskSlot1Enable = true;
             flaskSlot2Enable = true;
             flaskSlot3Enable = true;
             flaskSlot4Enable = true;
             flaskSlot5Enable = true;
-            debugMode = false;
             #endregion
         }
 
@@ -137,19 +145,29 @@ namespace FlaskManager
         #endregion
 
         #region Settings Menu
-        [Menu("UI Settings/Debug Mode", 100)]
-        public EmptyNode uisettingsHolder { get; set; }
-        [Menu("UI Enable", 101, 100)]
-        public ToggleNode uiEnable { get; set; }
-        [Menu("Position: X", 102, 100)]
-        public RangeNode<float> positionX { get; set; }
-        [Menu("Position: Y", 103, 100)]
-        public RangeNode<float> positionY { get; set; }
-        [Menu("Text Size", 104, 100)]
-        public RangeNode<int> textSize { get; set; }
-        [Menu("Debug Mode", 105, 100)]
-        public ToggleNode debugMode { get; set; }
+        [Menu("UI Settings", 100)]
+        public EmptyNode uiSesettingsHolder { get; set; }
+        [Menu("Flask Slot UI", 101, 100)]
 
+        public ToggleNode flaskUiEnable { get; set; }
+        [Menu("Position: X", 102, 101)]
+        public RangeNode<float> flask_PositionX { get; set; }
+        [Menu("Position: Y", 103, 101)]
+        public RangeNode<float> flask_PositionY { get; set; }
+        [Menu("Text Size", 104, 101)]
+        public RangeNode<int> flask_TextSize { get; set; }
+
+        [Menu("Buff Bar UI",105,100)]
+        public ToggleNode buffUiEnable { get; set; }
+        [Menu("Position: X", 106, 105)]
+        public RangeNode<float> buff_PositionX { get; set; }
+        [Menu("Position: Y", 107, 105)]
+        public RangeNode<float> buff_PositionY { get; set; }
+        [Menu("Text Size", 108, 105)]
+        public RangeNode<int> buff_TextSize { get; set; }
+
+        [Menu("Debug Mode", 109,100)]
+        public ToggleNode debugMode { get; set; }
 
         [Menu("Enable/Disable Flasks", 110)]
         public EmptyNode flasksettingsHolder { get; set; }

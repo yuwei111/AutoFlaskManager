@@ -45,10 +45,10 @@ namespace FlaskManager
         public override void Render()
         {
             base.Render();
-            if (Settings.Enable.Value && Settings.uiEnable.Value)
+            if (Settings.Enable.Value && Settings.flaskUiEnable.Value)
             {
-                float X = GameController.Window.GetWindowRectangle().Width * Settings.positionX.Value * .01f;
-                float Y = GameController.Window.GetWindowRectangle().Height * Settings.positionY.Value * .01f;
+                float X = GameController.Window.GetWindowRectangle().Width * Settings.flask_PositionX.Value * .01f;
+                float Y = GameController.Window.GetWindowRectangle().Height * Settings.flask_PositionY.Value * .01f;
                 Vector2 position = new Vector2(X, Y);
                 float maxWidth = 0;
                 float maxheight = 0;
@@ -56,21 +56,22 @@ namespace FlaskManager
                 foreach (var flasks in playerFlaskList.ToArray())
                 {
                     Color textColor = (flasks.isEnabled) ? Color.DarkKhaki : Color.Red;
-                    var size = Graphics.DrawText(flasks.FlaskName, Settings.textSize.Value, position, textColor);
+                    var size = Graphics.DrawText(flasks.FlaskName, Settings.flask_TextSize.Value, position, textColor);
                     position.Y += size.Height;
                     maxheight += size.Height;
                     maxWidth = Math.Max(maxWidth, size.Width);
                 }
-                /* Debug Panel for buffs. TODO
-                 *foreach (var buff in GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Life>().Buffs)
-                {
-                    if (float.IsInfinity(buff.Timer) || buff.Name.ToLower().Contains("flask"))
-                        continue;
-                    var size = Graphics.DrawText(buff.Name + ":" + buff.Timer, Settings.textSize.Value, position, Color.WhiteSmoke);
-                    position.Y += size.Height;
-                    maxheight += size.Height;
-                    maxWidth = Math.Max(maxWidth, size.Width);
-                }*/
+                /*Debug Panel for buffs
+                foreach (var buff in GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Life>().Buffs)
+               {
+                   if (float.IsInfinity(buff.Timer) || buff.Name.ToLower().Contains("flask"))
+                       continue;
+                   var size = Graphics.DrawText(buff.Name + ":" + buff.Timer, Settings.flask_TextSize.Value, position, Color.WhiteSmoke);
+                   position.Y += size.Height;
+                   maxheight += size.Height;
+                   maxWidth = Math.Max(maxWidth, size.Width);
+               }*/
+
                 var background = new RectangleF(X, Y, maxWidth, maxheight);
                 Graphics.DrawFrame(background, 5, Color.Black);
                 Graphics.DrawImage("lightBackground.png", background);
