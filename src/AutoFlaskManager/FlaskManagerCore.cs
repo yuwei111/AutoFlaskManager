@@ -448,7 +448,9 @@ namespace FlaskManager
                     {
                        ExitPoe("cports.exe", "/close * * * * " + GameController.Window.Process.ProcessName + ".exe");
                         if (Settings.debugMode.Value)
-                        File.AppendAllText("autoflaskmanagerDebug.log", DateTime.Now + " AUTO QUIT: Your Health was at: " + (Math.Round(PlayerHealth.HPPercentage, 3) * 100 + "%" + Environment.NewLine));
+                            File.AppendAllText("autoflaskmanagerDebug.log", DateTime.Now +
+                                " AUTO QUIT: Your Health was at: " + (Math.Round(PlayerHealth.HPPercentage, 3) * 100 +
+                                "%" + Environment.NewLine));
                     }
                     catch (Exception)
                     {
@@ -462,7 +464,9 @@ namespace FlaskManager
                         
                         ExitPoe("cports.exe", "/close * * * * " + GameController.Window.Process.ProcessName + ".exe");
                         if (Settings.debugMode.Value)
-                        File.AppendAllText("autoflaskmanagerDebug.log", DateTime.Now + " AUTO QUIT: Your Energy Shield was at: " + (Math.Round(PlayerHealth.HPPercentage, 3) * 100 + "%" + Environment.NewLine));
+                            File.AppendAllText("autoflaskmanagerDebug.log", DateTime.Now +
+                                " AUTO QUIT: Your Energy Shield was at: " + (Math.Round(PlayerHealth.HPPercentage, 3) * 100 +
+                                "%" + Environment.NewLine));
                     }
                     catch (Exception)
                     {
@@ -649,8 +653,8 @@ namespace FlaskManager
         }
         #endregion
     }
-        #region Player Flasks
-public class PlayerFlask
+    #region Player Flasks
+    public class PlayerFlask
     {
         public string FlaskName;
         public int Slot;
@@ -725,9 +729,9 @@ public class PlayerFlask
                     break;
             }
         }
-    } 
+    }
     #endregion
-        #region Flask Types
+    #region Flask Types
     public enum FlaskAction : int
     {
         IGNORE = 0, // ignore mods and don't give error
@@ -751,7 +755,7 @@ public class PlayerFlask
         UNIQUE_FLASK
     }
     #endregion
-        #region Keybindings
+    #region Keybindings
     public class FlaskKeys
     {
         public Keys[] k;
