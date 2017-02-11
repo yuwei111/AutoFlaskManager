@@ -415,27 +415,27 @@ namespace FlaskManager
             var PlayerHealth = LocalPlayer.GetComponent<Life>();
             if (Settings.isPercentQuit.Value && LocalPlayer.IsValid)
             {
-                if (PlayerHealth.HPPercentage * 100 < Settings.percentHPQuit.Value)
+                if (Math.Round(PlayerHealth.HPPercentage,3) *100 < (Settings.percentHPQuit.Value))
                 {
                     try
                     {
                        ExitPoe("cports.exe", "/close * * * * " + GameController.Window.Process.ProcessName + ".exe");
                         if (Settings.debugMode.Value)
-                        File.AppendAllText("autoflaskmanagerDebug.log", DateTime.Now + " AUTO QUIT: You health was at: " + PlayerHealth.HPPercentage * 100 + "%" + Environment.NewLine);
+                        File.AppendAllText("autoflaskmanagerDebug.log", DateTime.Now + " AUTO QUIT: You health was at: " + (Math.Round(PlayerHealth.HPPercentage, 3) * 100 + "%" + Environment.NewLine));
                     }
                     catch (Exception)
                     {
                         LogError("Error: Cannot find cports.exe, you must die now!", errmsg_time);
                     }
                 }
-                if (PlayerHealth.ESPercentage * 100 < Settings.percentESQuit.Value)
+                if (Math.Round(PlayerHealth.HPPercentage, 3) * 100 < (Settings.percentESQuit.Value))
                 {
                     try
                     {
                         
                         ExitPoe("cports.exe", "/close * * * * " + GameController.Window.Process.ProcessName + ".exe");
                         if (Settings.debugMode.Value)
-                        File.AppendAllText("autoflaskmanagerDebug.log", DateTime.Now + " AUTO QUIT: You Energy Shield was at: " + PlayerHealth.ESPercentage * 100 + "%" + Environment.NewLine);
+                        File.AppendAllText("autoflaskmanagerDebug.log", DateTime.Now + " AUTO QUIT: You Energy Shield was at: " + (Math.Round(PlayerHealth.HPPercentage, 3) * 100 + "%" + Environment.NewLine));
                     }
                     catch (Exception)
                     {
