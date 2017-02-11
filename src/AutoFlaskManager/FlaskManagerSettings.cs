@@ -49,7 +49,7 @@ namespace FlaskManager
             uiEnable = false;
             positionX = new RangeNode<float>(28.0f, 0.0f, 100.0f);
             positionY = new RangeNode<float>(83.0f, 0.0f, 100.0f);
-            textSize = new RangeNode<int>(15, 15, 30);
+            textSize = new RangeNode<int>(15, 15, 60);
             flaskSlot1Enable = true;
             flaskSlot2Enable = true;
             flaskSlot3Enable = true;

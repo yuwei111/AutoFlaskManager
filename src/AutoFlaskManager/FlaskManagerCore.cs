@@ -16,10 +16,8 @@ using System.IO;
 using Newtonsoft.Json;
 using PoeHUD.Models.Enums;
 
-
 namespace FlaskManager
 {
-    
     public class FlaskManagerCore : BaseSettingsPlugin<FlaskManagerSettings>
     {
         #region FlaskManagerCore Var
@@ -40,61 +38,9 @@ namespace FlaskManager
         private float lastDefUsed;
         private float lastOffUsed;
         private List<PlayerFlask> playerFlaskList;
-        private FlaskKeys keyinfo; 
+        private FlaskKeys keyinfo;
         #endregion
-
-        #region FlaskInformations
-        private FlaskAction flask_name_to_action(string flaskname)
-        {
-            flaskname = flaskname.ToLower();
-            FlaskAction ret = FlaskAction.NONE;
-            String defense_pattern = @"bismuth|jade|stibnite|granite|amethyst|ruby|sapphire|topaz|aquamarine|quartz";
-            String offense_pattern = @"silver|sulphur|basalt|diamond";
-            if (flaskname.Contains("life"))
-                ret = FlaskAction.LIFE;
-            else if (flaskname.Contains("mana"))
-                ret = FlaskAction.MANA;
-            else if (flaskname.Contains("hybrid"))
-                ret = FlaskAction.HYBRID;
-            else if (flaskname.Contains("quicksilver"))
-                ret = FlaskAction.SPEEDRUN;
-            else if (System.Text.RegularExpressions.Regex.IsMatch(flaskname, defense_pattern))
-                ret = FlaskAction.DEFENSE;
-            else if (System.Text.RegularExpressions.Regex.IsMatch(flaskname, offense_pattern))
-                ret = FlaskAction.OFFENSE;
-            return ret;
-        }
-        private FlaskAction flask_mod_to_action(string flaskmodRawName)
-        {
-            flaskmodRawName = flaskmodRawName.ToLower();
-            FlaskAction ret = FlaskAction.NONE;
-            String defense_pattern = @"armour|evasion|lifeleech|manaleech|resistance";
-            String ignore_pattern = @"levelrequirement|duration|charges|recharge|recovery|extramana|extralife|consecrate|smoke|ground";
-            if (flaskmodRawName.Contains("unique"))
-                ret = FlaskAction.UNIQUE_FLASK;
-            else if (flaskmodRawName.Contains("poison"))
-                ret = FlaskAction.POISON_IMMUNE;
-            else if (flaskmodRawName.Contains("chill") && !flaskmodRawName.Contains("ground"))
-                ret = FlaskAction.FREEZE_IMMUNE;
-            else if (flaskmodRawName.Contains("burning"))
-                ret = FlaskAction.IGNITE_IMMUNE;
-            else if (flaskmodRawName.Contains("shock"))
-                ret = FlaskAction.SHOCK_IMMUNE;
-            else if (flaskmodRawName.Contains("bleeding"))
-                ret = FlaskAction.BLEED_IMMUNE;
-            else if (flaskmodRawName.Contains("curse"))
-                ret = FlaskAction.CURSE_IMMUNE;
-            else if (flaskmodRawName.Contains("knockback"))
-                ret = FlaskAction.OFFENSE;
-            else if (flaskmodRawName.Contains("movementspeed"))
-                ret = FlaskAction.SPEEDRUN;
-            else if (System.Text.RegularExpressions.Regex.IsMatch(flaskmodRawName, defense_pattern))
-                ret = FlaskAction.DEFENSE;
-            else if (System.Text.RegularExpressions.Regex.IsMatch(flaskmodRawName, ignore_pattern))
-                ret = FlaskAction.IGNORE;
-            return ret;
-        }
-        #endregion
+        
         #region FlaskManagerInit
         public override void Render()
         {
@@ -116,7 +62,7 @@ namespace FlaskManager
                     maxWidth = Math.Max(maxWidth, size.Width);
                 }
                 /* Debug Panel for buffs. TODO
-                 * foreach (var buff in GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Life>().Buffs)
+                 *foreach (var buff in GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Life>().Buffs)
                 {
                     if (float.IsInfinity(buff.Timer) || buff.Name.ToLower().Contains("flask"))
                         continue;
@@ -136,7 +82,7 @@ namespace FlaskManager
             if (Settings.debugMode.Value)
                 foreach (var key in debugDebuff)
                 {
-                    File.AppendAllText("autoflaskmanagerDebug.log", key.Key + " : " + key.Value + Environment.NewLine );
+                    File.AppendAllText("autoflaskmanagerDebug.log", key.Key + " : " + key.Value + Environment.NewLine);
                 }
         }
         public override void Initialise()
@@ -146,7 +92,8 @@ namespace FlaskManager
             {
                 string keyfile = File.ReadAllText("config/flaskbind.json");
                 keyinfo = JsonConvert.DeserializeObject<FlaskKeys>(keyfile);
-            } else
+            }
+            else
             {
                 keyinfo = new FlaskKeys(Keys.D1, Keys.D2, Keys.D3, Keys.D4, Keys.D5);
                 File.WriteAllText("config/flaskbind.json", JsonConvert.SerializeObject(keyinfo));
@@ -173,7 +120,7 @@ namespace FlaskManager
                 if (Settings.Enable.Value)
                 {
                     if (DEBUG)
-                        LogMessage("Enabling FlaskManager.",logmsg_time);
+                        LogMessage("Enabling FlaskManager.", logmsg_time);
                     moveCounter = 0;
                     isThreadEnabled = true;
                     lastManaUsed = 100f;
@@ -188,7 +135,7 @@ namespace FlaskManager
                 }
                 else
                 {
-                    if(DEBUG)
+                    if (DEBUG)
                         LogMessage("Disabling FlaskManager.", logmsg_time);
                     playerFlaskList.Clear();
                     isThreadEnabled = false;
@@ -212,7 +159,7 @@ namespace FlaskManager
             }
         }
         #endregion
-        #region FindingFlasks
+        #region Finding Flasks
         //Breath First Search for finding flask root.
         private Element findFlaskRoot()
         {
@@ -260,7 +207,7 @@ namespace FlaskManager
         }
         private bool GettingAllFlaskInfo(Element flaskRoot)
         {
-            if(DEBUG)
+            if (DEBUG)
                 LogMessage("Getting Inventory Flasks info.", logmsg_time);
             playerFlaskList.Clear();
             try
@@ -333,7 +280,59 @@ namespace FlaskManager
             return true;
         }
         #endregion
-        #region FlaskHelperFunctions
+        #region Flask Information
+        private FlaskAction flask_name_to_action(string flaskname)
+        {
+            flaskname = flaskname.ToLower();
+            FlaskAction ret = FlaskAction.NONE;
+            String defense_pattern = @"bismuth|jade|stibnite|granite|amethyst|ruby|sapphire|topaz|aquamarine|quartz";
+            String offense_pattern = @"silver|sulphur|basalt|diamond";
+            if (flaskname.Contains("life"))
+                ret = FlaskAction.LIFE;
+            else if (flaskname.Contains("mana"))
+                ret = FlaskAction.MANA;
+            else if (flaskname.Contains("hybrid"))
+                ret = FlaskAction.HYBRID;
+            else if (flaskname.Contains("quicksilver"))
+                ret = FlaskAction.SPEEDRUN;
+            else if (System.Text.RegularExpressions.Regex.IsMatch(flaskname, defense_pattern))
+                ret = FlaskAction.DEFENSE;
+            else if (System.Text.RegularExpressions.Regex.IsMatch(flaskname, offense_pattern))
+                ret = FlaskAction.OFFENSE;
+            return ret;
+        }
+        private FlaskAction flask_mod_to_action(string flaskmodRawName)
+        {
+            flaskmodRawName = flaskmodRawName.ToLower();
+            FlaskAction ret = FlaskAction.NONE;
+            String defense_pattern = @"armour|evasion|lifeleech|manaleech|resistance";
+            String ignore_pattern = @"levelrequirement|duration|charges|recharge|recovery|extramana|extralife|consecrate|smoke|ground";
+            if (flaskmodRawName.Contains("unique"))
+                ret = FlaskAction.UNIQUE_FLASK;
+            else if (flaskmodRawName.Contains("poison"))
+                ret = FlaskAction.POISON_IMMUNE;
+            else if (flaskmodRawName.Contains("chill") && !flaskmodRawName.Contains("ground"))
+                ret = FlaskAction.FREEZE_IMMUNE;
+            else if (flaskmodRawName.Contains("burning"))
+                ret = FlaskAction.IGNITE_IMMUNE;
+            else if (flaskmodRawName.Contains("shock"))
+                ret = FlaskAction.SHOCK_IMMUNE;
+            else if (flaskmodRawName.Contains("bleeding"))
+                ret = FlaskAction.BLEED_IMMUNE;
+            else if (flaskmodRawName.Contains("curse"))
+                ret = FlaskAction.CURSE_IMMUNE;
+            else if (flaskmodRawName.Contains("knockback"))
+                ret = FlaskAction.OFFENSE;
+            else if (flaskmodRawName.Contains("movementspeed"))
+                ret = FlaskAction.SPEEDRUN;
+            else if (System.Text.RegularExpressions.Regex.IsMatch(flaskmodRawName, defense_pattern))
+                ret = FlaskAction.DEFENSE;
+            else if (System.Text.RegularExpressions.Regex.IsMatch(flaskmodRawName, ignore_pattern))
+                ret = FlaskAction.IGNORE;
+            return ret;
+        }
+        #endregion
+        #region Flask Helper Functions
         private void UpdateFlaskChargesInfo(PlayerFlask flask)
         {
             flask.CurrentCharges = flask.Item.GetComponent<Charges>().NumCharges;
@@ -377,189 +376,6 @@ namespace FlaskManager
             return false;
         }
         #endregion
-        #region Plugin Termination Cleanup
-        private int ExitPoe(string ExeName, string arguments)
-        {
-            // Prepare the process to run
-            ProcessStartInfo start = new ProcessStartInfo();
-            // Enter in the command line arguments, everything you would enter after the executable name itself
-            start.Arguments = arguments;
-            // Enter the executable to run, including the complete path
-            start.FileName = ExeName;
-            // Do you want to show a console window?
-            start.WindowStyle = ProcessWindowStyle.Hidden;
-            start.CreateNoWindow = true;
-            int exitCode;
-
-
-            // Run the external process & wait for it to finish
-            using (Process proc = Process.Start(start))
-            {
-                proc.WaitForExit();
-
-                // Retrieve the app's exit code
-                exitCode = proc.ExitCode;
-            }
-            return exitCode;
-        }
-        #endregion
-        #region Chicken Auto Quit
-        private void AutoChicken()
-        {
-            var LocalPlayer = GameController.Game.IngameState.Data.LocalPlayer;
-            var PlayerHealth = LocalPlayer.GetComponent<Life>();
-            if (Settings.isPercentQuit.Value && LocalPlayer.IsValid)
-            {
-                if (PlayerHealth.HPPercentage * 100 < Settings.percentHPQuit.Value)
-                {
-                    try
-                    {
-                        ExitPoe("cports.exe", "/close * * * * " + GameController.Window.Process.ProcessName + ".exe");
-                    }
-                    catch (Exception)
-                    {
-                        LogError("Error: Cannot find cports.exe, you must die now!", errmsg_time);
-                    }
-
-                }
-                if (PlayerHealth.ESPercentage * 100 < Settings.percentESQuit.Value)
-                {
-                    try
-                    {
-                        ExitPoe("cports.exe", "/close * * * * " + GameController.Window.Process.ProcessName + ".exe");
-                    }
-                    catch (Exception)
-                    {
-                        LogError("Error: Cannot find cports.exe, you must die now!", errmsg_time);
-                    }
-                }
-            }
-            return; 
-        }
-        #endregion
-        #region Auto Quick Silver Flask
-        private void SpeedFlaskLogic()
-        {
-            var LocalPlayer = GameController.Game.IngameState.Data.LocalPlayer;
-            var PlayerHealth = LocalPlayer.GetComponent<Life>();
-            var PlayerMovement = LocalPlayer.GetComponent<Actor>();
-            moveCounter = PlayerMovement.isMoving ? moveCounter += 0.1f : 0;
-            if (LocalPlayer.IsValid && Settings.qSEnable.Value && moveCounter >= Settings.qSDur.Value &&
-                !PlayerHealth.HasBuff("flask_bonus_movement_speed") &&
-                !PlayerHealth.HasBuff("flask_utility_sprint"))
-            {
-                FindDrinkFlask(FlaskAction.SPEEDRUN, FlaskAction.SPEEDRUN);
-            }
-        } 
-        #endregion
-        #region Auto Mana Flask
-        private void ManaLogic()
-        {
-            var LocalPlayer = GameController.Game.IngameState.Data.LocalPlayer;
-            var PlayerHealth = LocalPlayer.GetComponent<Life>();
-            lastManaUsed += 0.1f;
-            if (lastManaUsed < Settings.ManaDelay.Value)
-                return;
-            if (Settings.autoFlask.Value && LocalPlayer.IsValid)
-            {
-                if (PlayerHealth.MPPercentage * 100 < Settings.PerManaFlask.Value)
-                {
-                    if (FindDrinkFlask(FlaskAction.MANA, FlaskAction.IGNORE))
-                        lastManaUsed = 0f;
-                    else if (FindDrinkFlask(FlaskAction.HYBRID, FlaskAction.IGNORE))
-                        lastManaUsed = 0f;
-                }
-            }
-        } 
-        #endregion
-        #region Auto Health Flask
-        private void LifeLogic()
-        {
-            var LocalPlayer = GameController.Game.IngameState.Data.LocalPlayer;
-            var PlayerHealth = LocalPlayer.GetComponent<Life>();
-            lastLifeUsed += 0.1f;
-            if (lastLifeUsed < Settings.HPDelay.Value)
-                return;
-            if (Settings.autoFlask.Value && LocalPlayer.IsValid)
-            {
-                if (PlayerHealth.HPPercentage * 100 < Settings.perHPFlask.Value)
-                {
-                    if (FindDrinkFlask(FlaskAction.LIFE, FlaskAction.IGNORE))
-                        lastLifeUsed = 0f;
-                    else if (FindDrinkFlask(FlaskAction.HYBRID, FlaskAction.IGNORE))
-                        lastLifeUsed = 0f;
-                }
-            }
-        } 
-        #endregion
-        #region Ailment Flask
-        private void AilmentLogic()
-        {
-            var LocalPlayer = GameController.Game.IngameState.Data.LocalPlayer;
-            var PlayerHealth = LocalPlayer.GetComponent<Life>();
-            foreach (var buff in PlayerHealth.Buffs)
-            {
-                var buffName = buff.Name;
-
-                if (DEBUG)
-                    debugDebuff[buffName] = buff.Timer;
-
-                if (!Settings.remAilment.Value)
-                    return;
-                if (Settings.remCorrupt.Value && !float.IsInfinity(buff.Timer) && HasDebuff(debuffInfo.Bleeding, buffName, false))
-                    LogMessage("Bleeding -> hasDrunkFlask:" + FindDrinkFlask(FlaskAction.IGNORE, FlaskAction.BLEED_IMMUNE), logmsg_time);
-                else if (Settings.remPoison.Value && !float.IsInfinity(buff.Timer) && HasDebuff(debuffInfo.Poisoned, buffName, false))
-                    LogMessage("Poison -> hasDrunkFlask:" + FindDrinkFlask(FlaskAction.IGNORE, FlaskAction.POISON_IMMUNE), logmsg_time);
-                else if (Settings.remFrozen.Value && !float.IsInfinity(buff.Timer) && HasDebuff(debuffInfo.ChilledFrozen, buffName, false))
-                    LogMessage("Frozen -> hasDrunkFlask:" + FindDrinkFlask(FlaskAction.IGNORE, FlaskAction.FREEZE_IMMUNE), logmsg_time);
-                else if (Settings.remBurning.Value && !float.IsInfinity(buff.Timer) && HasDebuff(debuffInfo.Burning, buffName, false))
-                    LogMessage("Burning -> hasDrunkFlask:" + FindDrinkFlask(FlaskAction.IGNORE, FlaskAction.IGNITE_IMMUNE), logmsg_time);
-                else if (Settings.remShocked.Value && !float.IsInfinity(buff.Timer) && HasDebuff(debuffInfo.Shocked, buffName, false))
-                    LogMessage("Shock -> hasDrunkFlask:" + FindDrinkFlask(FlaskAction.IGNORE, FlaskAction.SHOCK_IMMUNE), logmsg_time);
-                else if (Settings.remCurse.Value && !float.IsInfinity(buff.Timer) && HasDebuff(debuffInfo.WeakenedSlowed, buffName, false))
-                    LogMessage("Curse -> hasDrunkFlask:" + FindDrinkFlask(FlaskAction.IGNORE, FlaskAction.CURSE_IMMUNE), logmsg_time);
-            }
-        } 
-        #endregion
-        #region Defensive Flask
-        private void DefensiveFlask()
-        {
-            var LocalPlayer = GameController.Game.IngameState.Data.LocalPlayer;
-            var PlayerHealth = LocalPlayer.GetComponent<Life>();
-            lastDefUsed += 0.1f;
-            if (lastDefUsed < Settings.DefensiveDelay.Value)
-                return;
-            if (Settings.defFlaskEnable.Value && LocalPlayer.IsValid)
-            {
-                if (PlayerHealth.HPPercentage * 100 < Settings.hPDefensive.Value ||
-                    PlayerHealth.ESPercentage * 100 < Settings.eSDefensive.Value)
-                {
-                    if (FindDrinkFlask(FlaskAction.DEFENSE, FlaskAction.DEFENSE, true))
-                        lastDefUsed = 0f;
-                }
-            }
-        } 
-        #endregion
-        #region Offensive Flask
-        private void OffensiveFlask()
-        {
-            var LocalPlayer = GameController.Game.IngameState.Data.LocalPlayer;
-            var PlayerHealth = LocalPlayer.GetComponent<Life>();
-            lastOffUsed += 0.1f;
-            if (lastOffUsed < Settings.OffensiveDelay.Value)
-                return;
-            if (Settings.offFlaskEnable.Value && LocalPlayer.IsValid)
-            {
-                if (PlayerHealth.HPPercentage * 100 < Settings.hpOffensive.Value ||
-                    PlayerHealth.ESPercentage * 100 < Settings.esOffensive.Value)
-                {
-                    if (FindDrinkFlask(FlaskAction.OFFENSE, FlaskAction.OFFENSE, true))
-                        lastOffUsed = 0f;
-                }
-            }
-        } 
-        #endregion
-
         #region Keyboard Input
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = false)]
         private static extern IntPtr SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
@@ -591,7 +407,169 @@ namespace FlaskManager
             }
         }
         #endregion
-        #region Threading, do not touch
+
+        #region Chicken Auto Quit
+        private void AutoChicken()
+        {
+            var LocalPlayer = GameController.Game.IngameState.Data.LocalPlayer;
+            var PlayerHealth = LocalPlayer.GetComponent<Life>();
+            if (Settings.isPercentQuit.Value && LocalPlayer.IsValid)
+            {
+                if (PlayerHealth.HPPercentage * 100 < Settings.percentHPQuit.Value)
+                {
+                    try
+                    {
+                       ExitPoe("cports.exe", "/close * * * * " + GameController.Window.Process.ProcessName + ".exe");
+                        if (Settings.debugMode.Value)
+                        File.AppendAllText("autoflaskmanagerDebug.log", DateTime.Now + " AUTO QUIT: You health was at: " + PlayerHealth.HPPercentage * 100 + "%" + Environment.NewLine);
+                    }
+                    catch (Exception)
+                    {
+                        LogError("Error: Cannot find cports.exe, you must die now!", errmsg_time);
+                    }
+                }
+                if (PlayerHealth.ESPercentage * 100 < Settings.percentESQuit.Value)
+                {
+                    try
+                    {
+                        
+                        ExitPoe("cports.exe", "/close * * * * " + GameController.Window.Process.ProcessName + ".exe");
+                        if (Settings.debugMode.Value)
+                        File.AppendAllText("autoflaskmanagerDebug.log", DateTime.Now + " AUTO QUIT: You Energy Shield was at: " + PlayerHealth.ESPercentage * 100 + "%" + Environment.NewLine);
+                    }
+                    catch (Exception)
+                    {
+                        LogError("Error: Cannot find cports.exe, you must die now!", errmsg_time);
+                    }
+                }
+            }
+            return;
+        }
+        #endregion 
+        #region Auto Health Flasks
+        private void LifeLogic()
+        {
+            var LocalPlayer = GameController.Game.IngameState.Data.LocalPlayer;
+            var PlayerHealth = LocalPlayer.GetComponent<Life>();
+            lastLifeUsed += 0.1f;
+            if (lastLifeUsed < Settings.HPDelay.Value)
+                return;
+            if (Settings.autoFlask.Value && LocalPlayer.IsValid)
+            {
+                if (PlayerHealth.HPPercentage * 100 < Settings.perHPFlask.Value)
+                {
+                    if (FindDrinkFlask(FlaskAction.LIFE, FlaskAction.IGNORE))
+                        lastLifeUsed = 0f;
+                    else if (FindDrinkFlask(FlaskAction.HYBRID, FlaskAction.IGNORE))
+                        lastLifeUsed = 0f;
+                }
+            }
+        }
+        #endregion
+        #region Auto Mana Flasks
+        private void ManaLogic()
+        {
+            var LocalPlayer = GameController.Game.IngameState.Data.LocalPlayer;
+            var PlayerHealth = LocalPlayer.GetComponent<Life>();
+            lastManaUsed += 0.1f;
+            if (lastManaUsed < Settings.ManaDelay.Value)
+                return;
+            if (Settings.autoFlask.Value && LocalPlayer.IsValid)
+            {
+                if (PlayerHealth.MPPercentage * 100 < Settings.PerManaFlask.Value)
+                {
+                    if (FindDrinkFlask(FlaskAction.MANA, FlaskAction.IGNORE))
+                        lastManaUsed = 0f;
+                    else if (FindDrinkFlask(FlaskAction.HYBRID, FlaskAction.IGNORE))
+                        lastManaUsed = 0f;
+                }
+            }
+        }
+        #endregion
+        #region Auto Ailment Flasks
+        private void AilmentLogic()
+        {
+            var LocalPlayer = GameController.Game.IngameState.Data.LocalPlayer;
+            var PlayerHealth = LocalPlayer.GetComponent<Life>();
+            foreach (var buff in PlayerHealth.Buffs)
+            {
+                var buffName = buff.Name;
+
+                if (DEBUG)
+                    debugDebuff[buffName] = buff.Timer;
+
+                if (!Settings.remAilment.Value)
+                    return;
+                if (Settings.remCorrupt.Value && !float.IsInfinity(buff.Timer) && HasDebuff(debuffInfo.Bleeding, buffName, false))
+                    LogMessage("Bleeding -> hasDrunkFlask:" + FindDrinkFlask(FlaskAction.IGNORE, FlaskAction.BLEED_IMMUNE), logmsg_time);
+                else if (Settings.remPoison.Value && !float.IsInfinity(buff.Timer) && HasDebuff(debuffInfo.Poisoned, buffName, false))
+                    LogMessage("Poison -> hasDrunkFlask:" + FindDrinkFlask(FlaskAction.IGNORE, FlaskAction.POISON_IMMUNE), logmsg_time);
+                else if (Settings.remFrozen.Value && !float.IsInfinity(buff.Timer) && HasDebuff(debuffInfo.ChilledFrozen, buffName, false))
+                    LogMessage("Frozen -> hasDrunkFlask:" + FindDrinkFlask(FlaskAction.IGNORE, FlaskAction.FREEZE_IMMUNE), logmsg_time);
+                else if (Settings.remBurning.Value && !float.IsInfinity(buff.Timer) && HasDebuff(debuffInfo.Burning, buffName, false))
+                    LogMessage("Burning -> hasDrunkFlask:" + FindDrinkFlask(FlaskAction.IGNORE, FlaskAction.IGNITE_IMMUNE), logmsg_time);
+                else if (Settings.remShocked.Value && !float.IsInfinity(buff.Timer) && HasDebuff(debuffInfo.Shocked, buffName, false))
+                    LogMessage("Shock -> hasDrunkFlask:" + FindDrinkFlask(FlaskAction.IGNORE, FlaskAction.SHOCK_IMMUNE), logmsg_time);
+                else if (Settings.remCurse.Value && !float.IsInfinity(buff.Timer) && HasDebuff(debuffInfo.WeakenedSlowed, buffName, false))
+                    LogMessage("Curse -> hasDrunkFlask:" + FindDrinkFlask(FlaskAction.IGNORE, FlaskAction.CURSE_IMMUNE), logmsg_time);
+            }
+        }
+        #endregion
+        #region Auto Quick Silver Flasks
+        private void SpeedFlaskLogic()
+        {
+            var LocalPlayer = GameController.Game.IngameState.Data.LocalPlayer;
+            var PlayerHealth = LocalPlayer.GetComponent<Life>();
+            var PlayerMovement = LocalPlayer.GetComponent<Actor>();
+            moveCounter = PlayerMovement.isMoving ? moveCounter += 0.1f : 0;
+            if (LocalPlayer.IsValid && Settings.qSEnable.Value && moveCounter >= Settings.qSDur.Value &&
+                !PlayerHealth.HasBuff("flask_bonus_movement_speed") &&
+                !PlayerHealth.HasBuff("flask_utility_sprint"))
+            {
+                FindDrinkFlask(FlaskAction.SPEEDRUN, FlaskAction.SPEEDRUN);
+            }
+        }
+        #endregion
+        #region Defensive Flasks
+        private void DefensiveFlask()
+        {
+            var LocalPlayer = GameController.Game.IngameState.Data.LocalPlayer;
+            var PlayerHealth = LocalPlayer.GetComponent<Life>();
+            lastDefUsed += 0.1f;
+            if (lastDefUsed < Settings.DefensiveDelay.Value)
+                return;
+            if (Settings.defFlaskEnable.Value && LocalPlayer.IsValid)
+            {
+                if (PlayerHealth.HPPercentage * 100 < Settings.hPDefensive.Value ||
+                    PlayerHealth.ESPercentage * 100 < Settings.eSDefensive.Value)
+                {
+                    if (FindDrinkFlask(FlaskAction.DEFENSE, FlaskAction.DEFENSE, true))
+                        lastDefUsed = 0f;
+                }
+            }
+        }
+        #endregion
+        #region Offensive Flasks
+        private void OffensiveFlask()
+        {
+            var LocalPlayer = GameController.Game.IngameState.Data.LocalPlayer;
+            var PlayerHealth = LocalPlayer.GetComponent<Life>();
+            lastOffUsed += 0.1f;
+            if (lastOffUsed < Settings.OffensiveDelay.Value)
+                return;
+            if (Settings.offFlaskEnable.Value && LocalPlayer.IsValid)
+            {
+                if (PlayerHealth.HPPercentage * 100 < Settings.hpOffensive.Value ||
+                    PlayerHealth.ESPercentage * 100 < Settings.esOffensive.Value)
+                {
+                    if (FindDrinkFlask(FlaskAction.OFFENSE, FlaskAction.OFFENSE, true))
+                        lastOffUsed = 0f;
+                }
+            }
+        }
+        #endregion
+
+        #region Plugin Thread
         private void FlaskMain()
         {
             if (!GameController.Game.IngameState.Data.LocalPlayer.IsValid)
@@ -605,7 +583,7 @@ namespace FlaskManager
             var totalFlask = (int)(flaskRoot.ChildCount);
             if (totalFlask > 0 && totalFlask != playerFlaskList.Count)
             {
-                if(DEBUG)
+                if (DEBUG)
                     LogMessage("Invalid Flask Count, Recalculating it.", logmsg_time);
                 if (!GettingAllFlaskInfo(flaskRoot))
                     return;
@@ -634,17 +612,43 @@ namespace FlaskManager
             while (isThreadEnabled)
             {
                 FlaskMain();
-                for (int j=0; j< 10; j++)
+                for (int j = 0; j < 10; j++)
                 {
                     AutoChicken();
                     Thread.Sleep(10);
                 }
             }
-       }
+        }
+        #endregion
+        #region Debug Log File Handler
+                private int ExitPoe(string ExeName, string arguments)
+                {
+                    // Prepare the process to run
+                    ProcessStartInfo start = new ProcessStartInfo();
+                    // Enter in the command line arguments, everything you would enter after the executable name itself
+                    start.Arguments = arguments;
+                    // Enter the executable to run, including the complete path
+                    start.FileName = ExeName;
+                    // Do you want to show a console window?
+                    start.WindowStyle = ProcessWindowStyle.Hidden;
+                    start.CreateNoWindow = true;
+                    int exitCode;
+
+
+                    // Run the external process & wait for it to finish
+                    using (Process proc = Process.Start(start))
+                    {
+                        proc.WaitForExit();
+
+                        // Retrieve the app's exit code
+                        exitCode = proc.ExitCode;
+                    }
+                    return exitCode;
+                }
         #endregion
     }
-    #region Player Flasks
-    public class PlayerFlask
+        #region Player Flasks
+public class PlayerFlask
     {
         public string FlaskName;
         public int Slot;
@@ -721,7 +725,7 @@ namespace FlaskManager
         }
     } 
     #endregion
-    #region Flask Types
+        #region Flask Types
     public enum FlaskAction : int
     {
         IGNORE = 0, // ignore mods and don't give error
@@ -745,7 +749,7 @@ namespace FlaskManager
         UNIQUE_FLASK
     }
     #endregion
-    #region Keybindings
+        #region Keybindings
     public class FlaskKeys
     {
         public Keys[] k;
