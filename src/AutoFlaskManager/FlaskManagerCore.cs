@@ -44,16 +44,27 @@ namespace FlaskManager
         #region FlaskManagerInit
         public void BuffUi()
         {
-            /*Debug Panel for buffs
-            foreach (var buff in GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Life>().Buffs)
-            {
-               if (float.IsInfinity(buff.Timer) || buff.Name.ToLower().Contains("flask"))
-                   continue;
-               var size = Graphics.DrawText(buff.Name + ":" + buff.Timer, Settings.flask_TextSize.Value, position, Color.WhiteSmoke);
-               position.Y += size.Height;
-               maxheight += size.Height;
-               maxWidth = Math.Max(maxWidth, size.Width);
-            }*/
+            if (Settings.Enable.Value && Settings.buffUiEnable.Value)
+            { 
+            float X = GameController.Window.GetWindowRectangle().Width * Settings.buff_PositionX.Value * .01f;
+            float Y = GameController.Window.GetWindowRectangle().Height * Settings.buff_PositionY.Value * .01f;
+            Vector2 position = new Vector2(X, Y);
+            float maxWidth = 0;
+            float maxheight = 0;
+
+                foreach (var buff in GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Life>().Buffs)
+                {
+                    if (float.IsInfinity(buff.Timer) || buff.Name.ToLower().Contains("flask"))
+                        continue;
+                    var size = Graphics.DrawText(buff.Name + ":" + buff.Timer, Settings.buff_TextSize.Value, position, Color.WhiteSmoke);
+                    position.Y += size.Height;
+                    maxheight += size.Height;
+                    maxWidth = Math.Max(maxWidth, size.Width);
+                }
+                var background = new RectangleF(X, Y, maxWidth, maxheight);
+                Graphics.DrawFrame(background, 5, Color.Black);
+                Graphics.DrawImage("lightBackground.png", background);
+            }
             return;
         }
         public void FlaskUi()

@@ -53,8 +53,8 @@ namespace FlaskManager
             flask_TextSize = new RangeNode<int>(15, 15, 60);
             //Buff UI Settings
             buffUiEnable = false;
-            buff_PositionX = new RangeNode<float>(28.0f, 0.0f, 100.0f);
-            buff_PositionY = new RangeNode<float>(83.0f, 0.0f, 100.0f);
+            buff_PositionX = new RangeNode<float>(0.0f, 0.0f, 100.0f);
+            buff_PositionY = new RangeNode<float>(10.0f, 0.0f, 100.0f);
             buff_TextSize = new RangeNode<int>(15, 15, 60);
             //Debug
             debugMode = false;
