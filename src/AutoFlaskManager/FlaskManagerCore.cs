@@ -19,8 +19,10 @@ using PoeHUD.Models.Enums;
 
 namespace FlaskManager
 {
+    
     public class FlaskManagerCore : BaseSettingsPlugin<FlaskManagerSettings>
     {
+        #region FlaskManagerCore Var
         private bool DEBUG = false;
         private readonly int logmsg_time = 3;
         private readonly int errmsg_time = 10;
@@ -38,7 +40,8 @@ namespace FlaskManager
         private float lastDefUsed;
         private float lastOffUsed;
         private List<PlayerFlask> playerFlaskList;
-        private FlaskKeys keyinfo;
+        private FlaskKeys keyinfo; 
+        #endregion
 
         #region FlaskInformations
         private FlaskAction flask_name_to_action(string flaskname)
@@ -372,7 +375,7 @@ namespace FlaskManager
             return false;
         }
         #endregion
-        #region FlaskAndChickenLogics
+        #region Plugin Termination Cleanup
         private int ExitPoe(string ExeName, string arguments)
         {
             // Prepare the process to run
@@ -397,6 +400,8 @@ namespace FlaskManager
             }
             return exitCode;
         }
+        #endregion
+        #region Chicken Auto Quit
         private void AutoChicken()
         {
             var LocalPlayer = GameController.Game.IngameState.Data.LocalPlayer;
@@ -427,8 +432,10 @@ namespace FlaskManager
                     }
                 }
             }
-            return;
+            return; 
         }
+        #endregion
+        #region Auto Quick Silver Flask
         private void SpeedFlaskLogic()
         {
             var LocalPlayer = GameController.Game.IngameState.Data.LocalPlayer;
@@ -441,7 +448,9 @@ namespace FlaskManager
             {
                 FindDrinkFlask(FlaskAction.SPEEDRUN, FlaskAction.SPEEDRUN);
             }
-        }
+        } 
+        #endregion
+        #region Auto Mana Flask
         private void ManaLogic()
         {
             var LocalPlayer = GameController.Game.IngameState.Data.LocalPlayer;
@@ -459,7 +468,9 @@ namespace FlaskManager
                         lastManaUsed = 0f;
                 }
             }
-        }
+        } 
+        #endregion
+        #region Auto Health Flask
         private void LifeLogic()
         {
             var LocalPlayer = GameController.Game.IngameState.Data.LocalPlayer;
@@ -477,7 +488,9 @@ namespace FlaskManager
                         lastLifeUsed = 0f;
                 }
             }
-        }
+        } 
+        #endregion
+        #region Ailment Flask
         private void AilmentLogic()
         {
             var LocalPlayer = GameController.Game.IngameState.Data.LocalPlayer;
@@ -504,8 +517,10 @@ namespace FlaskManager
                 else if (Settings.remCurse.Value && !float.IsInfinity(buff.Timer) && HasDebuff(debuffInfo.WeakenedSlowed, buffName, false))
                     LogMessage("Curse -> hasDrunkFlask:" + FindDrinkFlask(FlaskAction.IGNORE, FlaskAction.CURSE_IMMUNE), logmsg_time);
             }
-        }
-        private void DeffensiveFlask()
+        } 
+        #endregion
+        #region Defensive Flask
+        private void DefensiveFlask()
         {
             var LocalPlayer = GameController.Game.IngameState.Data.LocalPlayer;
             var PlayerHealth = LocalPlayer.GetComponent<Life>();
@@ -517,11 +532,13 @@ namespace FlaskManager
                 if (PlayerHealth.HPPercentage * 100 < Settings.hPDefensive.Value ||
                     PlayerHealth.ESPercentage * 100 < Settings.eSDefensive.Value)
                 {
-                    if (FindDrinkFlask(FlaskAction.DEFENSE, FlaskAction.DEFENSE,true))
+                    if (FindDrinkFlask(FlaskAction.DEFENSE, FlaskAction.DEFENSE, true))
                         lastDefUsed = 0f;
                 }
             }
-        }
+        } 
+        #endregion
+        #region Offensive Flask
         private void OffensiveFlask()
         {
             var LocalPlayer = GameController.Game.IngameState.Data.LocalPlayer;
@@ -531,14 +548,14 @@ namespace FlaskManager
                 return;
             if (Settings.offFlaskEnable.Value && LocalPlayer.IsValid)
             {
-                if (PlayerHealth.HPPercentage * 100 < Settings.hPOffensive.Value ||
-                    PlayerHealth.ESPercentage * 100 < Settings.eSOffensive.Value)
+                if (PlayerHealth.HPPercentage * 100 < Settings.hpOffensive.Value ||
+                    PlayerHealth.ESPercentage * 100 < Settings.esOffensive.Value)
                 {
                     if (FindDrinkFlask(FlaskAction.OFFENSE, FlaskAction.OFFENSE, true))
                         lastOffUsed = 0f;
                 }
             }
-        }
+        } 
         #endregion
 
         #region Keyboard Input
@@ -606,7 +623,7 @@ namespace FlaskManager
             ManaLogic();
             LifeLogic();
             AilmentLogic();
-            DeffensiveFlask();
+            DefensiveFlask();
             OffensiveFlask();
             return;
         }
@@ -624,6 +641,7 @@ namespace FlaskManager
        }
         #endregion
     }
+    #region Player Flasks
     public class PlayerFlask
     {
         public string FlaskName;
@@ -699,7 +717,9 @@ namespace FlaskManager
                     break;
             }
         }
-    }
+    } 
+    #endregion
+    #region Flask Types
     public enum FlaskAction : int
     {
         IGNORE = 0, // ignore mods and don't give error
@@ -722,6 +742,8 @@ namespace FlaskManager
         CURSE_IMMUNE, // MOD: warding
         UNIQUE_FLASK
     }
+    #endregion
+    #region Keybindings
     public class FlaskKeys
     {
         public Keys[] k;
@@ -734,5 +756,6 @@ namespace FlaskManager
             k[3] = k4;
             k[4] = k5;
         }
-    }
+    } 
+    #endregion
 }

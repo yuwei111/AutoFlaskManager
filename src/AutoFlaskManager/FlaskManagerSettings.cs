@@ -14,7 +14,6 @@ namespace FlaskManager
             isPercentQuit = false;
             percentHPQuit = new RangeNode<float>(35f, 0f, 100f);
             percentESQuit = new RangeNode<float>(35f, 0, 100);
-
             //HP/MANA
             autoFlask = false;
             perHPFlask = new RangeNode<int>(60, 0, 100);
@@ -41,8 +40,8 @@ namespace FlaskManager
             DefensiveDelay = new RangeNode<float>(3f, 2f, 10f);
             //Offensive Flask
             offFlaskEnable = false;
-            hPOffensive = new RangeNode<int>(50, 0, 100);
-            eSOffensive = new RangeNode<int>(50, 0, 100);
+            hpOffensive = new RangeNode<int>(50, 0, 100);
+            esOffensive = new RangeNode<int>(50, 0, 100);
             OffensiveDelay = new RangeNode<float>(3f, 2f, 10f);
             //Unique Flask
             uniqFlaskEnable = false;
@@ -125,9 +124,9 @@ namespace FlaskManager
         [Menu("Offensive Flask", 50)]
         public ToggleNode offFlaskEnable { get; set; }
         [Menu("Min Life % Auto Offensive Flask", 51, 50)]
-        public RangeNode<int> hPOffensive { get; set; }
+        public RangeNode<int> hpOffensive { get; set; }
         [Menu("Min ES % Auto Offensive Flask", 52, 50)]
-        public RangeNode<int> eSOffensive { get; set; }
+        public RangeNode<int> esOffensive { get; set; }
         [Menu("Offensive Flask Delay", 53, 50)]
         public RangeNode<float> OffensiveDelay { get; set; }
         #endregion
