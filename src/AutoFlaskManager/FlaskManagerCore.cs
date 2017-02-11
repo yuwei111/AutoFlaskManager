@@ -29,7 +29,8 @@ namespace FlaskManager
         private Queue<Element> eleQueue;
         private Dictionary<string, float> debugDebuff;
 
-        private bool isTownOrHideout;
+        private bool isTown;
+        private bool isHideout;
         private DebuffPanelConfig debuffInfo;
 
         private float moveCounter;
@@ -148,7 +149,8 @@ namespace FlaskManager
                     lastLifeUsed = 100f;
                     lastDefUsed = 100f;
                     lastOffUsed = 100f;
-                    isTownOrHideout = true;
+                    isTown = true;
+                    isHideout = false;
                     gameHandle = GameController.Window.Process.MainWindowHandle;
                     //We are creating our plugin thread inside PoEHUD!
                     Thread flaskThread = new Thread(FlaskThread) { IsBackground = true };
@@ -173,10 +175,16 @@ namespace FlaskManager
             if (Settings.Enable.Value)
             {
                 LogMessage("Area has been changed. Loading flasks info.", logmsg_time);
-                if (GameController.Area.CurrentArea.IsHideout || GameController.Area.CurrentArea.IsTown)
-                    isTownOrHideout = true;
+
+                if (area.CurrentArea.IsHideout)
+                    isHideout = true;
                 else
-                    isTownOrHideout = false;
+                    isHideout = false;
+
+                if (area.CurrentArea.IsTown)
+                    isTown = true;
+                else
+                    isTown = false;
             }
         }
         #endregion
@@ -648,7 +656,7 @@ namespace FlaskManager
                     return;
                 }
 
-            if (isTownOrHideout || GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Life>().HasBuff("grace_period"))
+            if (isTown || isHideout || GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Life>().HasBuff("grace_period"))
                 return;
 
             SpeedFlaskLogic();
