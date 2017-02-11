@@ -421,7 +421,7 @@ namespace FlaskManager
                     {
                        ExitPoe("cports.exe", "/close * * * * " + GameController.Window.Process.ProcessName + ".exe");
                         if (Settings.debugMode.Value)
-                        File.AppendAllText("autoflaskmanagerDebug.log", DateTime.Now + " AUTO QUIT: You health was at: " + (Math.Round(PlayerHealth.HPPercentage, 3) * 100 + "%" + Environment.NewLine));
+                        File.AppendAllText("autoflaskmanagerDebug.log", DateTime.Now + " AUTO QUIT: Your health was at: " + (Math.Round(PlayerHealth.HPPercentage, 3) * 100 + "%" + Environment.NewLine));
                     }
                     catch (Exception)
                     {
@@ -435,7 +435,7 @@ namespace FlaskManager
                         
                         ExitPoe("cports.exe", "/close * * * * " + GameController.Window.Process.ProcessName + ".exe");
                         if (Settings.debugMode.Value)
-                        File.AppendAllText("autoflaskmanagerDebug.log", DateTime.Now + " AUTO QUIT: You Energy Shield was at: " + (Math.Round(PlayerHealth.HPPercentage, 3) * 100 + "%" + Environment.NewLine));
+                        File.AppendAllText("autoflaskmanagerDebug.log", DateTime.Now + " AUTO QUIT: Your Energy Shield was at: " + (Math.Round(PlayerHealth.HPPercentage, 3) * 100 + "%" + Environment.NewLine));
                     }
                     catch (Exception)
                     {
