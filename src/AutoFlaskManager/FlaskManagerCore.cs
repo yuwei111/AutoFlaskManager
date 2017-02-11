@@ -45,7 +45,7 @@ namespace FlaskManager
         #region FlaskManagerInit
         public void BuffUi()
         {
-            if (Settings.Enable.Value && Settings.buffUiEnable.Value)
+            if (Settings.buffUiEnable.Value)
             { 
             float X = GameController.Window.GetWindowRectangle().Width * Settings.buff_PositionX.Value * .01f;
             float Y = GameController.Window.GetWindowRectangle().Height * Settings.buff_PositionY.Value * .01f;
@@ -70,7 +70,7 @@ namespace FlaskManager
         }
         public void FlaskUi()
         {
-            if (Settings.Enable.Value && Settings.flaskUiEnable.Value)
+            if (Settings.flaskUiEnable.Value)
             {
                 float X = GameController.Window.GetWindowRectangle().Width * Settings.flask_PositionX.Value * .01f;
                 float Y = GameController.Window.GetWindowRectangle().Height * Settings.flask_PositionY.Value * .01f;
@@ -95,8 +95,11 @@ namespace FlaskManager
         public override void Render()
         {
             base.Render();
-            FlaskUi();
-            BuffUi();
+            if (Settings.Enable.Value)
+            {
+                FlaskUi();
+                BuffUi();
+            }
         }
         public override void OnClose()
         {
