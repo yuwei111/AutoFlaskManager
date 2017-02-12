@@ -50,8 +50,12 @@ namespace FlaskManager
                 float X = (GameController.Window.GetWindowRectangle().Width / 2) - (475/4);
                 float Y = (GameController.Window.GetWindowRectangle().Height / 2) - (709/4);
                 RectangleF container = new RectangleF(X, Y, 475/2, 709/2);
-                if ( File.Exists(@"plugins\AutoFlaskManager\splash\AutoFlaskManagerCredits.png"))
-                    Graphics.DrawPluginImage(@"plugins\AutoFlaskManager\splash\AutoFlaskManagerCredits.png", container);
+                if ( File.Exists( PluginDirectory + @"\splash\AutoFlaskManagerCredits.png"))
+                    Graphics.DrawPluginImage(PluginDirectory + @"\splash\AutoFlaskManagerCredits.png", container);
+                else
+                {
+                    LogMessage("Cannot find splash image, disable About.", logmsg_time);
+                }
             }
             return;
         }
