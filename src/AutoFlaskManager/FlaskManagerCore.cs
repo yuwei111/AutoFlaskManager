@@ -43,6 +43,18 @@ namespace FlaskManager
         #endregion
 
         #region FlaskManagerInit
+        /*public void SplashPage()
+        {
+            if (Settings.splashPage.Value)
+            {
+                float X = GameController.Window.GetWindowRectangle().Width * Settings.splashPage_PositionX.Value * .01f;
+                float Y = GameController.Window.GetWindowRectangle().Height * Settings.splashPage_PositionY.Value * .01f;
+                Vector2 position = new Vector2(X, Y);
+            
+            }
+            return;
+        }*/
+
         public void BuffUi()
         {
             if (Settings.buffUiEnable.Value && !isTown)
@@ -91,6 +103,7 @@ namespace FlaskManager
                 Graphics.DrawFrame(background, 5, Color.Black);
                 Graphics.DrawImage("lightBackground.png", background);
             }
+            return;
         }
         public override void Render()
         {
@@ -99,6 +112,7 @@ namespace FlaskManager
             {
                 FlaskUi();
                 BuffUi();
+                SplashPage();
             }
         }
         public override void OnClose()

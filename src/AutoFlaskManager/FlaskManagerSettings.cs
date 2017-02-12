@@ -65,6 +65,11 @@ namespace FlaskManager
             flaskSlot3Enable = true;
             flaskSlot4Enable = true;
             flaskSlot5Enable = true;
+            //About
+            splashPage = true;
+            splashPage_PositionX = new RangeNode<float>(50.0f, 0.0f, 100.0f);
+            splashPage_PositionY = new RangeNode<float>(50.0f, 0.0f, 100.0f);
+            splashPage_TextSize = new RangeNode<int>(48, 15, 60);
             #endregion
         }
 
@@ -108,14 +113,14 @@ namespace FlaskManager
         [Menu("Corrupting Blood Stacks", 27, 20)]
         public RangeNode<int> corrptCount { get; set; }
         [Menu("Remove Ailment Post Duration (s)", 28, 20)]
-        public RangeNode<int> ailmentDur { get; set; } 
+        public RangeNode<int> ailmentDur { get; set; }
         #endregion
 
         #region Quick Sivler Flask Menu
         [Menu("QuickSilver Flask", 30)]
         public ToggleNode qSEnable { get; set; }
         [Menu("Use After Moving Post (s)", 31, 30)]
-        public RangeNode<float> qSDur { get; set; } 
+        public RangeNode<float> qSDur { get; set; }
         #endregion
 
         #region Defensive Flask Menu
@@ -142,7 +147,7 @@ namespace FlaskManager
 
         #region Unnique Flask Menu
         [Menu("Unique Flask", 60)]
-        public ToggleNode uniqFlaskEnable { get; set; } 
+        public ToggleNode uniqFlaskEnable { get; set; }
         #endregion
 
         #region Settings Menu
@@ -158,7 +163,7 @@ namespace FlaskManager
         [Menu("Text Size", 104, 101)]
         public RangeNode<int> flask_TextSize { get; set; }
 
-        [Menu("Buff Bar UI",105,100)]
+        [Menu("Buff Bar UI", 105, 100)]
         public ToggleNode buffUiEnable { get; set; }
         [Menu("Position: X", 106, 105)]
         public RangeNode<float> buff_PositionX { get; set; }
@@ -166,10 +171,10 @@ namespace FlaskManager
         public RangeNode<float> buff_PositionY { get; set; }
         [Menu("Text Size", 108, 105)]
         public RangeNode<int> buff_TextSize { get; set; }
-        [Menu("Enable Flask Or Aura Debuff/Buff",109,105)]
+        [Menu("Enable Flask Or Aura Debuff/Buff", 109, 105)]
         public ToggleNode enableFlaskAuraBuff { get; set; }
 
-        [Menu("Debug Mode", 110,100)]
+        [Menu("Debug Mode", 110, 100)]
         public ToggleNode debugMode { get; set; }
 
         [Menu("Enable/Disable Flasks", 120)]
@@ -184,6 +189,17 @@ namespace FlaskManager
         public ToggleNode flaskSlot4Enable { get; set; }
         [Menu("Use Flask Slot 5", 125, 120)]
         public ToggleNode flaskSlot5Enable { get; set; }
+
+        [Menu("About", 126)]
+        public EmptyNode aboutMenuHolder { get; set; }
+        [Menu("Credits", 127, 126)]
+        public ToggleNode splashPage { get; set; }
+        [Menu("Position: X", 127, 126)]
+        public RangeNode<float> splashPage_PositionX { get; set; }
+        [Menu("Position: Y", 128, 126)]
+        public RangeNode<float> splashPage_PositionY { get; set; }
+        [Menu("Text Size", 129, 126)]
+        public RangeNode<int> splashPage_TextSize { get; set; }
         #endregion
     }
 }
