@@ -43,17 +43,18 @@ namespace FlaskManager
         #endregion
 
         #region FlaskManagerInit
-        /*public void SplashPage()
+        public void SplashPage()
         {
-            if (Settings.splashPage.Value)
+            if (Settings.about.Value)
             {
-                float X = GameController.Window.GetWindowRectangle().Width * Settings.splashPage_PositionX.Value * .01f;
-                float Y = GameController.Window.GetWindowRectangle().Height * Settings.splashPage_PositionY.Value * .01f;
-                Vector2 position = new Vector2(X, Y);
-            
+                float X = (GameController.Window.GetWindowRectangle().Width / 2) - (475/4);
+                float Y = (GameController.Window.GetWindowRectangle().Height / 2) - (709/4);
+                RectangleF container = new RectangleF(X, Y, 475/2, 709/2);
+                if ( File.Exists(@"plugins\AutoFlaskManager\splash\AutoFlaskManagerCredits.png"))
+                    Graphics.DrawPluginImage(@"plugins\AutoFlaskManager\splash\AutoFlaskManagerCredits.png", container);
             }
             return;
-        }*/
+        }
 
         public void BuffUi()
         {

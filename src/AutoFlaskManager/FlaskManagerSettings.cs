@@ -66,10 +66,7 @@ namespace FlaskManager
             flaskSlot4Enable = true;
             flaskSlot5Enable = true;
             //About
-            splashPage = true;
-            splashPage_PositionX = new RangeNode<float>(50.0f, 0.0f, 100.0f);
-            splashPage_PositionY = new RangeNode<float>(50.0f, 0.0f, 100.0f);
-            splashPage_TextSize = new RangeNode<int>(48, 15, 60);
+            about = true;
             #endregion
         }
 
@@ -191,15 +188,7 @@ namespace FlaskManager
         public ToggleNode flaskSlot5Enable { get; set; }
 
         [Menu("About", 126)]
-        public EmptyNode aboutMenuHolder { get; set; }
-        [Menu("Credits", 127, 126)]
-        public ToggleNode splashPage { get; set; }
-        [Menu("Position: X", 127, 126)]
-        public RangeNode<float> splashPage_PositionX { get; set; }
-        [Menu("Position: Y", 128, 126)]
-        public RangeNode<float> splashPage_PositionY { get; set; }
-        [Menu("Text Size", 129, 126)]
-        public RangeNode<int> splashPage_TextSize { get; set; }
+        public ToggleNode about { get; set; }
         #endregion
     }
 }
