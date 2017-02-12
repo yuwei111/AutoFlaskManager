@@ -47,9 +47,9 @@ namespace FlaskManager
         {
             if (Settings.about.Value)
             {
-                float X = (GameController.Window.GetWindowRectangle().Width / 2) - (475/4);
-                float Y = (GameController.Window.GetWindowRectangle().Height / 2) - (709/4);
-                RectangleF container = new RectangleF(X, Y, 475/2, 709/2);
+                float X = (GameController.Window.GetWindowRectangle().Width / 2) - (475/2);
+                float Y = (GameController.Window.GetWindowRectangle().Height / 2) - (395/2);
+                RectangleF container = new RectangleF(X, Y, 475, 395);
                 if ( File.Exists( PluginDirectory + @"\splash\AutoFlaskManagerCredits.png"))
                     Graphics.DrawPluginImage(PluginDirectory + @"\splash\AutoFlaskManagerCredits.png", container);
                 else
