@@ -21,7 +21,6 @@ namespace FlaskManager
     public class FlaskManagerCore : BaseSettingsPlugin<FlaskManagerSettings>
     {
         #region FlaskManagerCore Var
-        private bool DEBUG = false;
         private readonly int logmsg_time = 3;
         private readonly int errmsg_time = 10;
         private bool isThreadEnabled;
@@ -126,7 +125,7 @@ namespace FlaskManager
             if (Settings.debugMode.Value)
                 foreach (var key in debugDebuff)
                 {
-                    File.AppendAllText("autoflaskmanagerDebug.log", key.Key + " : " + key.Value + Environment.NewLine);
+                    File.AppendAllText("autoflaskmanagerDebug.log", DateTime.Now + key.Key + " : " + key.Value + Environment.NewLine);
                 }
         }
         public override void Initialise()
@@ -146,16 +145,10 @@ namespace FlaskManager
             string json = File.ReadAllText("config/debuffPanel.json");
             debuffInfo = JsonConvert.DeserializeObject<DebuffPanelConfig>(json);
             eleQueue = new Queue<Element>();
-            DEBUG = Settings.debugMode.Value;
             debugDebuff = new Dictionary<string, float>();
             OnFlaskManagerToggle();
             GameController.Area.OnAreaChange += area => OnAreaChange(area);
             Settings.Enable.OnValueChanged += OnFlaskManagerToggle;
-            Settings.debugMode.OnValueChanged += OnDebugMode;
-        }
-        private void OnDebugMode()
-        {
-            DEBUG = Settings.debugMode.Value;
         }
         private void OnFlaskManagerToggle()
         {
@@ -163,7 +156,7 @@ namespace FlaskManager
             {
                 if (Settings.Enable.Value)
                 {
-                    if (DEBUG)
+                    if (Settings.debugMode.Value)
                         LogMessage("Enabling FlaskManager.", logmsg_time);
                     moveCounter = 0;
                     isThreadEnabled = true;
@@ -180,7 +173,7 @@ namespace FlaskManager
                 }
                 else
                 {
-                    if (DEBUG)
+                    if (Settings.debugMode.Value)
                         LogMessage("Disabling FlaskManager.", logmsg_time);
                     playerFlaskList.Clear();
                     isThreadEnabled = false;
@@ -251,14 +244,17 @@ namespace FlaskManager
             }
             catch (Exception e)
             {
-                LogError("Warning: Cannot find Flask list.", errmsg_time);
-                LogError(e.Message + e.StackTrace, errmsg_time);
+                if (Settings.debugMode.Value)
+                {
+                    LogError("Warning: Cannot find Flask list.", errmsg_time);
+                    LogError(e.Message + e.StackTrace, errmsg_time);
+                }
                 return null;
             }
         }
         private bool GettingAllFlaskInfo(Element flaskRoot)
         {
-            if (DEBUG)
+            if (Settings.debugMode.Value)
                 LogMessage("Getting Inventory Flasks info.", logmsg_time);
             playerFlaskList.Clear();
             try
@@ -319,7 +315,7 @@ namespace FlaskManager
             }
             catch (Exception e)
             {
-                if (DEBUG)
+                if (Settings.debugMode.Value)
                 {
                     LogError("Warning: Error getting all flask Informations.", errmsg_time);
                     LogError(e.Message + e.StackTrace, errmsg_time);
@@ -402,7 +398,7 @@ namespace FlaskManager
                 {
                     UseFlask(flask);
                     UpdateFlaskChargesInfo(flask);
-                    if (DEBUG)
+                    if (Settings.debugMode.Value)
                         LogMessage("Just Drank Flask on slot " + flask.Slot, logmsg_time);
                     // if there are multiple flasks, drinking 1 of them at a time is enough.
                     hasDrunk = true;
@@ -577,7 +573,7 @@ namespace FlaskManager
             {
                 var buffName = buff.Name;
 
-                if (DEBUG)
+                if (Settings.debugMode.Value)
                     debugDebuff[buffName] = buff.Timer;
 
                 if (!Settings.remAilment.Value)
@@ -665,7 +661,7 @@ namespace FlaskManager
             var totalFlask = (int)(flaskRoot.ChildCount);
             if (totalFlask > 0 && totalFlask != playerFlaskList.Count)
             {
-                if (DEBUG)
+                if (Settings.debugMode.Value)
                     LogMessage("Invalid Flask Count, Recalculating it.", logmsg_time);
                 if (!GettingAllFlaskInfo(flaskRoot))
                     return;
