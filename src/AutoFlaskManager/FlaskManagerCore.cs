@@ -275,29 +275,44 @@ namespace FlaskManager
                     newFlask.UseCharges = flaskCharges.ChargesPerUse;
                     newFlask.CurrentCharges = flaskCharges.NumCharges;
                     newFlask.FlaskName = GameController.Files.BaseItemTypes.Translate(flaskItem.Path).BaseName;
+
+                    //Checking flask action based on flask name type.
                     newFlask.FlaskAction1 = Flask_name_to_action(newFlask.FlaskName);
-                    //Checking flask action based on flask name.
                     if (newFlask.FlaskAction1 == FlaskAction.NONE)
                         LogError("Error: " + newFlask.FlaskName + " name not found. Is it unique flask? If not, report this error message.", errmsg_time);
-                    FlaskAction action2 = newFlask.FlaskAction2 = FlaskAction.NONE;
-                    //Checking flask action based on flask mods.
+
+                    //Checking for unique flasks.
+                    if (flaskMods.ItemRarity == ItemRarity.Unique)
+                    {
+                        if (Settings.uniqFlaskEnable.Value)
+                        {
+                            //Enabling Unique flask action 2.
+                            newFlask.FlaskAction2 = Unique_name_to_action(flaskMods.UniqueName);
+                        } else
+                        {
+                            //Disabling Unique Flask actions.
+                            newFlask.FlaskAction1 = FlaskAction.NONE;
+                            newFlask.FlaskAction2 = FlaskAction.NONE;
+                        }
+                    }
+
+                    //Checking flask mods.
+                    FlaskAction action2 = FlaskAction.NONE;
                     foreach (var mod in flaskMods.ItemMods)
                     {
                         if (mod.Name.ToLower().Contains("flaskchargesused"))
                             newFlask.UseCharges = (int)Math.Floor(newFlask.UseCharges + ((double)(newFlask.UseCharges) * mod.Value1 / 100));
-                        action2 = Flask_mod_to_action(mod.RawName);
+
+                        // We have already decided action2 for unique flasks.
                         if (flaskMods.ItemRarity == ItemRarity.Unique)
-                            newFlask.FlaskAction2 = FlaskAction.UNIQUE_FLASK;
-                        else if (action2 == FlaskAction.NONE)
+                            continue;
+
+                        action2 = Flask_mod_to_action(mod.RawName);
+                        if (action2 == FlaskAction.NONE)
                             LogError("Error: " + mod.RawName + " mod not found. Is it unique flask? If not, report this error message.", errmsg_time);
                         else if (action2 != FlaskAction.IGNORE)
                             newFlask.FlaskAction2 = action2;
                     }
-                    // If it's a unique flask, ignore flask action based on flask name
-                    // Depending if user have enabled or disabled unique flask or not.
-                    if (newFlask.FlaskAction2 == FlaskAction.UNIQUE_FLASK)
-                        if (!Settings.uniqFlaskEnable.Value)
-                            newFlask.FlaskAction1 = FlaskAction.NONE;
 
                     // Speedrun mod on mana/life flask wouldn't work when full mana/life is full respectively,
                     // So we will ignore speedrun mod from mana/life flask. Other mods
@@ -328,6 +343,10 @@ namespace FlaskManager
         }
         #endregion
         #region Flask Information
+        private FlaskAction Unique_name_to_action(string uniqueFlaskname)
+        {
+            return FlaskAction.UNIQUE_FLASK;
+        }
         private FlaskAction Flask_name_to_action(string flaskname)
         {
             flaskname = flaskname.ToLower();
