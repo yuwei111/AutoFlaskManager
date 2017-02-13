@@ -27,12 +27,12 @@ namespace FlaskManager
             remBurning = false;
             remCurse = false;
             remPoison = false;
-            remBleed = false;
+            remCorrupt = false;
             corrptCount = new RangeNode<int>(10, 1, 20);
             ailmentDur = new RangeNode<int>(0, 0, 5);
-            //Quicksilver
-            quicksilverEnable = false;
-            quicksilverDurration = new RangeNode<float>(1.5f, 0f, 10f);
+            //QuickSilver
+            qSEnable = false;
+            qSDur = new RangeNode<float>(1.5f, 0f, 10f);
             //Defensive Flask
             defFlaskEnable = false;
             hPDefensive = new RangeNode<int>(50, 0, 100);
@@ -105,19 +105,19 @@ namespace FlaskManager
         public ToggleNode remCurse { get; set; }
         [Menu("Remove Poison Ailment", 25, 20)]
         public ToggleNode remPoison { get; set; }
-        [Menu("Remove Bleeding/Corrupting Blood Ailment", 26, 20)]
-        public ToggleNode remBleed { get; set; }
+        [Menu("Remove Corrupting/Bleed Ailment", 26, 20)]
+        public ToggleNode remCorrupt { get; set; }
         [Menu("Corrupting Blood Stacks", 27, 20)]
         public RangeNode<int> corrptCount { get; set; }
         [Menu("Remove Ailment Post Duration (s)", 28, 20)]
         public RangeNode<int> ailmentDur { get; set; }
         #endregion
 
-        #region Quicksilver Flask Menu
-        [Menu("Quicksilver Flask", 30)]
-        public ToggleNode quicksilverEnable { get; set; }
+        #region Quick Sivler Flask Menu
+        [Menu("QuickSilver Flask", 30)]
+        public ToggleNode qSEnable { get; set; }
         [Menu("Use After Moving Post (s)", 31, 30)]
-        public RangeNode<float> quicksilverDurration { get; set; }
+        public RangeNode<float> qSDur { get; set; }
         #endregion
 
         #region Defensive Flask Menu
