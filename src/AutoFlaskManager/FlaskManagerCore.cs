@@ -275,6 +275,7 @@ namespace FlaskManager
                     newFlask.UseCharges = flaskCharges.ChargesPerUse;
                     newFlask.CurrentCharges = flaskCharges.NumCharges;
                     newFlask.FlaskName = GameController.Files.BaseItemTypes.Translate(flaskItem.Path).BaseName;
+                    newFlask.FlaskAction2 = FlaskAction.NONE;
 
                     //Checking flask action based on flask name type.
                     newFlask.FlaskAction1 = Flask_name_to_action(newFlask.FlaskName);
@@ -345,7 +346,14 @@ namespace FlaskManager
         #region Flask Information
         private FlaskAction Unique_name_to_action(string uniqueFlaskname)
         {
-            return FlaskAction.UNIQUE_FLASK;
+            if (uniqueFlaskname.Contains("Dying Sun"))
+                return FlaskAction.OFFENSE;
+            else if (uniqueFlaskname.Contains("Atziri's Promise"))
+                return FlaskAction.OFFENSE;
+            else if (uniqueFlaskname.Contains("The Overflowing Chalice"))
+                return FlaskAction.UTILITY;
+            else
+                return FlaskAction.UNIQUE_FLASK;
         }
         private FlaskAction Flask_name_to_action(string flaskname)
         {
@@ -372,7 +380,7 @@ namespace FlaskManager
             flaskmodRawName = flaskmodRawName.ToLower();
             FlaskAction ret = FlaskAction.NONE;
             String defense_pattern = @"armour|evasion|lifeleech|manaleech|resistance";
-            String ignore_pattern = @"levelrequirement|duration|charges|recharge|recovery|extramana|extralife|consecrate|smoke|ground";
+            String ignore_pattern = @"levelrequirement|duration|charges|recharge|recovery|extramana|extralife|consecrate|smoke|ground|flaskhealthminions";
             if (flaskmodRawName.Contains("unique"))
                 ret = FlaskAction.UNIQUE_FLASK;
             else if (flaskmodRawName.Contains("poison"))
