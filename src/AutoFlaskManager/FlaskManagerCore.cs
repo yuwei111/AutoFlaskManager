@@ -782,16 +782,29 @@ namespace FlaskManager
     {
         IGNORE = 0,         // ignore mods and don't give error
         NONE,               // flask isn't initilized.
-        LIFE,               //life
-        MANA,               //mana
-        HYBRID,             //hybrid flasks
+        LIFE,               //life, Blood of the Karui
+        MANA,               //mana, Doedre's Elixir, 
+                            //Zerphi's Last Breath, Lavianga's Spirit
+
+        HYBRID,             //hybrid flasks,
+
         DEFENSE,            //bismuth, jade, stibnite, granite,
                             //amethyst, ruby, sapphire, topaz,
-                            // aquamarine, quartz
+                            // aquamarine, quartz, Sin's Rebirth, 
+                            //Coruscating Elixir, Forbidden Taste,Rumi's Concoction
                             //MODS: iron skin, reflexes, gluttony,
                             // craving, resistance
+
+        UTILITY,            //Doedre's Elixir, Zerphi's Last Breath, Lavianga's Spirit
+
         SPEEDRUN,           //quick silver, MOD: adrenaline,
-        OFFENSE,            //silver, sulphur, basalt, diamond, MOD: Fending
+
+        OFFENSE,            //silver, sulphur, basalt, diamond,Taste of Hate, 
+                            //Kiara's Determination, Lion's Roar, The Overflowing Chalice, 
+                            //The Sorrow of the Divine,Rotgut, Witchfire Brew, Atziri's Promise, 
+                            //Dying Sun,Vessel of Vinktar
+                            //MOD: Fending
+
         POISON_IMMUNE,      // MOD: curing
         FREEZE_IMMUNE,      // MOD: heat
         IGNITE_IMMUNE,      // MOD: dousing
@@ -799,15 +812,16 @@ namespace FlaskManager
         BLEED_IMMUNE,       // MOD: staunching
         CURSE_IMMUNE,       // MOD: warding
         UNIQUE_FLASK,       //
-        UNIQUE_lIFE,        //Blood of the Karui
-        UNIQUE_MANA,        //Doedre's Elixir, Zerphi's Last Breath, Lavianga's Spirit
-        UNIQUE_HYBRID,      //Divination Distillate, The Writhing Jar
-        UNIQUE_DEFENSIVE,   //Sin's Rebirth, Coruscating Elixir, Forbidden Taste
-                            //Rumi's Concoction,
-        UNIQUE_OFFENSIVE,   //Taste of Hate, Kiara's Determination, Lion's Roar
-                            //The Overflowing Chalice, The Sorrow of the Divine,
-                            //Rotgut, Witchfire Brew, Atziri's Promise, Dying Sun,
-                            //Vessel of Vinktar    
+
+        //UNIQUE_lIFE,        //Blood of the Karui
+        //UNIQUE_MANA,       Doedre's Elixir, Zerphi's Last Breath, Lavianga's Spirit
+        //UNIQUE_HYBRID,      //Divination Distillate, The Writhing Jar
+        //UNIQUE_DEFENSIVE,   //Sin's Rebirth, Coruscating Elixir, Forbidden Taste
+        //Rumi's Concoction,
+        //UNIQUE_OFFENSIVE,   //Taste of Hate, Kiara's Determination, Lion's Roar
+        //The Overflowing Chalice, The Sorrow of the Divine,
+        //Rotgut, Witchfire Brew, Atziri's Promise, Dying Sun,
+        //Vessel of Vinktar    
     }
     #endregion
     #region Keybindings
