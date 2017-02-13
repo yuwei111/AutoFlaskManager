@@ -507,7 +507,6 @@ namespace FlaskManager
                 {
                     try
                     {
-                        
                         ExitPoe("cports.exe", "/close * * * * " + GameController.Window.Process.ProcessName + ".exe");
                         if (Settings.debugMode.Value)
                             File.AppendAllText("autoflaskmanagerDebug.log", DateTime.Now +
@@ -578,7 +577,10 @@ namespace FlaskManager
 
                 if (!Settings.remAilment.Value)
                     return;
-                if (Settings.remCorrupt.Value && !float.IsInfinity(buff.Timer) && HasDebuff(debuffInfo.Bleeding, buffName, false))
+                if (Settings.remBleed.Value && !float.IsInfinity(buff.Timer) && HasDebuff(debuffInfo.Bleeding, buffName, false))
+                    LogMessage("Bleeding -> hasDrunkFlask:" + FindDrinkFlask(FlaskAction.IGNORE, FlaskAction.BLEED_IMMUNE), logmsg_time);
+                else if (Settings.remAilment.Value && !float.IsInfinity(buff.Timer) && HasDebuff(debuffInfo.Corruption, buffName, false)
+                    && buff.Charges >= Settings.corrptCount)
                     LogMessage("Bleeding -> hasDrunkFlask:" + FindDrinkFlask(FlaskAction.IGNORE, FlaskAction.BLEED_IMMUNE), logmsg_time);
                 else if (Settings.remPoison.Value && !float.IsInfinity(buff.Timer) && HasDebuff(debuffInfo.Poisoned, buffName, false))
                     LogMessage("Poison -> hasDrunkFlask:" + FindDrinkFlask(FlaskAction.IGNORE, FlaskAction.POISON_IMMUNE), logmsg_time);
@@ -600,7 +602,7 @@ namespace FlaskManager
             var PlayerHealth = LocalPlayer.GetComponent<Life>();
             var PlayerMovement = LocalPlayer.GetComponent<Actor>();
             moveCounter = PlayerMovement.isMoving ? moveCounter += 0.1f : 0;
-            if (LocalPlayer.IsValid && Settings.qSEnable.Value && moveCounter >= Settings.qSDur.Value &&
+            if (LocalPlayer.IsValid && Settings.quicksilverEnable.Value && moveCounter >= Settings.quicksilverDurration.Value &&
                 !PlayerHealth.HasBuff("flask_bonus_movement_speed") &&
                 !PlayerHealth.HasBuff("flask_utility_sprint"))
             {
@@ -811,6 +813,8 @@ namespace FlaskManager
         SHOCK_IMMUNE,       // MOD: grounding
         BLEED_IMMUNE,       // MOD: staunching
         CURSE_IMMUNE,       // MOD: warding
+
+
         UNIQUE_FLASK,       //
 
         //UNIQUE_lIFE,        //Blood of the Karui
