@@ -285,11 +285,16 @@ namespace FlaskManager
                     //Checking for unique flasks.
                     if (flaskMods.ItemRarity == ItemRarity.Unique)
                     {
-                        if (Settings.uniqFlaskEnable.Value)
+                        {
+                            newFlask.FlaskName = flaskMods.UniqueName;
+                        }
+                    
+                       if (Settings.uniqFlaskEnable.Value)
                         {
                             //Enabling Unique flask action 2.
                             newFlask.FlaskAction2 = Unique_name_to_action(flaskMods.UniqueName);
-                        } else
+                        }
+                        else
                         {
                             //Disabling Unique Flask actions.
                             newFlask.FlaskAction1 = FlaskAction.NONE;
@@ -327,7 +332,6 @@ namespace FlaskManager
                     newFlask.EnableDisableFlask();
                     playerFlaskList.Add(newFlask);
                 }
-
             }
             catch (Exception e)
             {
@@ -394,10 +398,6 @@ namespace FlaskManager
             else
                 return FlaskAction.UNIQUE_FLASK;
         }
-
-  
-
-
         private FlaskAction Flask_name_to_action(string flaskname)
         {
             flaskname = flaskname.ToLower();
