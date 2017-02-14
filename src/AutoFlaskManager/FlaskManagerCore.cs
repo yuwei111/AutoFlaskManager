@@ -346,15 +346,58 @@ namespace FlaskManager
         #region Flask Information
         private FlaskAction Unique_name_to_action(string uniqueFlaskname)
         {
-            if (uniqueFlaskname.Contains("Dying Sun"))
+            //Offensive Flask
+            if (uniqueFlaskname.Contains("Atziri's Promise"))
                 return FlaskAction.OFFENSE;
-            else if (uniqueFlaskname.Contains("Atziri's Promise"))
+            else if (uniqueFlaskname.Contains("Dying Sun"))
+                return FlaskAction.OFFENSE;
+            else if (uniqueFlaskname.Contains("Kiara's Determination"))
+                return FlaskAction.OFFENSE;
+            else if (uniqueFlaskname.Contains("Lion's Roar"))
+                return FlaskAction.OFFENSE;
+            else if (uniqueFlaskname.Contains("Rotgut"))
+                return FlaskAction.OFFENSE;
+            else if (uniqueFlaskname.Contains("Taste of Hate"))
                 return FlaskAction.OFFENSE;
             else if (uniqueFlaskname.Contains("The Overflowing Chalice"))
+                return FlaskAction.OFFENSE;
+            else if (uniqueFlaskname.Contains("The Sorrow of the Divine"))
+                return FlaskAction.OFFENSE;
+            else if (uniqueFlaskname.Contains("Vessel of Vinktar"))
+                return FlaskAction.OFFENSE;
+            else if (uniqueFlaskname.Contains("Witchfire Brew"))
+                return FlaskAction.OFFENSE;
+            //Defensive Flask
+            else if (uniqueFlaskname.Contains("Coruscating Elixir"))
+                return FlaskAction.DEFENSE;
+            else if (uniqueFlaskname.Contains("Fobidden Taste"))
+                return FlaskAction.DEFENSE;
+            else if (uniqueFlaskname.Contains("Rumi's Concoction"))
+                return FlaskAction.DEFENSE;
+            else if (uniqueFlaskname.Contains("Sin's Rebirth"))
+                return FlaskAction.DEFENSE;
+            //life
+            else if (uniqueFlaskname.Contains("Blood of the Karui"))
+                return FlaskAction.LIFE;
+            //Mana
+            else if (uniqueFlaskname.Contains("Doedre's Elixir"))
+                return FlaskAction.MANA;
+            else if (uniqueFlaskname.Contains("Lavianga's Spirit"))
+                return FlaskAction.MANA;
+            else if (uniqueFlaskname.Contains("Zerphi's Last Breath"))
+                return FlaskAction.MANA;
+            //Utility
+            else if (uniqueFlaskname.Contains("Divination Distillate"))
+                return FlaskAction.UTILITY;
+            else if (uniqueFlaskname.Contains("The Writhing Jar"))
                 return FlaskAction.UTILITY;
             else
                 return FlaskAction.UNIQUE_FLASK;
         }
+
+  
+
+
         private FlaskAction Flask_name_to_action(string flaskname)
         {
             flaskname = flaskname.ToLower();
@@ -846,14 +889,14 @@ namespace FlaskManager
         UNIQUE_FLASK,       //
 
         //UNIQUE_lIFE,        //Blood of the Karui
-        //UNIQUE_MANA,       Doedre's Elixir, Zerphi's Last Breath, Lavianga's Spirit
+        //UNIQUE_MANA,        //Doedre's Elixir, Zerphi's Last Breath, Lavianga's Spirit
         //UNIQUE_HYBRID,      //Divination Distillate, The Writhing Jar
         //UNIQUE_DEFENSIVE,   //Sin's Rebirth, Coruscating Elixir, Forbidden Taste
-        //Rumi's Concoction,
+                              //Rumi's Concoction,
         //UNIQUE_OFFENSIVE,   //Taste of Hate, Kiara's Determination, Lion's Roar
         //The Overflowing Chalice, The Sorrow of the Divine,
         //Rotgut, Witchfire Brew, Atziri's Promise, Dying Sun,
-        //Vessel of Vinktar    
+        //Vessel of Vinktar 
     }
     #endregion
     #region Keybindings
