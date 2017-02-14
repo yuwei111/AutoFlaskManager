@@ -285,11 +285,8 @@ namespace FlaskManager
                     //Checking for unique flasks.
                     if (flaskMods.ItemRarity == ItemRarity.Unique)
                     {
-                        {
-                            newFlask.FlaskName = flaskMods.UniqueName;
-                        }
-                    
-                       if (Settings.uniqFlaskEnable.Value)
+                        newFlask.FlaskName = flaskMods.UniqueName;
+                        if (Settings.uniqFlaskEnable.Value)
                         {
                             //Enabling Unique flask action 2.
                             newFlask.FlaskAction2 = Unique_name_to_action(flaskMods.UniqueName);
