@@ -58,22 +58,30 @@ namespace FlaskManager
             }
             return;
         }
-
         public void BuffUi()
         {
             if (Settings.buffUiEnable.Value && !isTown)
-            { 
-            float X = GameController.Window.GetWindowRectangle().Width * Settings.buff_PositionX.Value * .01f;
-            float Y = GameController.Window.GetWindowRectangle().Height * Settings.buff_PositionY.Value * .01f;
-            Vector2 position = new Vector2(X, Y);
-            float maxWidth = 0;
-            float maxheight = 0;
-
+            {
+                float X = GameController.Window.GetWindowRectangle().Width * Settings.buff_PositionX.Value * .01f;
+                float Y = GameController.Window.GetWindowRectangle().Height * Settings.buff_PositionY.Value * .01f;
+                Vector2 position = new Vector2(X, Y);
+                float maxWidth = 0;
+                float maxheight = 0;
+                var textColor = Color.WhiteSmoke;
                 foreach (var buff in GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Life>().Buffs)
                 {
-                    if (!Settings.enableFlaskAuraBuff.Value && (float.IsInfinity(buff.Timer) || buff.Name.ToLower().Contains("flask")))
+                    var isInfinity = float.IsInfinity(buff.Timer);
+                    var isFlaskBuff = buff.Name.ToLower().Contains("flask");
+                    if (!Settings.enableFlaskAuraBuff.Value && (isInfinity || isFlaskBuff))
                         continue;
-                    Color textColor = (buff.Name.ToLower().Contains("flask")) ? Color.SpringGreen : Color.WhiteSmoke;
+
+                    if (isFlaskBuff)
+                        textColor = Color.SpringGreen;
+                    else if (isInfinity)
+                        textColor = Color.Purple;
+                    else
+                        textColor = Color.WhiteSmoke;
+
                     var size = Graphics.DrawText(buff.Name + ":" + buff.Timer, Settings.buff_TextSize.Value, position, textColor);
                     position.Y += size.Height;
                     maxheight += size.Height;
@@ -94,19 +102,18 @@ namespace FlaskManager
                 Vector2 position = new Vector2(X, Y);
                 float maxWidth = 0;
                 float maxheight = 0;
-
+                Color textColor = Color.WhiteSmoke;
 
                 foreach (var flasks in playerFlaskList.ToArray())
                 {
-                    Color textColor = (flasks.isEnabled) ? Color.WhiteSmoke : Color.Red;
-                    if (flasks.isEnabled && flasks.flaskRarity == ItemRarity.Magic)
-                    {
+                    if (!flasks.isEnabled)
+                        textColor = Color.Red;
+                    else if (flasks.flaskRarity == ItemRarity.Magic)
                         textColor = Color.CornflowerBlue;
-                    }
-                    if (flasks.isEnabled && flasks.flaskRarity == ItemRarity.Unique)
-                    {
+                    else if (flasks.flaskRarity == ItemRarity.Unique)
                         textColor = Color.Chocolate;
-                    }
+                    else
+                        textColor = Color.WhiteSmoke;
 
                     var size = Graphics.DrawText(flasks.FlaskName, Settings.flask_TextSize.Value, position, textColor);
                     position.Y += size.Height;
