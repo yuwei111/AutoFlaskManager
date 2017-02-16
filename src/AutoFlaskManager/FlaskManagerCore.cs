@@ -358,13 +358,14 @@ namespace FlaskManager
         }
         #endregion
         #region Flask Information
+        #region Flask Information :Unique Flasks
         private FlaskAction Unique_name_to_action(String uniqueFlaskname)
         {
             FlaskAction _ret = FlaskAction.UNIQUE_FLASK;
             switch (uniqueFlaskname)
             {
                 //Offenisve
-                case "Atziri's Promise": 
+                case "Atziri's Promise":
                     _ret = FlaskAction.OFFENSE;
                     break;
                 case "Dying Sun":
@@ -398,7 +399,6 @@ namespace FlaskManager
                 case "Coruscating Elixir":
                     _ret = FlaskAction.DEFENSE;
                     break;
-
                 case "Fobidden Taste":
                     _ret = FlaskAction.DEFENSE;
                     break;
@@ -429,71 +429,69 @@ namespace FlaskManager
                 case "The Writhing Jar":
                     _ret = FlaskAction.UTILITY;
                     break;
-
                 default:
                     _ret = FlaskAction.UNIQUE_FLASK;
                     break;
             }
             return _ret;
         }
-        
         // Legacy Unique String search method 
-         /* private FlaskAction Unique_name_to_action(string uniqueFlaskname)
-        {
-            //Offensive Flask
-            if (uniqueFlaskname.Contains("Atziri's Promise"))
-                return FlaskAction.OFFENSE;
-            else if (uniqueFlaskname.Contains("Dying Sun"))
-                return FlaskAction.OFFENSE;
-            else if (uniqueFlaskname.Contains("Kiara's Determination"))
-                return FlaskAction.OFFENSE;
-            else if (uniqueFlaskname.Contains("Lion's Roar"))
-                return FlaskAction.OFFENSE;
-            else if (uniqueFlaskname.Contains("Rotgut"))
-                return FlaskAction.OFFENSE;
-            else if (uniqueFlaskname.Contains("Taste of Hate"))
-                return FlaskAction.OFFENSE;
-            else if (uniqueFlaskname.Contains("The Overflowing Chalice"))
-                return FlaskAction.OFFENSE;
-            else if (uniqueFlaskname.Contains("The Sorrow of the Divine"))
-                return FlaskAction.OFFENSE;
-            else if (uniqueFlaskname.Contains("Vessel of Vinktar"))
-                return FlaskAction.OFFENSE;
-            else if (uniqueFlaskname.Contains("Witchfire Brew"))
-                return FlaskAction.OFFENSE;
-            
-            //Defensive Flask
-            else if (uniqueFlaskname.Contains("Coruscating Elixir"))
-                return FlaskAction.DEFENSE;
-            else if (uniqueFlaskname.Contains("Fobidden Taste"))
-                return FlaskAction.DEFENSE;
-            else if (uniqueFlaskname.Contains("Rumi's Concoction"))
-                return FlaskAction.DEFENSE;
-            else if (uniqueFlaskname.Contains("Sin's Rebirth"))
-                return FlaskAction.DEFENSE;
-            
-            //life
-            else if (uniqueFlaskname.Contains("Blood of the Karui"))
-                return FlaskAction.LIFE;
-           
-            //Mana
-            else if (uniqueFlaskname.Contains("Doedre's Elixir"))
-                return FlaskAction.MANA;
-            else if (uniqueFlaskname.Contains("Lavianga's Spirit"))
-                return FlaskAction.MANA;
-            else if (uniqueFlaskname.Contains("Zerphi's Last Breath"))
-                return FlaskAction.MANA;
-            
-            //Utility
-            else if (uniqueFlaskname.Contains("Divination Distillate"))
-                return FlaskAction.UTILITY;
-            else if (uniqueFlaskname.Contains("The Writhing Jar"))
-                return FlaskAction.UTILITY;
-            else
-                return FlaskAction.UNIQUE_FLASK;
-        }
-        */
+        /* private FlaskAction Unique_name_to_action(string uniqueFlaskname)
+       {
+           //Offensive Flask
+           if (uniqueFlaskname.Contains("Atziri's Promise"))
+               return FlaskAction.OFFENSE;
+           else if (uniqueFlaskname.Contains("Dying Sun"))
+               return FlaskAction.OFFENSE;
+           else if (uniqueFlaskname.Contains("Kiara's Determination"))
+               return FlaskAction.OFFENSE;
+           else if (uniqueFlaskname.Contains("Lion's Roar"))
+               return FlaskAction.OFFENSE;
+           else if (uniqueFlaskname.Contains("Rotgut"))
+               return FlaskAction.OFFENSE;
+           else if (uniqueFlaskname.Contains("Taste of Hate"))
+               return FlaskAction.OFFENSE;
+           else if (uniqueFlaskname.Contains("The Overflowing Chalice"))
+               return FlaskAction.OFFENSE;
+           else if (uniqueFlaskname.Contains("The Sorrow of the Divine"))
+               return FlaskAction.OFFENSE;
+           else if (uniqueFlaskname.Contains("Vessel of Vinktar"))
+               return FlaskAction.OFFENSE;
+           else if (uniqueFlaskname.Contains("Witchfire Brew"))
+               return FlaskAction.OFFENSE;
 
+           //Defensive Flask
+           else if (uniqueFlaskname.Contains("Coruscating Elixir"))
+               return FlaskAction.DEFENSE;
+           else if (uniqueFlaskname.Contains("Fobidden Taste"))
+               return FlaskAction.DEFENSE;
+           else if (uniqueFlaskname.Contains("Rumi's Concoction"))
+               return FlaskAction.DEFENSE;
+           else if (uniqueFlaskname.Contains("Sin's Rebirth"))
+               return FlaskAction.DEFENSE;
+
+           //life
+           else if (uniqueFlaskname.Contains("Blood of the Karui"))
+               return FlaskAction.LIFE;
+
+           //Mana
+           else if (uniqueFlaskname.Contains("Doedre's Elixir"))
+               return FlaskAction.MANA;
+           else if (uniqueFlaskname.Contains("Lavianga's Spirit"))
+               return FlaskAction.MANA;
+           else if (uniqueFlaskname.Contains("Zerphi's Last Breath"))
+               return FlaskAction.MANA;
+
+           //Utility
+           else if (uniqueFlaskname.Contains("Divination Distillate"))
+               return FlaskAction.UTILITY;
+           else if (uniqueFlaskname.Contains("The Writhing Jar"))
+               return FlaskAction.UTILITY;
+           else
+               return FlaskAction.UNIQUE_FLASK;
+       }
+       */
+        #endregion
         private FlaskAction Flask_name_to_action(string flaskname)
         {
             flaskname = flaskname.ToLower();
