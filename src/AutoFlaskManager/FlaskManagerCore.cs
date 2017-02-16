@@ -58,7 +58,6 @@ namespace FlaskManager
             }
             return;
         }
-
         public void BuffUi()
         {
             if (Settings.buffUiEnable.Value && !isTown)
@@ -444,7 +443,6 @@ namespace FlaskManager
             }
             return _ret;
         }
-        
         // Legacy Unique String search method 
          /* private FlaskAction Unique_name_to_action(string uniqueFlaskname)
         {
@@ -501,7 +499,6 @@ namespace FlaskManager
                 return FlaskAction.UNIQUE_FLASK;
         }
         */
-
         private FlaskAction Flask_name_to_action(string flaskname)
         {
             flaskname = flaskname.ToLower();
