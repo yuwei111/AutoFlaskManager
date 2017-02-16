@@ -98,7 +98,6 @@ namespace FlaskManager
 
                 foreach (var flasks in playerFlaskList.ToArray())
                 {
-<<<<<<< HEAD
                     Color textColor = (flasks.isEnabled) ? Color.WhiteSmoke : Color.Red;
                     if (flasks.isEnabled && flasks.flaskRarity == ItemRarity.Magic)
                     {
@@ -108,10 +107,7 @@ namespace FlaskManager
                     {
                         textColor = Color.Chocolate;
                     }
-=======
-                    Color textColor = (flasks.flaskRarity == ItemRarity.Unique) ? Color.DarkOrange : Color.DarkKhaki;
-                    textColor = (flasks.isEnabled) ? textColor : Color.Red;
->>>>>>> origin/master
+
                     var size = Graphics.DrawText(flasks.FlaskName, Settings.flask_TextSize.Value, position, textColor);
                     position.Y += size.Height;
                     maxheight += size.Height;
@@ -300,15 +296,10 @@ namespace FlaskManager
                     //Checking for unique flasks.
                     if (flaskMods.ItemRarity == ItemRarity.Unique)
                     {
-<<<<<<< HEAD
-                        {
-                            newFlask.FlaskName = flaskMods.UniqueName;
-                        }    
+ 
                        if (Settings.uniqFlaskEnable.Value)
-=======
                         newFlask.FlaskName = flaskMods.UniqueName;
                         if (Settings.uniqFlaskEnable.Value)
->>>>>>> origin/master
                         {
                             //Enabling Unique flask action 2.
                             newFlask.FlaskAction2 = Unique_name_to_action(flaskMods.UniqueName);
@@ -367,7 +358,6 @@ namespace FlaskManager
         }
         #endregion
         #region Flask Information
-
         private FlaskAction Unique_name_to_action(String uniqueFlaskname)
         {
             FlaskAction _ret = FlaskAction.UNIQUE_FLASK;
@@ -446,7 +436,9 @@ namespace FlaskManager
             }
             return _ret;
         }
-        /*private FlaskAction Unique_name_to_action(string uniqueFlaskname)
+        
+        // Legacy Unique String search method 
+         /* private FlaskAction Unique_name_to_action(string uniqueFlaskname)
         {
             //Offensive Flask
             if (uniqueFlaskname.Contains("Atziri's Promise"))
@@ -502,7 +494,6 @@ namespace FlaskManager
         }
         */
 
-
         private FlaskAction Flask_name_to_action(string flaskname)
         {
             flaskname = flaskname.ToLower();
@@ -523,7 +514,6 @@ namespace FlaskManager
                 ret = FlaskAction.OFFENSE;
             return ret;
         }
-        #region Flask Mod Types
         private FlaskAction Flask_mod_to_action(string flaskmodRawName)
         {
             flaskmodRawName = flaskmodRawName.ToLower();
@@ -554,7 +544,6 @@ namespace FlaskManager
                 ret = FlaskAction.IGNORE;
             return ret;
         }
-        #endregion
         #endregion
         #region Flask Helper Functions
         private void UpdateFlaskChargesInfo(PlayerFlask flask)
