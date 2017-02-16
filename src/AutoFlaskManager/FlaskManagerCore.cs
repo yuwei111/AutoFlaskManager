@@ -73,7 +73,8 @@ namespace FlaskManager
                 {
                     if (!Settings.enableFlaskAuraBuff.Value && (float.IsInfinity(buff.Timer) || buff.Name.ToLower().Contains("flask")))
                         continue;
-                    var size = Graphics.DrawText(buff.Name + ":" + buff.Timer, Settings.buff_TextSize.Value, position, Color.WhiteSmoke);
+                    Color textColor = (buff.Name.ToLower().Contains("flask")) ? Color.SpringGreen : Color.WhiteSmoke;
+                    var size = Graphics.DrawText(buff.Name + ":" + buff.Timer, Settings.buff_TextSize.Value, position, textColor);
                     position.Y += size.Height;
                     maxheight += size.Height;
                     maxWidth = Math.Max(maxWidth, size.Width);
@@ -94,15 +95,23 @@ namespace FlaskManager
                 float maxWidth = 0;
                 float maxheight = 0;
 
+
                 foreach (var flasks in playerFlaskList.ToArray())
                 {
-                    Color textColor = (flasks.isEnabled) ? Color.DarkKhaki : Color.Red;
+                    Color textColor = (flasks.isEnabled) ? Color.WhiteSmoke : Color.Red;
+                    if (flasks.isEnabled && flasks.flaskRarity == ItemRarity.Magic)
+                    {
+                        textColor = Color.CornflowerBlue;
+                    }
+                    if (flasks.isEnabled && flasks.flaskRarity == ItemRarity.Unique)
+                    {
+                        textColor = Color.Chocolate;
+                    }
                     var size = Graphics.DrawText(flasks.FlaskName, Settings.flask_TextSize.Value, position, textColor);
                     position.Y += size.Height;
                     maxheight += size.Height;
                     maxWidth = Math.Max(maxWidth, size.Width);
                 }
-
                 var background = new RectangleF(X, Y, maxWidth, maxheight);
                 Graphics.DrawFrame(background, 5, Color.Black);
                 Graphics.DrawImage("lightBackground.png", background);
@@ -274,6 +283,7 @@ namespace FlaskManager
                     newFlask.MaxCharges = flaskCharges.ChargesMax;
                     newFlask.UseCharges = flaskCharges.ChargesPerUse;
                     newFlask.CurrentCharges = flaskCharges.NumCharges;
+                    newFlask.flaskRarity = flaskMods.ItemRarity;
                     newFlask.FlaskName = GameController.Files.BaseItemTypes.Translate(flaskItem.Path).BaseName;
                     newFlask.FlaskAction2 = FlaskAction.NONE;
 
@@ -287,8 +297,7 @@ namespace FlaskManager
                     {
                         {
                             newFlask.FlaskName = flaskMods.UniqueName;
-                        }
-                    
+                        }    
                        if (Settings.uniqFlaskEnable.Value)
                         {
                             //Enabling Unique flask action 2.
@@ -348,7 +357,86 @@ namespace FlaskManager
         }
         #endregion
         #region Flask Information
-        private FlaskAction Unique_name_to_action(string uniqueFlaskname)
+
+        private FlaskAction Unique_name_to_action(String uniqueFlaskname)
+        {
+            FlaskAction _ret = FlaskAction.UNIQUE_FLASK;
+            switch (uniqueFlaskname)
+            {
+                //Offenisve
+                case "Atziri's Promise": 
+                    _ret = FlaskAction.OFFENSE;
+                    break;
+                case "Dying Sun":
+                    _ret = FlaskAction.OFFENSE;
+                    break;
+                case "Kiara's Determination":
+                    _ret = FlaskAction.OFFENSE;
+                    break;
+                case "Lion's Roar":
+                    _ret = FlaskAction.OFFENSE;
+                    break;
+                case "Rotgut":
+                    _ret = FlaskAction.OFFENSE;
+                    break;
+                case "Taste of Hate":
+                    _ret = FlaskAction.OFFENSE;
+                    break;
+                case "The Overflowing Chalice":
+                    _ret = FlaskAction.OFFENSE;
+                    break;
+                case "The Sorrow of the Divine":
+                    _ret = FlaskAction.OFFENSE;
+                    break;
+                case "Vessel of Vinktar":
+                    _ret = FlaskAction.OFFENSE;
+                    break;
+                case "Witchfire Brew":
+                    _ret = FlaskAction.OFFENSE;
+                    break;
+                //Defesnive
+                case "Coruscating Elixir":
+                    _ret = FlaskAction.DEFENSE;
+                    break;
+
+                case "Fobidden Taste":
+                    _ret = FlaskAction.DEFENSE;
+                    break;
+                case "Rumi's Concoction":
+                    _ret = FlaskAction.DEFENSE;
+                    break;
+                case "Sin's Rebirth":
+                    _ret = FlaskAction.DEFENSE;
+                    break;
+                //LIfe
+                case "Blood of the Karui":
+                    _ret = FlaskAction.LIFE;
+                    break;
+                //Mana
+                case "Doedre's Elixir":
+                    _ret = FlaskAction.MANA;
+                    break;
+                case "Lavianga's Spirit":
+                    _ret = FlaskAction.MANA;
+                    break;
+                case "Zerphi's Last Breath":
+                    _ret = FlaskAction.MANA;
+                    break;
+                //Utility
+                case "Divination Distillate":
+                    _ret = FlaskAction.UTILITY;
+                    break;
+                case "The Writhing Jar":
+                    _ret = FlaskAction.UTILITY;
+                    break;
+
+                default:
+                    _ret = FlaskAction.UNIQUE_FLASK;
+                    break;
+            }
+            return _ret;
+        }
+        /*private FlaskAction Unique_name_to_action(string uniqueFlaskname)
         {
             //Offensive Flask
             if (uniqueFlaskname.Contains("Atziri's Promise"))
@@ -371,6 +459,7 @@ namespace FlaskManager
                 return FlaskAction.OFFENSE;
             else if (uniqueFlaskname.Contains("Witchfire Brew"))
                 return FlaskAction.OFFENSE;
+            
             //Defensive Flask
             else if (uniqueFlaskname.Contains("Coruscating Elixir"))
                 return FlaskAction.DEFENSE;
@@ -380,9 +469,11 @@ namespace FlaskManager
                 return FlaskAction.DEFENSE;
             else if (uniqueFlaskname.Contains("Sin's Rebirth"))
                 return FlaskAction.DEFENSE;
+            
             //life
             else if (uniqueFlaskname.Contains("Blood of the Karui"))
                 return FlaskAction.LIFE;
+           
             //Mana
             else if (uniqueFlaskname.Contains("Doedre's Elixir"))
                 return FlaskAction.MANA;
@@ -390,6 +481,7 @@ namespace FlaskManager
                 return FlaskAction.MANA;
             else if (uniqueFlaskname.Contains("Zerphi's Last Breath"))
                 return FlaskAction.MANA;
+            
             //Utility
             else if (uniqueFlaskname.Contains("Divination Distillate"))
                 return FlaskAction.UTILITY;
@@ -398,6 +490,9 @@ namespace FlaskManager
             else
                 return FlaskAction.UNIQUE_FLASK;
         }
+        */
+
+
         private FlaskAction Flask_name_to_action(string flaskname)
         {
             flaskname = flaskname.ToLower();
@@ -418,6 +513,7 @@ namespace FlaskManager
                 ret = FlaskAction.OFFENSE;
             return ret;
         }
+        #region Flask Mod Types
         private FlaskAction Flask_mod_to_action(string flaskmodRawName)
         {
             flaskmodRawName = flaskmodRawName.ToLower();
@@ -448,6 +544,7 @@ namespace FlaskManager
                 ret = FlaskAction.IGNORE;
             return ret;
         }
+        #endregion
         #endregion
         #region Flask Helper Functions
         private void UpdateFlaskChargesInfo(PlayerFlask flask)
@@ -788,6 +885,7 @@ namespace FlaskManager
         public int CurrentCharges;
         public int UseCharges;
         public int MaxCharges;
+        public ItemRarity flaskRarity;
 
         private FlaskManagerSettings Settings;
         public void SetSettings(FlaskManagerSettings s)
@@ -886,7 +984,7 @@ namespace FlaskManager
         SHOCK_IMMUNE,       // MOD: grounding
         BLEED_IMMUNE,       // MOD: staunching
         CURSE_IMMUNE,       // MOD: warding
-        UNIQUE_FLASK,       //
+        UNIQUE_FLASK,       // All the milk shakes
 
         //UNIQUE_lIFE,        //Blood of the Karui
         //UNIQUE_MANA,        //Doedre's Elixir, Zerphi's Last Breath, Lavianga's Spirit
