@@ -96,7 +96,8 @@ namespace FlaskManager
 
                 foreach (var flasks in playerFlaskList.ToArray())
                 {
-                    Color textColor = (flasks.isEnabled) ? Color.DarkKhaki : Color.Red;
+                    Color textColor = (flasks.flaskRarity == ItemRarity.Unique) ? Color.DarkOrange : Color.DarkKhaki;
+                    textColor = (flasks.isEnabled) ? textColor : Color.Red;
                     var size = Graphics.DrawText(flasks.FlaskName, Settings.flask_TextSize.Value, position, textColor);
                     position.Y += size.Height;
                     maxheight += size.Height;
@@ -274,6 +275,7 @@ namespace FlaskManager
                     newFlask.MaxCharges = flaskCharges.ChargesMax;
                     newFlask.UseCharges = flaskCharges.ChargesPerUse;
                     newFlask.CurrentCharges = flaskCharges.NumCharges;
+                    newFlask.flaskRarity = flaskMods.ItemRarity;
                     newFlask.FlaskName = GameController.Files.BaseItemTypes.Translate(flaskItem.Path).BaseName;
                     newFlask.FlaskAction2 = FlaskAction.NONE;
 
@@ -785,6 +787,7 @@ namespace FlaskManager
         public int CurrentCharges;
         public int UseCharges;
         public int MaxCharges;
+        public ItemRarity flaskRarity;
 
         private FlaskManagerSettings Settings;
         public void SetSettings(FlaskManagerSettings s)
