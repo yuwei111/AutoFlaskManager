@@ -98,6 +98,7 @@ namespace FlaskManager
 
                 foreach (var flasks in playerFlaskList.ToArray())
                 {
+<<<<<<< HEAD
                     Color textColor = (flasks.isEnabled) ? Color.WhiteSmoke : Color.Red;
                     if (flasks.isEnabled && flasks.flaskRarity == ItemRarity.Magic)
                     {
@@ -107,6 +108,10 @@ namespace FlaskManager
                     {
                         textColor = Color.Chocolate;
                     }
+=======
+                    Color textColor = (flasks.flaskRarity == ItemRarity.Unique) ? Color.DarkOrange : Color.DarkKhaki;
+                    textColor = (flasks.isEnabled) ? textColor : Color.Red;
+>>>>>>> origin/master
                     var size = Graphics.DrawText(flasks.FlaskName, Settings.flask_TextSize.Value, position, textColor);
                     position.Y += size.Height;
                     maxheight += size.Height;
@@ -295,10 +300,15 @@ namespace FlaskManager
                     //Checking for unique flasks.
                     if (flaskMods.ItemRarity == ItemRarity.Unique)
                     {
+<<<<<<< HEAD
                         {
                             newFlask.FlaskName = flaskMods.UniqueName;
                         }    
                        if (Settings.uniqFlaskEnable.Value)
+=======
+                        newFlask.FlaskName = flaskMods.UniqueName;
+                        if (Settings.uniqFlaskEnable.Value)
+>>>>>>> origin/master
                         {
                             //Enabling Unique flask action 2.
                             newFlask.FlaskAction2 = Unique_name_to_action(flaskMods.UniqueName);
