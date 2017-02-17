@@ -8,9 +8,7 @@ using System.Threading;
 using System;
 using PoeHUD.Poe.EntityComponents;
 using PoeHUD.Poe.Elements;
-using System.Runtime.InteropServices;
 using SharpDX;
-using System.Diagnostics;
 using PoeHUD.Hud.Health;
 using System.IO;
 using Newtonsoft.Json;
@@ -24,7 +22,7 @@ namespace FlaskManager
         private readonly int logmsg_time = 3;
         private readonly int errmsg_time = 10;
         private bool isThreadEnabled;
-        private IntPtr gameHandle;
+        private KeyboardHelper keyboard;
         private Queue<Element> eleQueue;
         private Dictionary<string, float> debugDebuff;
 
@@ -183,7 +181,7 @@ namespace FlaskManager
                     lastOffUsed = 100f;
                     isTown = true;
                     isHideout = false;
-                    gameHandle = GameController.Window.Process.MainWindowHandle;
+                    keyboard = new KeyboardHelper(GameController);
                     //We are creating our plugin thread inside PoEHUD!
                     Thread flaskThread = new Thread(FlaskThread) { IsBackground = true };
                     flaskThread.Start();
@@ -551,13 +549,10 @@ namespace FlaskManager
         }
         #endregion
         #region Flask Helper Functions
-        private void UpdateFlaskChargesInfo(PlayerFlask flask)
-        {
-            flask.CurrentCharges = flask.Item.GetComponent<Charges>().NumCharges;
-        }
         private void UseFlask(PlayerFlask flask)
         {
-            KeyPressRelease(keyinfo.k[flask.Slot]);
+            keyboard.setLatency(GameController.Game.IngameState.CurLatency);
+            keyboard.KeyPressRelease(keyinfo.k[flask.Slot]);
         }
         private bool FindDrinkFlask(FlaskAction type1, FlaskAction type2, bool shouldDrinkAll = false)
         {
@@ -568,7 +563,7 @@ namespace FlaskManager
                 if (flask.isEnabled && flask.CurrentCharges >= flask.UseCharges)
                 {
                     UseFlask(flask);
-                    UpdateFlaskChargesInfo(flask);
+                    flask.UpdateFlaskChargesInfo();
                     if (Settings.debugMode.Value)
                         LogMessage("Just Drank Flask on slot " + flask.Slot, logmsg_time);
                     // if there are multiple flasks, drinking 1 of them at a time is enough.
@@ -578,7 +573,7 @@ namespace FlaskManager
                 }
                 else
                 {
-                    UpdateFlaskChargesInfo(flask);
+                    flask.UpdateFlaskChargesInfo();
                 }
 
             }
@@ -594,64 +589,7 @@ namespace FlaskManager
             return false;
         }
         #endregion
-        #region Keyboard Input
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = false)]
-        private static extern IntPtr SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
-        [return: MarshalAs(UnmanagedType.Bool)]
-        [DllImport("user32.dll", SetLastError = true)]
-        private static extern bool PostMessage(IntPtr hWnd, uint msg, UIntPtr wParam, UIntPtr lParam);
-        [DllImport("User32.dll")]
-        public static extern short GetAsyncKeyState(System.Windows.Forms.Keys vKey);
-        public void KeyDown(Keys Key)
-        {
-            SendMessage(gameHandle, 0x100, (int)Key, 0);
-        }
-        public void KeyUp(Keys Key)
-        {
-            SendMessage(gameHandle, 0x101, (int)Key, 0);
-        }
-        public void KeyPressRelease(Keys key)
-        {
-            KeyDown(key);
-            Thread.Sleep((int)(GameController.Game.IngameState.CurLatency));
-            // working as a double key.
-            //KeyUp(key);
-        }
-        private void Write(string text, params object[] args)
-        {
-            foreach (var character in string.Format(text, args))
-            {
-                PostMessage(gameHandle, 0x0102, new UIntPtr(character), UIntPtr.Zero);
-            }
-        }
-        #endregion
 
-        #region External Process Handle Helper
-                private int ExitPoe(string ExeName, string arguments)
-                {
-                    // Prepare the process to run
-                    ProcessStartInfo start = new ProcessStartInfo();
-                    // Enter in the command line arguments, everything you would enter after the executable name itself
-                    start.Arguments = arguments;
-                    // Enter the executable to run, including the complete path
-                    start.FileName = ExeName;
-                    // Do you want to show a console window?
-                    start.WindowStyle = ProcessWindowStyle.Hidden;
-                    start.CreateNoWindow = true;
-                    int exitCode;
-
-
-                    // Run the external process & wait for it to finish
-                    using (Process proc = Process.Start(start))
-                    {
-                        proc.WaitForExit();
-
-                        // Retrieve the app's exit code
-                        exitCode = proc.ExitCode;
-                    }
-                    return exitCode;
-                }
-        #endregion
         #region Chicken Auto Quit
         private void AutoChicken()
         {
@@ -663,7 +601,7 @@ namespace FlaskManager
                 {
                     try
                     {
-                       ExitPoe("cports.exe", "/close * * * * " + GameController.Window.Process.ProcessName + ".exe");
+                        PoeProcessHandler.ExitPoe("cports.exe", "/close * * * * " + GameController.Window.Process.ProcessName + ".exe");
                         if (Settings.debugMode.Value)
                             File.AppendAllText("autoflaskmanagerDebug.log", DateTime.Now +
                                 " AUTO QUIT: Your Health was at: " + (Math.Round(PlayerHealth.HPPercentage, 3) * 100 +
@@ -678,8 +616,8 @@ namespace FlaskManager
                 {
                     try
                     {
-                        
-                        ExitPoe("cports.exe", "/close * * * * " + GameController.Window.Process.ProcessName + ".exe");
+
+                        PoeProcessHandler.ExitPoe("cports.exe", "/close * * * * " + GameController.Window.Process.ProcessName + ".exe");
                         if (Settings.debugMode.Value)
                             File.AppendAllText("autoflaskmanagerDebug.log", DateTime.Now +
                                 " AUTO QUIT: Your Energy Shield was at: " + (Math.Round(PlayerHealth.HPPercentage, 3) * 100 +
@@ -875,145 +813,4 @@ namespace FlaskManager
         }
         #endregion
     }
-    #region Player Flasks
-    public class PlayerFlask
-    {
-        public string FlaskName;
-        public int Slot;
-        public bool isEnabled;
-
-        public Entity Item;
-        public FlaskAction FlaskAction1;
-        public FlaskAction FlaskAction2;
-
-        public int CurrentCharges;
-        public int UseCharges;
-        public int MaxCharges;
-        public ItemRarity flaskRarity;
-
-        private FlaskManagerSettings Settings;
-        public void SetSettings(FlaskManagerSettings s)
-        {
-            Settings = s;
-        }
-        public void EnableDisableFlask()
-        {
-            switch (Slot)
-            {
-                case 0:
-                    isEnabled = Settings.flaskSlot1Enable.Value;
-                    Settings.flaskSlot1Enable.OnValueChanged += this.EnableDisableFlask;
-                    break;
-                case 1:
-                    isEnabled = Settings.flaskSlot2Enable.Value;
-                    Settings.flaskSlot2Enable.OnValueChanged += this.EnableDisableFlask;
-                    break;
-                case 2:
-                    isEnabled = Settings.flaskSlot3Enable.Value;
-                    Settings.flaskSlot3Enable.OnValueChanged += this.EnableDisableFlask;
-                    break;
-                case 3:
-                    isEnabled = Settings.flaskSlot4Enable.Value;
-                    Settings.flaskSlot4Enable.OnValueChanged += this.EnableDisableFlask;
-                    break;
-                case 4:
-                    isEnabled = Settings.flaskSlot5Enable.Value;
-                    Settings.flaskSlot5Enable.OnValueChanged += this.EnableDisableFlask;
-                    break;
-                default:
-                    break;
-            }
-        }
-        ~PlayerFlask()
-        {
-            switch (Slot)
-            {
-                case 0:
-                    if (Settings.flaskSlot1Enable.OnValueChanged != null)
-                        Settings.flaskSlot1Enable.OnValueChanged -= this.EnableDisableFlask;
-                    break;
-                case 1:
-                    if (Settings.flaskSlot2Enable.OnValueChanged != null)
-                        Settings.flaskSlot2Enable.OnValueChanged -= this.EnableDisableFlask;
-                    break;
-                case 2:
-                    if (Settings.flaskSlot3Enable.OnValueChanged != null)
-                        Settings.flaskSlot3Enable.OnValueChanged -= this.EnableDisableFlask;
-                    break;
-                case 3:
-                    if (Settings.flaskSlot4Enable.OnValueChanged != null)
-                        Settings.flaskSlot4Enable.OnValueChanged -= this.EnableDisableFlask;
-                    break;
-                case 4:
-                    if (Settings.flaskSlot5Enable.OnValueChanged != null)
-                        Settings.flaskSlot5Enable.OnValueChanged -= this.EnableDisableFlask;
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
-    #endregion
-    #region Flask Types
-    public enum FlaskAction : int
-    {
-        IGNORE = 0,         // ignore mods and don't give error
-        NONE,               // flask isn't initilized.
-        LIFE,               //life, Blood of the Karui
-        MANA,               //mana, Doedre's Elixir, 
-                            //Zerphi's Last Breath, Lavianga's Spirit
-
-        HYBRID,             //hybrid flasks,
-
-        DEFENSE,            //bismuth, jade, stibnite, granite,
-                            //amethyst, ruby, sapphire, topaz,
-                            // aquamarine, quartz, Sin's Rebirth, 
-                            //Coruscating Elixir, Forbidden Taste,Rumi's Concoction
-                            //MODS: iron skin, reflexes, gluttony,
-                            // craving, resistance
-
-        UTILITY,            //Doedre's Elixir, Zerphi's Last Breath, Lavianga's Spirit
-
-        SPEEDRUN,           //quick silver, MOD: adrenaline,
-
-        OFFENSE,            //silver, sulphur, basalt, diamond,Taste of Hate, 
-                            //Kiara's Determination, Lion's Roar, The Overflowing Chalice, 
-                            //The Sorrow of the Divine,Rotgut, Witchfire Brew, Atziri's Promise, 
-                            //Dying Sun,Vessel of Vinktar
-                            //MOD: Fending
-
-        POISON_IMMUNE,      // MOD: curing
-        FREEZE_IMMUNE,      // MOD: heat
-        IGNITE_IMMUNE,      // MOD: dousing
-        SHOCK_IMMUNE,       // MOD: grounding
-        BLEED_IMMUNE,       // MOD: staunching
-        CURSE_IMMUNE,       // MOD: warding
-        UNIQUE_FLASK,       // All the milk shakes
-
-        //UNIQUE_lIFE,        //Blood of the Karui
-        //UNIQUE_MANA,        //Doedre's Elixir, Zerphi's Last Breath, Lavianga's Spirit
-        //UNIQUE_HYBRID,      //Divination Distillate, The Writhing Jar
-        //UNIQUE_DEFENSIVE,   //Sin's Rebirth, Coruscating Elixir, Forbidden Taste
-                              //Rumi's Concoction,
-        //UNIQUE_OFFENSIVE,   //Taste of Hate, Kiara's Determination, Lion's Roar
-        //The Overflowing Chalice, The Sorrow of the Divine,
-        //Rotgut, Witchfire Brew, Atziri's Promise, Dying Sun,
-        //Vessel of Vinktar 
-    }
-    #endregion
-    #region Keybindings
-    public class FlaskKeys
-    {
-        public Keys[] k;
-        public FlaskKeys(Keys k1, Keys k2, Keys k3, Keys k4, Keys k5)
-        {
-            k = new Keys[5];
-            k[0] = k1;
-            k[1] = k2;
-            k[2] = k3;
-            k[3] = k4;
-            k[4] = k5;
-        }
-    } 
-    #endregion
-}
+ }

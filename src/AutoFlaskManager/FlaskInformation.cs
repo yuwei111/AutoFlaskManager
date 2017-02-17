@@ -1,0 +1,6 @@
+﻿namespace FlaskManager
+{
+    class FlaskInformation
+    {
+    }
+}
