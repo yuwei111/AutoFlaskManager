@@ -39,7 +39,11 @@ namespace FlaskManager
         public void KeyPressRelease(Keys key)
         {
             KeyDown(key);
-            Thread.Sleep((int)(CurLatency));
+            int lat = (int)(CurLatency);
+            if (lat < 1000)
+                Thread.Sleep((int)(lat));
+            else
+                Thread.Sleep(1000);
             // working as a double key.
             //KeyUp(key);
         }
