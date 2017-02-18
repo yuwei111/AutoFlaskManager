@@ -168,9 +168,8 @@ namespace FlaskManager
             string flaskString = File.ReadAllText(flaskFilename);
             string json = File.ReadAllText(debufFilename);
             keyInfo = JsonConvert.DeserializeObject<FlaskKeys>(keyString);
-            flaskInfo = JsonConvert.DeserializeObject<FlaskInformation>(flaskString);
             debuffInfo = JsonConvert.DeserializeObject<DebuffPanelConfig>(json);
-
+            flaskInfo = JsonConvert.DeserializeObject<FlaskInformation>(flaskString);
             playerFlaskList = new List<PlayerFlask>();
             eleQueue = new Queue<Element>();
             debugDebuff = new Dictionary<string, float>();
@@ -319,7 +318,7 @@ namespace FlaskManager
                         {
                             //Enabling Unique flask action 2.
                             if (!flaskInfo.UniqueFlaskNames.TryGetValue(newFlask.FlaskName, out newFlask.FlaskAction2))
-                                LogError("Error: " + newFlask.FlaskName + " name not found. Report this error message.", errmsg_time);
+                                LogError("Error: " + newFlask.FlaskName + " unique name not found. Report this error message.", errmsg_time);
                         }
                         else
                         {
@@ -341,7 +340,7 @@ namespace FlaskManager
                             continue;
 
                         if(!flaskInfo.FlaskMods.TryGetValue(mod.Name, out action2))
-                            LogError("Error: " + mod.RawName + " mod not found. Is it unique flask? If not, report this error message.", errmsg_time);
+                            LogError("Error: " + mod.Name + " mod not found. Is it unique flask? If not, report this error message.", errmsg_time);
                         else if (action2 != FlaskAction.IGNORE)
                             newFlask.FlaskAction2 = action2;
                     }
