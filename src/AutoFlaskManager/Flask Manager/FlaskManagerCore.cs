@@ -305,11 +305,11 @@ namespace FlaskManager
                     newFlask.flaskRarity = flaskMods.ItemRarity;
                     newFlask.FlaskName = GameController.Files.BaseItemTypes.Translate(flaskItem.Path).BaseName;
                     newFlask.FlaskAction2 = FlaskAction.NONE;
+                    newFlask.FlaskAction1 = FlaskAction.NONE;
 
                     //Checking flask action based on flask name type.
-                    newFlask.FlaskAction1 = flaskInfo.FlaskTypes[newFlask.FlaskName];
-                    if (newFlask.FlaskAction1 == FlaskAction.NONE)
-                        LogError("Error: " + newFlask.FlaskName + " name not found. Is it unique flask? If not, report this error message.", errmsg_time);
+                    if (!flaskInfo.FlaskTypes.TryGetValue(newFlask.FlaskName, out newFlask.FlaskAction1))
+                        LogError("Error: " + newFlask.FlaskName + " name not found. Report this error message.", errmsg_time);
 
                     //Checking for unique flasks.
                     if (flaskMods.ItemRarity == ItemRarity.Unique)
@@ -318,7 +318,8 @@ namespace FlaskManager
                         if (Settings.uniqFlaskEnable.Value)
                         {
                             //Enabling Unique flask action 2.
-                            newFlask.FlaskAction2 = flaskInfo.UniqueFlaskNames[newFlask.FlaskName];
+                            if (!flaskInfo.UniqueFlaskNames.TryGetValue(newFlask.FlaskName, out newFlask.FlaskAction2))
+                                LogError("Error: " + newFlask.FlaskName + " name not found. Report this error message.", errmsg_time);
                         }
                         else
                         {
@@ -339,8 +340,7 @@ namespace FlaskManager
                         if (flaskMods.ItemRarity == ItemRarity.Unique)
                             continue;
 
-                        action2 = flaskInfo.FlaskMods[mod.RawName];
-                        if (action2 == FlaskAction.NONE)
+                        if(!flaskInfo.FlaskMods.TryGetValue(mod.Name, out action2))
                             LogError("Error: " + mod.RawName + " mod not found. Is it unique flask? If not, report this error message.", errmsg_time);
                         else if (action2 != FlaskAction.IGNORE)
                             newFlask.FlaskAction2 = action2;
