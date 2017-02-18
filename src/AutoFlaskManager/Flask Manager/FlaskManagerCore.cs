@@ -432,7 +432,7 @@ namespace FlaskManager
                         LogError("Error: Cannot find cports.exe, you must die now!", errmsg_time);
                     }
                 }
-                if (Math.Round(PlayerHealth.HPPercentage, 3) * 100 < (Settings.percentESQuit.Value))
+                if (Math.Round(PlayerHealth.ESPercentage, 3) * 100 < (Settings.percentESQuit.Value))
                 {
                     try
                     {
@@ -440,7 +440,7 @@ namespace FlaskManager
                         PoeProcessHandler.ExitPoe("cports.exe", "/close * * * * " + GameController.Window.Process.ProcessName + ".exe");
                         if (Settings.debugMode.Value)
                             File.AppendAllText("autoflaskmanagerDebug.log", DateTime.Now +
-                                " AUTO QUIT: Your Energy Shield was at: " + (Math.Round(PlayerHealth.HPPercentage, 3) * 100 +
+                                " AUTO QUIT: Your Energy Shield was at: " + (Math.Round(PlayerHealth.ESPercentage, 3) * 100 +
                                 "%" + Environment.NewLine));
                     }
                     catch (Exception)
