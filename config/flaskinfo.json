@@ -32,78 +32,16 @@
         CURSE_IMMUNE = 14,       // MOD: warding
         UNIQUE_FLASK = 15,       // All the milk shakes
 */
-{
-"ignore_pattern":{
-"levelrequirement":0,
-"duration":0,
-"charges":0,
-"recharge":0,
-"recovery":0,
-"extramana":0,
-"extralife":0,
-"consecrate":0,
-"smoke":0,
-"ground":0,
-"flaskhealthminions":0,
-}
-"defense_pattern":{
-"bismuth":5,
-"jade":5,
-"stibnite":5,
-"granite":5,
-"amethyst":5,
-"ruby":5,
-"sapphire":5,
-"topaz":5,
-"aquamarine":5,
-"quartz":5,
-"armour":5,
-"evasion":5,
-"lifeleech":5,
-"manaleech":5,
-"resistance":5,
-}
-"offesnive_pattener":{
-"silver":8,
-"sulphur":8,
-"basalt":8,
-"diamond":8,
-}
-"flaskname":{
-"lfie":2,
-"mana":3,
-"hybrid":4,
-"quicksilver":7,
-}
-"flaskmodRawName":{
-"posion":9,
-"chill" && "ground":10,
-"burning":11,
-"shock":12,
-"bleeding":13,
-"curse":14,
-"movementspeed":7,
-"unique":15,
-}
-"uniqueFlaskname":{
-"Blood of the Karui":2,
-"Doedre's Elixir":3,
-"Lavianga's Spirit":3,
-"Zerphi's Last Breath":3,
-"Coruscating Elixir":5,
-"Fobidden Taste":5,
-"Rumi's Concoction":5,
-"Sin's Rebirth":5,
-"Divination Distillate":6,
-"The Writhing Jar":6,
-"Atziri's Promise":8,
-"Dying Sun":8,
-"Kiara's Determination":8,
-"Lion's Roar":8,
-"Rotgut":8,
-"Taste of Hate":8,
-"The Overflowing Chalice":8,
-"The Sorrow of the Divine":8,
-"Vessel of Vinktar":8,
-"Witchfire Brew":8,
-}
+  "UniqueFlaskNames": {
+    "test1":0,
+    "test2":0,
+    "test3":0
+  },
+  "FlaskTypes": {
+    "test1":0,
+    "test2":0
+  },
+  "FlaskMods": {
+    "test1":0,
+    "test2":0
+  }

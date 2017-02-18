@@ -1,0 +1,297 @@
+/*
+        IGNORE = 0,         // ignore mods and don't give error
+        NONE = 1,               // flask isn't initilized.
+        LIFE = 2,               //life, Blood of the Karui
+        MANA = 3,               //mana, Doedre's Elixir, 
+                            //Zerphi's Last Breath, Lavianga's Spirit
+
+        HYBRID = 4,             //hybrid flasks,
+
+        DEFENSE = 5,            //bismuth, jade, stibnite, granite,
+                            //amethyst, ruby, sapphire, topaz,
+                            // aquamarine, quartz, Sin's Rebirth, 
+                            //Coruscating Elixir, Forbidden Taste,Rumi's Concoction
+                            //MODS: iron skin, reflexes, gluttony,
+                            // craving, resistance
+
+        UTILITY = 6,            //Doedre's Elixir, Zerphi's Last Breath, Lavianga's Spirit
+
+        SPEEDRUN = 7,           //quick silver, MOD: adrenaline,
+
+        OFFENSE = 8,            //silver, sulphur, basalt, diamond,Taste of Hate, 
+                            //Kiara's Determination, Lion's Roar, The Overflowing Chalice, 
+                            //The Sorrow of the Divine,Rotgut, Witchfire Brew, Atziri's Promise, 
+                            //Dying Sun,Vessel of Vinktar
+                            //MOD: Fending
+
+        POISON_IMMUNE = 9,      // MOD: curing
+        FREEZE_IMMUNE = 10,      // MOD: heat
+        IGNITE_IMMUNE = 11,      // MOD: dousing
+        SHOCK_IMMUNE = 12,       // MOD: grounding
+        BLEED_IMMUNE = 13,       // MOD: staunching
+        CURSE_IMMUNE = 14,       // MOD: warding
+        UNIQUE_FLASK = 15,       // All the milk shakes
+*/
+{
+"ignore_pattern":{
+"levelrequirement":0,
+"duration":0,
+"charges":0,
+"recharge":0,
+"recovery":0,
+"extramana":0,
+"extralife":0,
+"consecrate":0,
+"smoke":0,
+"ground":0,
+"flaskhealthminions":0,
+}
+"defense_pattern":{
+"bismuth":5,
+"jade":5,
+"stibnite":5,
+"granite":5,
+"amethyst":5,
+"ruby":5,
+"sapphire":5,
+"topaz":5,
+"aquamarine":5,
+"quartz":5,
+"armour":5,
+"evasion":5,
+"lifeleech":5,
+"manaleech":5,
+"resistance":5,
+}
+"offesnive_pattener":{
+"silver":8,
+"sulphur":8,
+"basalt":8,
+"diamond":8,
+}
+"flaskname":{
+"lfie":2,
+"mana":3,
+"hybrid":4,
+"quicksilver":7,
+}
+"flaskmodRawName":{
+"posion":9,
+"chill" && "ground":10,
+"burning":11,
+"shock":12,
+"bleeding":13,
+"curse":14,
+"movementspeed":7,
+"unique":15,
+}
+"uniqueFlaskname":{
+"Blood of the Karui":2,
+"Doedre's Elixir":3,
+"Lavianga's Spirit":3,
+"Zerphi's Last Breath":3,
+"Coruscating Elixir":5,
+"Fobidden Taste":5,
+"Rumi's Concoction":5,
+"Sin's Rebirth":5,
+"Divination Distillate":6,
+"The Writhing Jar":6,
+"Atziri's Promise":8,
+"Dying Sun":8,
+"Kiara's Determination":8,
+"Lion's Roar":8,
+"Rotgut":8,
+"Taste of Hate":8,
+"The Overflowing Chalice":8,
+"The Sorrow of the Divine":8,
+"Vessel of Vinktar":8,
+"Witchfire Brew":8,
+}
+
+
+        #region Flask Information
+        #region Flask Information :Unique Flasks
+        private FlaskAction Unique_name_to_action(String uniqueFlaskname)
+        {
+            FlaskAction _ret = FlaskAction.UNIQUE_FLASK;
+            switch (uniqueFlaskname)
+            {
+                //Offenisve
+                case "Atziri's Promise":
+                    _ret = FlaskAction.OFFENSE;
+                    break;
+                case "Dying Sun":
+                    _ret = FlaskAction.OFFENSE;
+                    break;
+                case "Kiara's Determination":
+                    _ret = FlaskAction.OFFENSE;
+                    break;
+                case "Lion's Roar":
+                    _ret = FlaskAction.OFFENSE;
+                    break;
+                case "Rotgut":
+                    _ret = FlaskAction.OFFENSE;
+                    break;
+                case "Taste of Hate":
+                    _ret = FlaskAction.OFFENSE;
+                    break;
+                case "The Overflowing Chalice":
+                    _ret = FlaskAction.OFFENSE;
+                    break;
+                case "The Sorrow of the Divine":
+                    _ret = FlaskAction.OFFENSE;
+                    break;
+                case "Vessel of Vinktar":
+                    _ret = FlaskAction.OFFENSE;
+                    break;
+                case "Witchfire Brew":
+                    _ret = FlaskAction.OFFENSE;
+                    break;
+                //Defesnive
+                case "Coruscating Elixir":
+                    _ret = FlaskAction.DEFENSE;
+                    break;
+                case "Fobidden Taste":
+                    _ret = FlaskAction.DEFENSE;
+                    break;
+                case "Rumi's Concoction":
+                    _ret = FlaskAction.DEFENSE;
+                    break;
+                case "Sin's Rebirth":
+                    _ret = FlaskAction.DEFENSE;
+                    break;
+                //LIfe
+                case "Blood of the Karui":
+                    _ret = FlaskAction.LIFE;
+                    break;
+                //Mana
+                case "Doedre's Elixir":
+                    _ret = FlaskAction.MANA;
+                    break;
+                case "Lavianga's Spirit":
+                    _ret = FlaskAction.MANA;
+                    break;
+                case "Zerphi's Last Breath":
+                    _ret = FlaskAction.MANA;
+                    break;
+                //Utility
+                case "Divination Distillate":
+                    _ret = FlaskAction.UTILITY;
+                    break;
+                case "The Writhing Jar":
+                    _ret = FlaskAction.UTILITY;
+                    break;
+                default:
+                    _ret = FlaskAction.UNIQUE_FLASK;
+                    break;
+            }
+            return _ret;
+        }
+        // Legacy Unique String search method 
+        /* private FlaskAction Unique_name_to_action(string uniqueFlaskname)
+       {
+           //Offensive Flask
+           if (uniqueFlaskname.Contains("Atziri's Promise"))
+               return FlaskAction.OFFENSE;
+           else if (uniqueFlaskname.Contains("Dying Sun"))
+               return FlaskAction.OFFENSE;
+           else if (uniqueFlaskname.Contains("Kiara's Determination"))
+               return FlaskAction.OFFENSE;
+           else if (uniqueFlaskname.Contains("Lion's Roar"))
+               return FlaskAction.OFFENSE;
+           else if (uniqueFlaskname.Contains("Rotgut"))
+               return FlaskAction.OFFENSE;
+           else if (uniqueFlaskname.Contains("Taste of Hate"))
+               return FlaskAction.OFFENSE;
+           else if (uniqueFlaskname.Contains("The Overflowing Chalice"))
+               return FlaskAction.OFFENSE;
+           else if (uniqueFlaskname.Contains("The Sorrow of the Divine"))
+               return FlaskAction.OFFENSE;
+           else if (uniqueFlaskname.Contains("Vessel of Vinktar"))
+               return FlaskAction.OFFENSE;
+           else if (uniqueFlaskname.Contains("Witchfire Brew"))
+               return FlaskAction.OFFENSE;
+
+           //Defensive Flask
+           else if (uniqueFlaskname.Contains("Coruscating Elixir"))
+               return FlaskAction.DEFENSE;
+           else if (uniqueFlaskname.Contains("Fobidden Taste"))
+               return FlaskAction.DEFENSE;
+           else if (uniqueFlaskname.Contains("Rumi's Concoction"))
+               return FlaskAction.DEFENSE;
+           else if (uniqueFlaskname.Contains("Sin's Rebirth"))
+               return FlaskAction.DEFENSE;
+
+           //life
+           else if (uniqueFlaskname.Contains("Blood of the Karui"))
+               return FlaskAction.LIFE;
+
+           //Mana
+           else if (uniqueFlaskname.Contains("Doedre's Elixir"))
+               return FlaskAction.MANA;
+           else if (uniqueFlaskname.Contains("Lavianga's Spirit"))
+               return FlaskAction.MANA;
+           else if (uniqueFlaskname.Contains("Zerphi's Last Breath"))
+               return FlaskAction.MANA;
+
+           //Utility
+           else if (uniqueFlaskname.Contains("Divination Distillate"))
+               return FlaskAction.UTILITY;
+           else if (uniqueFlaskname.Contains("The Writhing Jar"))
+               return FlaskAction.UTILITY;
+           else
+               return FlaskAction.UNIQUE_FLASK;
+       }
+       */
+        #endregion
+        private FlaskAction Flask_name_to_action(string flaskname)
+        {
+            flaskname = flaskname.ToLower();
+            FlaskAction ret = FlaskAction.NONE;
+            String defense_pattern = @"bismuth|jade|stibnite|granite|amethyst|ruby|sapphire|topaz|aquamarine|quartz";
+            String offense_pattern = @"silver|sulphur|basalt|diamond";
+            if (flaskname.Contains("life"))
+                ret = FlaskAction.LIFE;
+            else if (flaskname.Contains("mana"))
+                ret = FlaskAction.MANA;
+            else if (flaskname.Contains("hybrid"))
+                ret = FlaskAction.HYBRID;
+            else if (flaskname.Contains("quicksilver"))
+                ret = FlaskAction.SPEEDRUN;
+            else if (System.Text.RegularExpressions.Regex.IsMatch(flaskname, defense_pattern))
+                ret = FlaskAction.DEFENSE;
+            else if (System.Text.RegularExpressions.Regex.IsMatch(flaskname, offense_pattern))
+                ret = FlaskAction.OFFENSE;
+            return ret;
+        }
+        private FlaskAction Flask_mod_to_action(string flaskmodRawName)
+        {
+            flaskmodRawName = flaskmodRawName.ToLower();
+            FlaskAction ret = FlaskAction.NONE;
+            String defense_pattern = @"armour|evasion|lifeleech|manaleech|resistance";
+            String ignore_pattern = @"levelrequirement|duration|charges|recharge|recovery|extramana|extralife|consecrate|smoke|ground|flaskhealthminions";
+            if (flaskmodRawName.Contains("unique"))
+                ret = FlaskAction.UNIQUE_FLASK;
+            else if (flaskmodRawName.Contains("poison"))
+                ret = FlaskAction.POISON_IMMUNE;
+            else if (flaskmodRawName.Contains("chill") && !flaskmodRawName.Contains("ground"))
+                ret = FlaskAction.FREEZE_IMMUNE;
+            else if (flaskmodRawName.Contains("burning"))
+                ret = FlaskAction.IGNITE_IMMUNE;
+            else if (flaskmodRawName.Contains("shock"))
+                ret = FlaskAction.SHOCK_IMMUNE;
+            else if (flaskmodRawName.Contains("bleeding"))
+                ret = FlaskAction.BLEED_IMMUNE;
+            else if (flaskmodRawName.Contains("curse"))
+                ret = FlaskAction.CURSE_IMMUNE;
+            else if (flaskmodRawName.Contains("knockback"))
+                ret = FlaskAction.OFFENSE;
+            else if (flaskmodRawName.Contains("movementspeed"))
+                ret = FlaskAction.SPEEDRUN;
+            else if (System.Text.RegularExpressions.Regex.IsMatch(flaskmodRawName, defense_pattern))
+                ret = FlaskAction.DEFENSE;
+            else if (System.Text.RegularExpressions.Regex.IsMatch(flaskmodRawName, ignore_pattern))
+                ret = FlaskAction.IGNORE;
+            return ret;
+        }
+        #endregion
