@@ -29,14 +29,15 @@ namespace FlaskManager
         private bool isTown;
         private bool isHideout;
         private DebuffPanelConfig debuffInfo;
+        private FlaskInformation flaskInfo;
+        private FlaskKeys keyInfo;
+        private List<PlayerFlask> playerFlaskList;
 
         private float moveCounter;
         private float lastManaUsed;
         private float lastLifeUsed;
         private float lastDefUsed;
         private float lastOffUsed;
-        private List<PlayerFlask> playerFlaskList;
-        private FlaskKeys keyinfo;
         #endregion
 
         #region FlaskManagerInit
@@ -146,19 +147,31 @@ namespace FlaskManager
         public override void Initialise()
         {
             PluginName = "Flask Manager";
-            if (File.Exists(PluginDirectory + @"/config/flaskbind.json"))
+            var bindFilename = PluginDirectory + @"/config/flaskbind.json";
+            var flaskFilename = PluginDirectory + @"/config/flaskinfo.json";
+            var debufFilename = "config/debuffPanel.json";
+            if (!File.Exists(bindFilename))
             {
-                string keyfile = File.ReadAllText(PluginDirectory + @"/config/flaskbind.json");
-                keyinfo = JsonConvert.DeserializeObject<FlaskKeys>(keyfile);
+                LogError("Cannot find " + bindFilename + " file. This plugin will exit.", errmsg_time);
+                return;
             }
-            else
+            if (!File.Exists(flaskFilename))
             {
-                keyinfo = new FlaskKeys(Keys.D1, Keys.D2, Keys.D3, Keys.D4, Keys.D5);
-                File.WriteAllText(PluginDirectory + @"/config/flaskbind.json", JsonConvert.SerializeObject(keyinfo));
+                LogError("Cannot find " + flaskFilename + " file. This plugin will exit.", errmsg_time);
+                return;
             }
-            playerFlaskList = new List<PlayerFlask>();
-            string json = File.ReadAllText("config/debuffPanel.json");
+            if (!File.Exists(debufFilename))
+            {
+                LogError("Cannot find " + debufFilename + " file. This plugin will exit.", errmsg_time);
+            }
+            string keyString = File.ReadAllText(bindFilename);
+            string flaskString = File.ReadAllText(flaskFilename);
+            string json = File.ReadAllText(debufFilename);
+            keyInfo = JsonConvert.DeserializeObject<FlaskKeys>(keyString);
+            flaskInfo = JsonConvert.DeserializeObject<FlaskInformation>(flaskString);
             debuffInfo = JsonConvert.DeserializeObject<DebuffPanelConfig>(json);
+
+            playerFlaskList = new List<PlayerFlask>();
             eleQueue = new Queue<Element>();
             debugDebuff = new Dictionary<string, float>();
             OnFlaskManagerToggle();
@@ -294,20 +307,18 @@ namespace FlaskManager
                     newFlask.FlaskAction2 = FlaskAction.NONE;
 
                     //Checking flask action based on flask name type.
-                    newFlask.FlaskAction1 = Flask_name_to_action(newFlask.FlaskName);
+                    newFlask.FlaskAction1 = flaskInfo.FlaskTypes[newFlask.FlaskName];
                     if (newFlask.FlaskAction1 == FlaskAction.NONE)
                         LogError("Error: " + newFlask.FlaskName + " name not found. Is it unique flask? If not, report this error message.", errmsg_time);
 
                     //Checking for unique flasks.
                     if (flaskMods.ItemRarity == ItemRarity.Unique)
                     {
- 
-                       if (Settings.uniqFlaskEnable.Value)
                         newFlask.FlaskName = flaskMods.UniqueName;
                         if (Settings.uniqFlaskEnable.Value)
                         {
                             //Enabling Unique flask action 2.
-                            newFlask.FlaskAction2 = Unique_name_to_action(flaskMods.UniqueName);
+                            newFlask.FlaskAction2 = flaskInfo.UniqueFlaskNames[newFlask.FlaskName];
                         }
                         else
                         {
@@ -328,7 +339,7 @@ namespace FlaskManager
                         if (flaskMods.ItemRarity == ItemRarity.Unique)
                             continue;
 
-                        action2 = Flask_mod_to_action(mod.RawName);
+                        action2 = flaskInfo.FlaskMods[mod.RawName];
                         if (action2 == FlaskAction.NONE)
                             LogError("Error: " + mod.RawName + " mod not found. Is it unique flask? If not, report this error message.", errmsg_time);
                         else if (action2 != FlaskAction.IGNORE)
@@ -549,11 +560,6 @@ namespace FlaskManager
         }
         #endregion
         #region Flask Helper Functions
-        private void UseFlask(PlayerFlask flask)
-        {
-            keyboard.setLatency(GameController.Game.IngameState.CurLatency);
-            keyboard.KeyPressRelease(keyinfo.k[flask.Slot]);
-        }
         private bool FindDrinkFlask(FlaskAction type1, FlaskAction type2, bool shouldDrinkAll = false)
         {
             bool hasDrunk = false;
@@ -562,7 +568,8 @@ namespace FlaskManager
             {
                 if (flask.isEnabled && flask.CurrentCharges >= flask.UseCharges)
                 {
-                    UseFlask(flask);
+                    keyboard.setLatency(GameController.Game.IngameState.CurLatency);
+                    keyboard.KeyPressRelease(keyInfo.k[flask.Slot]);
                     flask.UpdateFlaskChargesInfo();
                     if (Settings.debugMode.Value)
                         LogMessage("Just Drank Flask on slot " + flask.Slot, logmsg_time);
@@ -632,7 +639,6 @@ namespace FlaskManager
             return;
         }
         #endregion 
-        
         #region Auto Health Flasks
         private void LifeLogic()
         {
