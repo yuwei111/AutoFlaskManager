@@ -34,9 +34,9 @@
     <RunPostBuildEvent>Always</RunPostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="KeyboardHelper.cs" />
-    <Compile Include="PlayerFlask.cs" />
-    <Compile Include="PoeProcessHandler.cs" />
+    <Compile Include="Helpers\KeyboardHelper.cs" />
+    <Compile Include="Flask Components\PlayerFlask.cs" />
+    <Compile Include="Helpers\PoeProcessHandler.cs" />
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\..\..\Newtonsoft.Json.dll</HintPath>
       <Private>False</Private>
@@ -73,11 +73,11 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Compile Include="FlaskAction.cs" />
-    <Compile Include="FlaskInformation.cs" />
-    <Compile Include="FlaskKeys.cs" />
-    <Compile Include="FlaskManagerCore.cs" />
-    <Compile Include="FlaskManagerSettings.cs" />
+    <Compile Include="Flask Components\FlaskAction.cs" />
+    <Compile Include="Flask Components\FlaskInformation.cs" />
+    <Compile Include="Flask Components\FlaskKeys.cs" />
+    <Compile Include="Flask Manager\FlaskManagerCore.cs" />
+    <Compile Include="Flask Manager\FlaskManagerSettings.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
