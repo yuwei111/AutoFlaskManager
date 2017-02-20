@@ -3,7 +3,6 @@ using PoeHUD.Poe.Components;
 using PoeHUD.Plugins;
 using System.Collections.Generic;
 using PoeHUD.Poe;
-using System.Windows.Forms;
 using System.Threading;
 using System;
 using PoeHUD.Poe.EntityComponents;
@@ -185,7 +184,7 @@ namespace FlaskManager
                 {
                     if (Settings.debugMode.Value)
                         LogMessage("Enabling FlaskManager.", logmsg_time);
-                    moveCounter = 0;
+                    moveCounter = 0f;
                     isThreadEnabled = true;
                     lastManaUsed = 100f;
                     lastLifeUsed = 100f;
@@ -532,7 +531,7 @@ namespace FlaskManager
             var LocalPlayer = GameController.Game.IngameState.Data.LocalPlayer;
             var PlayerHealth = LocalPlayer.GetComponent<Life>();
             var PlayerMovement = LocalPlayer.GetComponent<Actor>();
-            moveCounter = PlayerMovement.isMoving ? moveCounter += 0.1f : 0;
+            moveCounter = PlayerMovement.isMoving ? moveCounter += 100f : 0;
             if (LocalPlayer.IsValid && Settings.quicksilverEnable.Value && moveCounter >= Settings.quicksilverDurration.Value &&
                 !PlayerHealth.HasBuff("flask_bonus_movement_speed") &&
                 !PlayerHealth.HasBuff("flask_utility_sprint"))

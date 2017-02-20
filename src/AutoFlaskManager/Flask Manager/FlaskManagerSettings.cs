@@ -32,7 +32,7 @@ namespace FlaskManager
             ailmentDur = new RangeNode<int>(0, 0, 5);
             //Quicksilver
             quicksilverEnable = false;
-            quicksilverDurration = new RangeNode<float>(1.5f, 0f, 10f);
+            quicksilverDurration = new RangeNode<float>(500f, 0f, 5000f);
             //Defensive Flask
             defFlaskEnable = false;
             hPDefensive = new RangeNode<int>(50, 0, 100);
@@ -116,7 +116,7 @@ namespace FlaskManager
         #region Quick Sivler Flask Menu
         [Menu("QuickSilver Flask", 30)]
         public ToggleNode quicksilverEnable { get; set; }
-        [Menu("Use After Moving Post (s)", 31, 30)]
+        [Menu("Use After Moving Post (millisecond)", 31, 30)]
         public RangeNode<float> quicksilverDurration { get; set; }
         #endregion
 
