@@ -17,8 +17,8 @@ namespace FlaskManager
             //HP/MANA
             autoFlask = false;
             perHPFlask = new RangeNode<int>(60, 0, 100);
-            HPDelay = new RangeNode<float>(1f, 0f, 4f);
-            ManaDelay = new RangeNode<float>(1f, 0f, 4f);
+            HPDelay = new RangeNode<float>(1000f, 0f, 5000f);
+            ManaDelay = new RangeNode<float>(1000f, 0f, 5000f);
             PerManaFlask = new RangeNode<float>(25f, 0, 100);
             //Ailment Flask
             remAilment = false;
@@ -37,12 +37,12 @@ namespace FlaskManager
             defFlaskEnable = false;
             hPDefensive = new RangeNode<int>(50, 0, 100);
             eSDefensive = new RangeNode<int>(50, 0, 100);
-            DefensiveDelay = new RangeNode<float>(3f, 2f, 10f);
+            DefensiveDelay = new RangeNode<float>(3000f, 0f, 10000f);
             //Offensive Flask
             offFlaskEnable = false;
             hpOffensive = new RangeNode<int>(50, 0, 100);
             esOffensive = new RangeNode<int>(50, 0, 100);
-            OffensiveDelay = new RangeNode<float>(3f, 2f, 10f);
+            OffensiveDelay = new RangeNode<float>(3000f, 0f, 10000f);
             //Unique Flask
             uniqFlaskEnable = false;
             // Settings

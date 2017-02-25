@@ -17,7 +17,6 @@ namespace FlaskManager
 {
     public class FlaskManagerCore : BaseSettingsPlugin<FlaskManagerSettings>
     {
-        #region FlaskManagerCore Var
         private readonly int logmsg_time = 3;
         private readonly int errmsg_time = 10;
         private bool isThreadEnabled;
@@ -37,7 +36,6 @@ namespace FlaskManager
         private float lastLifeUsed;
         private float lastDefUsed;
         private float lastOffUsed;
-        #endregion
 
         #region FlaskManagerInit
         public void SplashPage()
@@ -186,10 +184,10 @@ namespace FlaskManager
                         LogMessage("Enabling FlaskManager.", logmsg_time);
                     moveCounter = 0f;
                     isThreadEnabled = true;
-                    lastManaUsed = 100f;
-                    lastLifeUsed = 100f;
-                    lastDefUsed = 100f;
-                    lastOffUsed = 100f;
+                    lastManaUsed = 100000f;
+                    lastLifeUsed = 100000f;
+                    lastDefUsed = 100000f;
+                    lastOffUsed = 100000f;
                     isTown = true;
                     isHideout = false;
                     keyboard = new KeyboardHelper(GameController);
@@ -416,7 +414,7 @@ namespace FlaskManager
             var PlayerHealth = LocalPlayer.GetComponent<Life>();
             if (Settings.isPercentQuit.Value && LocalPlayer.IsValid)
             {
-                if (Math.Round(PlayerHealth.HPPercentage,3) *100 < (Settings.percentHPQuit.Value))
+                if (Math.Round(PlayerHealth.HPPercentage,3) * 100 < (Settings.percentHPQuit.Value))
                 {
                     try
                     {
@@ -456,7 +454,7 @@ namespace FlaskManager
         {
             var LocalPlayer = GameController.Game.IngameState.Data.LocalPlayer;
             var PlayerHealth = LocalPlayer.GetComponent<Life>();
-            lastLifeUsed += 0.1f;
+            lastLifeUsed += 100f;
             if (lastLifeUsed < Settings.HPDelay.Value)
                 return;
             if (Settings.autoFlask.Value && LocalPlayer.IsValid)
@@ -476,7 +474,7 @@ namespace FlaskManager
         {
             var LocalPlayer = GameController.Game.IngameState.Data.LocalPlayer;
             var PlayerHealth = LocalPlayer.GetComponent<Life>();
-            lastManaUsed += 0.1f;
+            lastManaUsed += 100f;
             if (lastManaUsed < Settings.ManaDelay.Value)
                 return;
             if (Settings.autoFlask.Value && LocalPlayer.IsValid)
@@ -545,7 +543,7 @@ namespace FlaskManager
         {
             var LocalPlayer = GameController.Game.IngameState.Data.LocalPlayer;
             var PlayerHealth = LocalPlayer.GetComponent<Life>();
-            lastDefUsed += 0.1f;
+            lastDefUsed += 100f;
             if (lastDefUsed < Settings.DefensiveDelay.Value)
                 return;
             if (Settings.defFlaskEnable.Value && LocalPlayer.IsValid)
@@ -564,7 +562,7 @@ namespace FlaskManager
         {
             var LocalPlayer = GameController.Game.IngameState.Data.LocalPlayer;
             var PlayerHealth = LocalPlayer.GetComponent<Life>();
-            lastOffUsed += 0.1f;
+            lastOffUsed += 100f;
             if (lastOffUsed < Settings.OffensiveDelay.Value)
                 return;
             if (Settings.offFlaskEnable.Value && LocalPlayer.IsValid)
