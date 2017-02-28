@@ -138,7 +138,7 @@ namespace FlaskManager
             if (Settings.debugMode.Value)
                 foreach (var key in debugDebuff)
                 {
-                    File.AppendAllText("autoflaskmanagerDebug.log", DateTime.Now + key.Key + " : " + key.Value + Environment.NewLine);
+                    File.AppendAllText("autoflaskmanagerDebug.log", DateTime.Now + " " + key.Key + " : " + key.Value + Environment.NewLine);
                 }
         }
         public override void Initialise()

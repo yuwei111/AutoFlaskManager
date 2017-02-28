@@ -29,7 +29,7 @@ namespace FlaskManager
             remPoison = false;
             remBleed = false;
             corrptCount = new RangeNode<int>(10, 1, 20);
-            ailmentDur = new RangeNode<int>(0, 0, 5);
+            ailmentDur = new RangeNode<int>(0, 0, 5000);
             //Quicksilver
             quicksilverEnable = false;
             quicksilverDurration = new RangeNode<float>(500f, 0f, 5000f);
@@ -84,11 +84,11 @@ namespace FlaskManager
         public ToggleNode autoFlask { get; set; }
         [Menu("Min Life % Auto HP Flask", 11, 10)]
         public RangeNode<int> perHPFlask { get; set; }
-        [Menu("HP Flask Delay", 12, 10)]
+        [Menu("HP Flask Delay (millisecond)", 12, 10)]
         public RangeNode<float> HPDelay { get; set; }
         [Menu("Min Mana % Auto Mana Flask", 13, 10)]
         public RangeNode<float> PerManaFlask { get; set; }
-        [Menu("Mana Flask Delay", 14, 10)]
+        [Menu("Mana Flask Delay (millisecond)", 14, 10)]
         public RangeNode<float> ManaDelay { get; set; }
         #endregion
 
@@ -109,7 +109,7 @@ namespace FlaskManager
         public ToggleNode remBleed { get; set; }
         [Menu("Corrupting Blood Stacks", 27, 20)]
         public RangeNode<int> corrptCount { get; set; }
-        [Menu("Remove Ailment Post Duration (s)", 28, 20)]
+        [Menu("Remove Ailment Post Duration (millisecond)", 28, 20)]
         public RangeNode<int> ailmentDur { get; set; }
         #endregion
 
@@ -127,7 +127,7 @@ namespace FlaskManager
         public RangeNode<int> hPDefensive { get; set; }
         [Menu("Min ES % Auto Defensive Flask", 42, 40)]
         public RangeNode<int> eSDefensive { get; set; }
-        [Menu("Defensive Flask Delay", 43, 40)]
+        [Menu("Defensive Flask Delay (millisecond)", 43, 40)]
         public RangeNode<float> DefensiveDelay { get; set; }
         #endregion
 
@@ -138,7 +138,7 @@ namespace FlaskManager
         public RangeNode<int> hpOffensive { get; set; }
         [Menu("Min ES % Auto Offensive Flask", 52, 50)]
         public RangeNode<int> esOffensive { get; set; }
-        [Menu("Offensive Flask Delay", 53, 50)]
+        [Menu("Offensive Flask Delay (millisecond)", 53, 50)]
         public RangeNode<float> OffensiveDelay { get; set; }
         #endregion
 
