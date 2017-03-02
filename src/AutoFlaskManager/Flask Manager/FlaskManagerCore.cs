@@ -19,7 +19,6 @@ namespace FlaskManager
     {
         private readonly int logmsg_time = 3;
         private readonly int errmsg_time = 10;
-        private bool isThreadEnabled;
         private KeyboardHelper keyboard;
         private Queue<Element> eleQueue;
         private Dictionary<string, float> debugDebuff;
@@ -184,7 +183,6 @@ namespace FlaskManager
                     if (Settings.debugMode.Value)
                         LogMessage("Enabling FlaskManager.", logmsg_time);
                     moveCounter = 0f;
-                    isThreadEnabled = true;
                     lastManaUsed = 100000f;
                     lastLifeUsed = 100000f;
                     lastDefUsed = 100000f;
@@ -201,7 +199,6 @@ namespace FlaskManager
                     if (Settings.debugMode.Value)
                         LogMessage("Disabling FlaskManager.", logmsg_time);
                     playerFlaskList.Clear();
-                    isThreadEnabled = false;
                 }
             }
             catch (Exception)
@@ -215,16 +212,8 @@ namespace FlaskManager
             if (Settings.Enable.Value)
             {
                 LogMessage("Area has been changed. Loading flasks info.", logmsg_time);
-
-                if (area.CurrentArea.IsHideout)
-                    isHideout = true;
-                else
-                    isHideout = false;
-
-                if (area.CurrentArea.IsTown)
-                    isTown = true;
-                else
-                    isTown = false;
+                isHideout = area.CurrentArea.IsHideout;
+                isTown = area.CurrentArea.IsTown;
             }
         }
         #endregion
@@ -626,7 +615,7 @@ namespace FlaskManager
         }
         private void FlaskThread()
         {
-            while (isThreadEnabled)
+            while (Settings.Enable.Value)
             {
                 FlaskMain();
                 for (int j = 0; j < 10; j++)
