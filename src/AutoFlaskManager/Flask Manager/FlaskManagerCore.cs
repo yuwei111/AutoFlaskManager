@@ -160,6 +160,7 @@ namespace FlaskManager
             if (!File.Exists(debufFilename))
             {
                 LogError("Cannot find " + debufFilename + " file. This plugin will exit.", errmsg_time);
+                return;
             }
             string keyString = File.ReadAllText(bindFilename);
             string flaskString = File.ReadAllText(flaskFilename);
@@ -379,7 +380,8 @@ namespace FlaskManager
                 if (flask.isEnabled && flask.CurrentCharges >= flask.UseCharges)
                 {
                     keyboard.setLatency(GameController.Game.IngameState.CurLatency);
-                    keyboard.KeyPressRelease(keyInfo.k[flask.Slot]);
+                    if (!keyboard.KeyPressRelease(keyInfo.k[flask.Slot]))
+                        LogError("Warning: High latency ( more than 1000 millisecond ), plugin will fail to work properly.", errmsg_time);
                     flask.UpdateFlaskChargesInfo();
                     if (Settings.debugMode.Value)
                         LogMessage("Just Drank Flask on slot " + flask.Slot, logmsg_time);
@@ -502,7 +504,10 @@ namespace FlaskManager
                 var buffName = buff.Name;
 
                 if (Settings.debugMode.Value)
-                    debugDebuff[buffName] = buff.Timer;
+                    if (debugDebuff.ContainsKey(buffName))
+                        debugDebuff[buffName] = Math.Max(buff.Timer, debugDebuff[buffName]);
+                    else
+                        debugDebuff[buffName] = buff.Timer;
 
                 if (!Settings.remAilment.Value)
                     return;
