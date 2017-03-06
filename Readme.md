@@ -16,9 +16,14 @@ This is a flaskmanager plugin for POEHUD.
 # F.A.Qs
 
 ```
-There is an update what should I do?
+There is an POEHUD/AutoFlaskManager update what should I do?
 ```
 Delete the old folder before downloading and installing the new one. OR things will fail.
+
+```
+There is a POE game update, what should I do? who will change the offsets.
+```
+Wait for POEHUD to be updated. If POEHUD works, this will work too. No need to change offsets as it automatically ask POEHUD for all the offsets.
 
 ```
 Does this plugin work with 32bit version of HUD?
