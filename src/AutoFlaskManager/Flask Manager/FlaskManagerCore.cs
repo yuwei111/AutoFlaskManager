@@ -25,6 +25,7 @@ namespace FlaskManager
 
         private bool isTown;
         private bool isHideout;
+        private bool _WarnFlaskSpeed;
         private DebuffPanelConfig debuffInfo;
         private FlaskInformation flaskInfo;
         private FlaskKeys keyInfo;
@@ -189,6 +190,7 @@ namespace FlaskManager
                     lastOffUsed = 100000f;
                     isTown = true;
                     isHideout = false;
+                    _WarnFlaskSpeed = false;
                     keyboard = new KeyboardHelper(GameController);
                     //We are creating our plugin thread inside PoEHUD!
                     Thread flaskThread = new Thread(FlaskThread) { IsBackground = true };
@@ -338,8 +340,16 @@ namespace FlaskManager
                     if ((newFlask.FlaskAction1 == FlaskAction.LIFE || newFlask.FlaskAction1 == FlaskAction.MANA ||
                         newFlask.FlaskAction1 == FlaskAction.HYBRID) && newFlask.FlaskAction2 == FlaskAction.SPEEDRUN)
                     {
-                        LogError("Warning: Speed Run mod is ignored on mana/life/hybrid flasks.", errmsg_time);
-                        newFlask.FlaskAction2 = FlaskAction.NONE;
+                        if (_WarnFlaskSpeed != true)
+                        {
+                            LogError("Warning: Speed Run mod is ignored on mana/life/hybrid flasks.", errmsg_time);
+                            newFlask.FlaskAction2 = FlaskAction.NONE;
+                            _WarnFlaskSpeed = true;
+                        }
+                        else
+                        {
+                            newFlask.FlaskAction2 = FlaskAction.NONE;
+                        }
                     }
                     newFlask.EnableDisableFlask();
                     playerFlaskList.Add(newFlask);
