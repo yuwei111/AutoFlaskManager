@@ -11,6 +11,31 @@ This is a flaskmanager plugin for POEHUD.
 - Disable the "About" option to turn off the Splash.
 - Fiddle with the plugin settings to your satisfaction. 
 
+# F.A.Qs
+```
+Q: There is an update what should I do?
+A: Delete the old folder before downloading and installing the new one. OR things will fail.
+```
+```
+Q: Does this plugin work with 32bit version of HUD?
+A: NO, 32bit PoeHUD is being phased out, as the game itself shifts to 64bit operation exclusively.
+```
+```
+Q: How come This plugin doesn't have or do feature XYZ?
+A: Because its not flask related (ie DPS calculator, monsters remaining, etc). We have no plans of implementing it, feel free to implement it if u want.
+```
+```
+Q: Does this Plugin support languages other than English?
+A: NO, you are welcome to translate the source and fork it.
+```
+```
+Q: My AutoFlask Manager is not working/I have binded the flask to other keys.
+A: Change the keys info in flaskbind.json which is in config folder of this flask manager. You need to add ASCII of your keys, you can google ASCII table to lookup your keys to ASCII translation.
+```
+```
+Q: Flask Manager is too fask, and drink all my flask in 1 go.
+A: You need to increase the delays of the flask manager. It's in milisecond, so you need to change it to 3000 to 5000 or anything you think is good enough.
+```
 # Setting Up POEHUD in plugin Development environment
 - Download x64 POEHUD version as only x64 support plugins.
  - git clone https://github.com/TehCheat/PoEHUD.git -b x64
