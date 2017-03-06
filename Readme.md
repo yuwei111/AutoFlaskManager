@@ -18,11 +18,14 @@ A: Delete the old folder before downloading and installing the new one. OR thing
 ```
 ```
 Q: Does this plugin work with 32bit version of HUD?
-A: NO, 32bit PoeHUD is being phased out, as the game itself shifts to 64bit operation exclusively.
+A: NO, 32bit PoeHUD is being phased out,
+as the game itself shifts to 64bit operation exclusively.
 ```
 ```
 Q: How come This plugin doesn't have or do feature XYZ that orriginal AutoAHK had?
-A: Because either its not flask related (ie DPS calculator, monsters remaining, etc) or it's not useful anymore. We have no plans of implementing it, feel free to implement it if u want.
+A: Because either its not flask related (ie DPS calculator,
+monsters remaining, etc) or it's not useful anymore.
+We have no plans of implementing it, feel free to implement it if u want.
 ```
 ```
 Q: Does this Plugin support languages other than English?
@@ -30,11 +33,16 @@ A: NO, you are welcome to translate the source and fork it.
 ```
 ```
 Q: My AutoFlask Manager is not working/I have binded the flask to other keys.
-A: Change the keys info in flaskbind.json which is in config folder of this flask manager. You need to add ASCII of your keys, you can google ASCII table to lookup your keys to ASCII translation.
+A: Change the keys info in flaskbind.json
+which is in config folder of this flask manager.
+You need to add ASCII of your keys,
+you can google ASCII table to lookup your keys to ASCII translation.
 ```
 ```
 Q: Flask Manager is too fask, and drink all my flask in 1 go.
-A: You need to increase the delays of the flask manager. It's in milisecond, so you need to change it to 3000 to 5000 or anything you think is good enough.
+A: You need to increase the delays of the flask manager.
+It's in milisecond, so you need to change it
+to 3000 to 5000 or anything you think is good enough.
 ```
 ```
 Q: There seems to be a logic error causing the plugin to not function correctly, will you look into it?
@@ -50,7 +58,9 @@ Q: What is debug mode/debug log. How can I enable/use it?
 ```
 ```
 Q: There is a lot of spam of logs.
-A: Disable the debug log, it's for debugging only. If there is still a lot of spam after distabling the debug log, report to us, we will try to reduce it.
+A: Disable the debug log, it's for debugging only.
+If there is still a lot of spam after distabling
+the debug log, report to us, we will try to reduce it.
 ```
 # Setting Up POEHUD in plugin Development environment
 - Download x64 POEHUD version as only x64 support plugins.
