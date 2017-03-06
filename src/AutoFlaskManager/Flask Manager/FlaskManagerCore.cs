@@ -190,7 +190,7 @@ namespace FlaskManager
                     lastOffUsed = 100000f;
                     isTown = true;
                     isHideout = false;
-                    _WarnFlaskSpeed = false;
+                    _WarnFlaskSpeed = true;
                     keyboard = new KeyboardHelper(GameController);
                     //We are creating our plugin thread inside PoEHUD!
                     Thread flaskThread = new Thread(FlaskThread) { IsBackground = true };
@@ -337,18 +337,16 @@ namespace FlaskManager
                     // Speedrun mod on mana/life flask wouldn't work when full mana/life is full respectively,
                     // So we will ignore speedrun mod from mana/life flask. Other mods
                     // on mana/life flasks will work.
-                    if ((newFlask.FlaskAction1 == FlaskAction.LIFE || newFlask.FlaskAction1 == FlaskAction.MANA ||
-                        newFlask.FlaskAction1 == FlaskAction.HYBRID) && newFlask.FlaskAction2 == FlaskAction.SPEEDRUN)
+                    if (newFlask.FlaskAction2 == FlaskAction.SPEEDRUN &&
+                        (newFlask.FlaskAction1 == FlaskAction.LIFE ||
+                         newFlask.FlaskAction1 == FlaskAction.MANA ||
+                         newFlask.FlaskAction1 == FlaskAction.HYBRID))
                     {
-                        if (_WarnFlaskSpeed != true)
+                        newFlask.FlaskAction2 = FlaskAction.NONE;
+                        if (_WarnFlaskSpeed)
                         {
-                            LogError("Warning: Speed Run mod is ignored on mana/life/hybrid flasks.", errmsg_time);
-                            newFlask.FlaskAction2 = FlaskAction.NONE;
-                            _WarnFlaskSpeed = true;
-                        }
-                        else
-                        {
-                            newFlask.FlaskAction2 = FlaskAction.NONE;
+                            LogError("Warning: Speed Run mod is ignored on mana/life/hybrid flasks. Use Alt Orbs on those flasks.", errmsg_time);
+                            _WarnFlaskSpeed = false;
                         }
                     }
                     newFlask.EnableDisableFlask();
