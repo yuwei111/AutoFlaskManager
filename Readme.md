@@ -64,7 +64,10 @@ the debug log, report to us, we will try to reduce it.
 ```
 ```
 Q: I am getting a warning "Warning: Speed Run mod is ignored on mana/life/hybrid flasks."
-A: Use Alt orb on your mana/life/hybrid flask containing speed mod as mana/life/hybrid flask shouldn't contain speed mod. This will greatly reduce the duration of a speed mod. Use utility flasks for speed mods.
+A: Use Alt orb on your mana/life/hybrid flask containing speed mod as
+mana/life/hybrid flask shouldn't contain speed mod.
+This will greatly reduce the duration of a speed mod.
+Use utility flasks for speed mods.
 ```
 # Setting Up POEHUD in plugin Development environment
 - Download x64 POEHUD version as only x64 support plugins.
