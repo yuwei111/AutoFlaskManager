@@ -2,14 +2,14 @@
 This is a flaskmanager plugin for POEHUD.
 
 # Installing AutoFlask in PoeHUD
-1. Hit Clone or Download -> Download as Zip
-2. Extract the Folder from the zip file
-3. Move the autoflaskmanger-master folder to the plugins folder in the poehud directory
-4. launch poe
-5. launch poehud
-6. hit the poehud menu -> hover over plugins -> enable autoflaskmanager
-7. Disable the "About" option to turn off the Splash.
-8. Fiddle with the plugin settings to your satisfaction. 
+- Hit Clone or Download -> Download as Zip
+- Extract the Folder from the zip file
+- Move the autoflaskmanger-master folder to the plugins folder in the poehud directory
+- launch poe
+- launch poehud
+- hit the poehud menu -> hover over plugins -> enable autoflaskmanager
+- Disable the "About" option to turn off the Splash.
+- Fiddle with the plugin settings to your satisfaction. 
 
 # Setting Up POEHUD in plugin Development environment
 - Download x64 POEHUD version as only x64 support plugins.
