@@ -45,8 +45,9 @@ NO, you are welcome to translate the source and fork it.
 My AutoFlask Manager is not working/I have binded the flask to other keys.
 ```
 Change the keys info in flaskbind.json which is in config folder of this flask manager.
+
 You can look into following file
-- C:\Users\[yourname]\Documents\My Games\Path of Exile\production_Config.ini
+- Documents\My Games\Path of Exile\production_Config.ini
 
 Look for following lines in the file
 - use_flask_in_slot1=49
