@@ -37,6 +37,16 @@ A: Change the keys info in flaskbind.json
 which is in config folder of this flask manager.
 You need to add ASCII of your keys,
 you can google ASCII table to lookup your keys to ASCII translation.
+OR
+you can look into following file
+C:\Users\[yourname]\Documents\My Games\Path of Exile\production_Config.ini
+Look for following lines in the file
+use_flask_in_slot1=49
+use_flask_in_slot2=50
+use_flask_in_slot3=51
+use_flask_in_slot4=52
+use_flask_in_slot5=53
+and add those numbers in the flaskbind.json respectively.
 ```
 ```
 Q: Flask Manager is too fask, and drink all my flask in 1 go.
