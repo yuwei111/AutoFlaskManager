@@ -12,73 +12,78 @@ This is a flaskmanager plugin for POEHUD.
 - Fiddle with the plugin settings to your satisfaction. 
 
 # F.A.Qs
+
 ```
-Q: There is an update what should I do?
-A: Delete the old folder before downloading and installing the new one. OR things will fail.
+There is an update what should I do?
 ```
+Delete the old folder before downloading and installing the new one. OR things will fail.
+
 ```
-Q: Does this plugin work with 32bit version of HUD?
-A: NO, 32bit PoeHUD is being phased out,
-as the game itself shifts to 64bit operation exclusively.
+Does this plugin work with 32bit version of HUD?
 ```
+NO, 32bit PoeHUD is being phased out, as the game itself shifts to 64bit operation exclusively.
+
 ```
-Q: How come This plugin doesn't have or do feature XYZ that orriginal AutoAHK had?
-A: Because either its not flask related (ie DPS calculator,
-monsters remaining, etc) or it's not useful anymore.
+How come This plugin doesn't have or do feature XYZ that orriginal AutoAHK had?
+```
+Because either its not flask related (ie DPS calculator, monsters remaining, etc) or it's not useful anymore.
 We have no plans of implementing it, feel free to implement it if u want.
+
 ```
+Does this Plugin support languages other than English?
 ```
-Q: Does this Plugin support languages other than English?
-A: NO, you are welcome to translate the source and fork it.
+NO, you are welcome to translate the source and fork it.
+
 ```
+My AutoFlask Manager is not working/I have binded the flask to other keys.
 ```
-Q: My AutoFlask Manager is not working/I have binded the flask to other keys.
-A: Change the keys info in flaskbind.json
-which is in config folder of this flask manager.
-You need to add ASCII of your keys,
-you can google ASCII table to lookup your keys to ASCII translation.
-OR
-you can look into following file
-C:\Users\[yourname]\Documents\My Games\Path of Exile\production_Config.ini
+Change the keys info in flaskbind.json which is in config folder of this flask manager.
+You can look into following file
+
+   ```
+        C:\Users\[yourname]\Documents\My Games\Path of Exile\production_Config.ini
+   ```
 Look for following lines in the file
-use_flask_in_slot1=49
-use_flask_in_slot2=50
-use_flask_in_slot3=51
-use_flask_in_slot4=52
-use_flask_in_slot5=53
+   ```
+        use_flask_in_slot1=49
+        use_flask_in_slot2=50
+        use_flask_in_slot3=51
+        use_flask_in_slot4=52
+        use_flask_in_slot5=53
+   ```
 and add those numbers in the flaskbind.json respectively.
+
 ```
+Flask Manager is too fask, and drink all my flask in 1 go.
 ```
-Q: Flask Manager is too fask, and drink all my flask in 1 go.
-A: You need to increase the delays of the flask manager.
-It's in milisecond, so you need to change it
-to 3000 to 5000 or anything you think is good enough.
+You need to increase the delays of the flask manager. It's in milisecond, so you need to change it to 3000 to 5000 or anything you think is good enough.
+
 ```
+What is debug mode/debug log. How can I enable/use it?
 ```
-Q: There seems to be a logic error causing the plugin to not function correctly, will you look into it?
-A: Yes, please provide details about usage case, screenshots and a debug log.
-```
-```
-Q: What is debug mode/debug log. How can I enable/use it?
+
 - Debug mode is only to provide debugging output to us.
 - You need to enable the debug mode from the autoflaskmanager settings menu of poehud to enable this feature.
 - This mode create a file in poehud.exe folder named as autoflaskmanagerdebug.log containing the debug logs.
 - This file is updated/written after you close the game or close the poehud.exe.
 - With this file also provide us with screenshots/use case and descriptions.
+
 ```
+There is a lot of spam of logs.
 ```
-Q: There is a lot of spam of logs.
-A: Disable the debug log, it's for debugging only.
-If there is still a lot of spam after distabling
-the debug log, report to us, we will try to reduce it.
+Disable the debug log, it's for debugging only. If there is still a lot of spam after distabling the debug log, report to us, we will try to reduce it.
+
 ```
+I am getting a warning "Warning: Speed Run mod is ignored on mana/life/hybrid flasks."
 ```
-Q: I am getting a warning "Warning: Speed Run mod is ignored on mana/life/hybrid flasks."
-A: Use Alt orb on your mana/life/hybrid flask containing speed mod as
-mana/life/hybrid flask shouldn't contain speed mod.
-This will greatly reduce the duration of a speed mod.
-Use utility flasks for speed mods.
+Use Alt orb on your mana/life/hybrid flask containing speed mod as mana/life/hybrid flask shouldn't contain speed mod.
+This will greatly reduce the duration of a speed mod. Use utility flasks for speed mods.
+
 ```
+There seems to be a logic error causing the plugin to not function correctly, will you look into it?
+```
+Yes, please provide details about usage case, screenshots and a debug log.
+
 # Setting Up POEHUD in plugin Development environment
 - Download x64 POEHUD version as only x64 support plugins.
  - git clone https://github.com/TehCheat/PoEHUD.git -b x64
