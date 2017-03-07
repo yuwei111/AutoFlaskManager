@@ -12,6 +12,7 @@ This is a flaskmanager plugin for POEHUD.
 - hit the poehud menu -> hover over plugins -> enable autoflaskmanager
 - Disable the "About" option to turn off the Splash.
 - Fiddle with the plugin settings to your satisfaction.
+- Note: As per normal HUD operation a red underline means disabled.
 # Making AutoQuit Work
 
 - In order to make autoquit mode work, you must download currports (cports.exe).
