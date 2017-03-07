@@ -14,7 +14,7 @@ This is a flaskmanager plugin for POEHUD.
 - Fiddle with the plugin settings to your satisfaction.
 # Making AutoQuit Work
 
-- In order to make autoquit mode work, you must download currports (cports.exe)
+- In order to make autoquit mode work, you must download currports (cports.exe).
 - Download Link (use x64 version): http://www.nirsoft.net/utils/cports.html#DownloadLinks
 - Once you downloaded it, extract it on the desktop
 - copy cports.exe from the desktop/extracted folder and paste it where PoeHud.exe is.
