@@ -33,6 +33,7 @@ namespace FlaskManager
             //Quicksilver
             quicksilverEnable = false;
             quicksilverDurration = new RangeNode<float>(500f, 0f, 5000f);
+            quicksilverUseWhen = new RangeNode<int>(0, 0, 100);
             //Defensive Flask
             defFlaskEnable = false;
             hPDefensive = new RangeNode<int>(50, 0, 100);
@@ -118,6 +119,8 @@ namespace FlaskManager
         public ToggleNode quicksilverEnable { get; set; }
         [Menu("Use After Moving Post (millisecond)", 31, 30)]
         public RangeNode<float> quicksilverDurration { get; set; }
+        [Menu("Use When Greater than X (0 to disable it)", 32, 30)]
+        public RangeNode<int> quicksilverUseWhen { get; set; }
         #endregion
 
         #region Defensive Flask Menu
