@@ -368,10 +368,15 @@ namespace FlaskManager
         }
         #endregion
         #region Flask Helper Functions
-        private bool FindDrinkFlask(FlaskAction type1, FlaskAction type2, bool shouldDrinkAll = false)
+        //Parameters:
+        // type1 and type2 define the type of flask you wanna drink.
+        // reason: is just for debugging output to see where does the drinking flask request came from
+        // minRequiredCharges: Min number of charges a flask must have to consider it a valid flask to drink.
+        // shouldDrinkAll: if you want to drink all the flasks of type1,type2 (true) or just first in the list(false).
+        private bool FindDrinkFlask(FlaskAction type1, FlaskAction type2, string reason, int minRequiredCharge = 0, bool shouldDrinkAll = false)
         {
             bool hasDrunk = false;
-            var flaskList = playerFlaskList.FindAll(x => x.FlaskAction1 == type1 || x.FlaskAction2 == type2);
+            var flaskList = playerFlaskList.FindAll(x => x.CurrentCharges >= minRequiredCharge && (x.FlaskAction1 == type1 || x.FlaskAction2 == type2));
             foreach (var flask in flaskList)
             {
                 if (flask.isEnabled && flask.CurrentCharges >= flask.UseCharges)
@@ -381,7 +386,7 @@ namespace FlaskManager
                         LogError("Warning: High latency ( more than 1000 millisecond ), plugin will fail to work properly.", errmsg_time);
                     flask.UpdateFlaskChargesInfo();
                     if (Settings.debugMode.Value)
-                        LogMessage("Just Drank Flask on slot " + flask.Slot, logmsg_time);
+                        LogMessage("Just Drank Flask on key " + keyInfo.k[flask.Slot] + " cuz of " + reason, logmsg_time);
                     // if there are multiple flasks, drinking 1 of them at a time is enough.
                     hasDrunk = true;
                     if (!shouldDrinkAll)
@@ -460,9 +465,9 @@ namespace FlaskManager
             {
                 if (PlayerHealth.HPPercentage * 100 < Settings.perHPFlask.Value)
                 {
-                    if (FindDrinkFlask(FlaskAction.LIFE, FlaskAction.IGNORE))
+                    if (FindDrinkFlask(FlaskAction.LIFE, FlaskAction.IGNORE,"Low life"))
                         lastLifeUsed = 0f;
-                    else if (FindDrinkFlask(FlaskAction.HYBRID, FlaskAction.IGNORE))
+                    else if (FindDrinkFlask(FlaskAction.HYBRID, FlaskAction.IGNORE, "Low life"))
                         lastLifeUsed = 0f;
                 }
             }
@@ -480,9 +485,9 @@ namespace FlaskManager
             {
                 if (PlayerHealth.MPPercentage * 100 < Settings.PerManaFlask.Value)
                 {
-                    if (FindDrinkFlask(FlaskAction.MANA, FlaskAction.IGNORE))
+                    if (FindDrinkFlask(FlaskAction.MANA, FlaskAction.IGNORE, "Low Mana"))
                         lastManaUsed = 0f;
-                    else if (FindDrinkFlask(FlaskAction.HYBRID, FlaskAction.IGNORE))
+                    else if (FindDrinkFlask(FlaskAction.HYBRID, FlaskAction.IGNORE, "Low Mana"))
                         lastManaUsed = 0f;
                 }
             }
@@ -512,31 +517,31 @@ namespace FlaskManager
                 var tmpResult = false;
                 if (Settings.remPoison.Value && HasDebuff(debuffInfo.Poisoned, buffName, false))
                 {
-                    tmpResult = FindDrinkFlask(FlaskAction.IGNORE, FlaskAction.POISON_IMMUNE);
+                    tmpResult = FindDrinkFlask(FlaskAction.IGNORE, FlaskAction.POISON_IMMUNE, "Poisoned");
                     if(Settings.debugMode.Value)
                         LogMessage("Poison -> hasDrunkFlask:" + tmpResult, logmsg_time);
                 }
                 else if (Settings.remFrozen.Value && HasDebuff(debuffInfo.ChilledFrozen, buffName, false))
                 {
-                    tmpResult = FindDrinkFlask(FlaskAction.IGNORE, FlaskAction.FREEZE_IMMUNE);
+                    tmpResult = FindDrinkFlask(FlaskAction.IGNORE, FlaskAction.FREEZE_IMMUNE, "Frozen");
                     if (Settings.debugMode.Value)
                         LogMessage("Frozen -> hasDrunkFlask:" + tmpResult, logmsg_time);
                 }
                 else if (Settings.remBurning.Value && HasDebuff(debuffInfo.Burning, buffName, false))
                 {
-                    tmpResult = FindDrinkFlask(FlaskAction.IGNORE, FlaskAction.IGNITE_IMMUNE);
+                    tmpResult = FindDrinkFlask(FlaskAction.IGNORE, FlaskAction.IGNITE_IMMUNE, "Burning");
                     if (Settings.debugMode.Value)
                         LogMessage("Burning -> hasDrunkFlask:" + tmpResult, logmsg_time);
                 }
                 else if (Settings.remShocked.Value && HasDebuff(debuffInfo.Shocked, buffName, false))
                 {
-                    tmpResult = FindDrinkFlask(FlaskAction.IGNORE, FlaskAction.SHOCK_IMMUNE);
+                    tmpResult = FindDrinkFlask(FlaskAction.IGNORE, FlaskAction.SHOCK_IMMUNE, "Shocked");
                     if (Settings.debugMode.Value)
                         LogMessage("Shock -> hasDrunkFlask:" + tmpResult, logmsg_time);
                 }
                 else if (Settings.remCurse.Value && HasDebuff(debuffInfo.WeakenedSlowed, buffName, false))
                 {
-                    tmpResult = FindDrinkFlask(FlaskAction.IGNORE, FlaskAction.CURSE_IMMUNE);
+                    tmpResult = FindDrinkFlask(FlaskAction.IGNORE, FlaskAction.CURSE_IMMUNE, "Cursed");
                     if (Settings.debugMode.Value)
                         LogMessage("Curse -> hasDrunkFlask:" + tmpResult, logmsg_time);
                 }
@@ -544,13 +549,13 @@ namespace FlaskManager
                 {
                     if (HasDebuff(debuffInfo.Bleeding, buffName, false))
                     {
-                        tmpResult = FindDrinkFlask(FlaskAction.IGNORE, FlaskAction.BLEED_IMMUNE);
+                        tmpResult = FindDrinkFlask(FlaskAction.IGNORE, FlaskAction.BLEED_IMMUNE,"Bleeding");
                         if (Settings.debugMode.Value)
                             LogMessage("Bleeding -> hasDrunkFlask:" + tmpResult, logmsg_time);
                     }
                     else if (HasDebuff(debuffInfo.Corruption, buffName, false) && buff.Charges >= Settings.corrptCount)
                     {
-                        tmpResult = FindDrinkFlask(FlaskAction.IGNORE, FlaskAction.BLEED_IMMUNE);
+                        tmpResult = FindDrinkFlask(FlaskAction.IGNORE, FlaskAction.BLEED_IMMUNE, "Corruption");
                         if (Settings.debugMode.Value)
                             LogMessage("Corruption -> hasDrunkFlask:" + tmpResult, logmsg_time);
                     }
@@ -569,7 +574,7 @@ namespace FlaskManager
                 !PlayerHealth.HasBuff("flask_bonus_movement_speed") &&
                 !PlayerHealth.HasBuff("flask_utility_sprint"))
             {
-                FindDrinkFlask(FlaskAction.SPEEDRUN, FlaskAction.SPEEDRUN);
+                FindDrinkFlask(FlaskAction.SPEEDRUN, FlaskAction.SPEEDRUN, "Moving Around", Settings.quicksilverUseWhen.Value);
             }
         }
         #endregion
@@ -586,7 +591,7 @@ namespace FlaskManager
                 if (PlayerHealth.HPPercentage * 100 < Settings.hPDefensive.Value ||
                     PlayerHealth.ESPercentage * 100 < Settings.eSDefensive.Value)
                 {
-                    if (FindDrinkFlask(FlaskAction.DEFENSE, FlaskAction.DEFENSE, true))
+                    if (FindDrinkFlask(FlaskAction.DEFENSE, FlaskAction.DEFENSE, "Defensive Action", 0,true))
                         lastDefUsed = 0f;
                 }
             }
@@ -605,7 +610,7 @@ namespace FlaskManager
                 if (PlayerHealth.HPPercentage * 100 < Settings.hpOffensive.Value ||
                     PlayerHealth.ESPercentage * 100 < Settings.esOffensive.Value)
                 {
-                    if (FindDrinkFlask(FlaskAction.OFFENSE, FlaskAction.OFFENSE, true))
+                    if (FindDrinkFlask(FlaskAction.OFFENSE, FlaskAction.OFFENSE, "Offensive Action", 0, true))
                         lastOffUsed = 0f;
                 }
             }
