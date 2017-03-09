@@ -12,6 +12,8 @@ using PoeHUD.Hud.Health;
 using System.IO;
 using Newtonsoft.Json;
 using PoeHUD.Models.Enums;
+using PoeHUD.Framework;
+using System.Windows.Forms;
 
 namespace FlaskManager
 {
@@ -127,6 +129,10 @@ namespace FlaskManager
             base.Render();
             if (Settings.Enable.Value)
             {
+                // Panic Quit Key.
+                if (WinApi.IsKeyDown(Keys.F4))
+                    PoeProcessHandler.ExitPoe("cports.exe", "/close * * * * " + GameController.Window.Process.ProcessName + ".exe");
+
                 FlaskUi();
                 BuffUi();
                 SplashPage();
