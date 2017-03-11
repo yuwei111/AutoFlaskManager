@@ -1,13 +1,13 @@
 ﻿using PoeHUD.Hud.Settings;
 using PoeHUD.Plugins;
 
-namespace FlaskManager
+namespace FlaskManager.Flask_Manager
 {
-    public class FlaskManagerSettings : SettingsBase
+    class FlaskManagerSettings : SettingsBase
     {
         public FlaskManagerSettings()
         {
-            #region Flask Manager Settings Var
+            #region Default Settings
             //plugin
             Enable = false;
             //Auto Quit

@@ -1,10 +1,11 @@
 ﻿using PoeHUD.Models.Enums;
 using PoeHUD.Poe;
 using PoeHUD.Poe.EntityComponents;
+using FlaskManager.Flask_Manager;
 
-namespace FlaskManager
+namespace FlaskManager.Flask_Components
 {
-    public class PlayerFlask
+    class PlayerFlask
     {
         public string FlaskName;
         public int Slot;
@@ -56,6 +57,7 @@ namespace FlaskManager
                     break;
             }
         }
+
         ~PlayerFlask()
         {
             switch (Slot)

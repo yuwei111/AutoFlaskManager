@@ -1,4 +1,4 @@
-﻿namespace FlaskManager
+﻿namespace FlaskManager.Flask_Components
 {
     public enum FlaskAction : int
     {
@@ -34,15 +34,5 @@
         BLEED_IMMUNE,       // MOD: staunching
         CURSE_IMMUNE,       // MOD: warding
         UNIQUE_FLASK,       // All the milk shakes
-
-        //UNIQUE_lIFE,        //Blood of the Karui
-        //UNIQUE_MANA,        //Doedre's Elixir, Zerphi's Last Breath, Lavianga's Spirit
-        //UNIQUE_HYBRID,      //Divination Distillate, The Writhing Jar
-        //UNIQUE_DEFENSIVE,   //Sin's Rebirth, Coruscating Elixir, Forbidden Taste
-        //Rumi's Concoction,
-        //UNIQUE_OFFENSIVE,   //Taste of Hate, Kiara's Determination, Lion's Roar
-        //The Overflowing Chalice, The Sorrow of the Divine,
-        //Rotgut, Witchfire Brew, Atziri's Promise, Dying Sun,
-        //Vessel of Vinktar 
     }
 }

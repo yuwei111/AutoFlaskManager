@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace FlaskManager
+namespace FlaskManager.Flask_Components
 {
     class FlaskInformation
     {

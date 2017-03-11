@@ -14,10 +14,12 @@ using Newtonsoft.Json;
 using PoeHUD.Models.Enums;
 using PoeHUD.Framework;
 using System.Windows.Forms;
+using FlaskManager.Flask_Components;
+using FlaskManager.Helpers;
 
-namespace FlaskManager
+namespace FlaskManager.Flask_Manager
 {
-    public class FlaskManagerCore : BaseSettingsPlugin<FlaskManagerSettings>
+    class FlaskManagerCore : BaseSettingsPlugin<FlaskManagerSettings>
     {
         private readonly int logmsg_time = 3;
         private readonly int errmsg_time = 10;
@@ -44,10 +46,10 @@ namespace FlaskManager
         {
             if (Settings.about.Value)
             {
-                float X = (GameController.Window.GetWindowRectangle().Width / 2) - (475/2);
-                float Y = (GameController.Window.GetWindowRectangle().Height / 2) - (395/2);
+                float X = (GameController.Window.GetWindowRectangle().Width / 2) - (475 / 2);
+                float Y = (GameController.Window.GetWindowRectangle().Height / 2) - (395 / 2);
                 RectangleF container = new RectangleF(X, Y, 475, 395);
-                if ( File.Exists( PluginDirectory + @"\splash\AutoFlaskManagerCredits.png"))
+                if (File.Exists(PluginDirectory + @"\splash\AutoFlaskManagerCredits.png"))
                     Graphics.DrawPluginImage(PluginDirectory + @"\splash\AutoFlaskManagerCredits.png", container);
                 else
                 {
@@ -334,7 +336,7 @@ namespace FlaskManager
                         if (flaskMods.ItemRarity == ItemRarity.Unique)
                             continue;
 
-                        if(!flaskInfo.FlaskMods.TryGetValue(mod.Name, out action2))
+                        if (!flaskInfo.FlaskMods.TryGetValue(mod.Name, out action2))
                             LogError("Error: " + mod.Name + " mod not found. Is it unique flask? If not, report this error message.", errmsg_time);
                         else if (action2 != FlaskAction.IGNORE)
                             newFlask.FlaskAction2 = action2;
@@ -424,7 +426,7 @@ namespace FlaskManager
             var PlayerHealth = LocalPlayer.GetComponent<Life>();
             if (Settings.isPercentQuit.Value && LocalPlayer.IsValid)
             {
-                if (Math.Round(PlayerHealth.HPPercentage,3) * 100 < (Settings.percentHPQuit.Value))
+                if (Math.Round(PlayerHealth.HPPercentage, 3) * 100 < (Settings.percentHPQuit.Value))
                 {
                     try
                     {
@@ -471,7 +473,7 @@ namespace FlaskManager
             {
                 if (PlayerHealth.HPPercentage * 100 < Settings.perHPFlask.Value)
                 {
-                    if (FindDrinkFlask(FlaskAction.LIFE, FlaskAction.IGNORE,"Low life"))
+                    if (FindDrinkFlask(FlaskAction.LIFE, FlaskAction.IGNORE, "Low life"))
                         lastLifeUsed = 0f;
                     else if (FindDrinkFlask(FlaskAction.HYBRID, FlaskAction.IGNORE, "Low life"))
                         lastLifeUsed = 0f;
@@ -524,7 +526,7 @@ namespace FlaskManager
                 if (Settings.remPoison.Value && HasDebuff(debuffInfo.Poisoned, buffName, false))
                 {
                     tmpResult = FindDrinkFlask(FlaskAction.IGNORE, FlaskAction.POISON_IMMUNE, "Poisoned");
-                    if(Settings.debugMode.Value)
+                    if (Settings.debugMode.Value)
                         LogMessage("Poison -> hasDrunkFlask:" + tmpResult, logmsg_time);
                 }
                 else if (Settings.remFrozen.Value && HasDebuff(debuffInfo.ChilledFrozen, buffName, false))
@@ -555,7 +557,7 @@ namespace FlaskManager
                 {
                     if (HasDebuff(debuffInfo.Bleeding, buffName, false))
                     {
-                        tmpResult = FindDrinkFlask(FlaskAction.IGNORE, FlaskAction.BLEED_IMMUNE,"Bleeding");
+                        tmpResult = FindDrinkFlask(FlaskAction.IGNORE, FlaskAction.BLEED_IMMUNE, "Bleeding");
                         if (Settings.debugMode.Value)
                             LogMessage("Bleeding -> hasDrunkFlask:" + tmpResult, logmsg_time);
                     }
@@ -597,7 +599,7 @@ namespace FlaskManager
                 if (PlayerHealth.HPPercentage * 100 < Settings.hPDefensive.Value ||
                     PlayerHealth.ESPercentage * 100 < Settings.eSDefensive.Value)
                 {
-                    if (FindDrinkFlask(FlaskAction.DEFENSE, FlaskAction.DEFENSE, "Defensive Action", 0,true))
+                    if (FindDrinkFlask(FlaskAction.DEFENSE, FlaskAction.DEFENSE, "Defensive Action", 0, true))
                         lastDefUsed = 0f;
                 }
             }
@@ -675,4 +677,4 @@ namespace FlaskManager
         }
         #endregion
     }
- }
+}

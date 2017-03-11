@@ -1,8 +1,6 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
-
-namespace FlaskManager
+namespace FlaskManager.Helpers
 {
     class PoeProcessHandler
     {

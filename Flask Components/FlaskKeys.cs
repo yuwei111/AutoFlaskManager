@@ -1,8 +1,8 @@
 ﻿using System.Windows.Forms;
 
-namespace FlaskManager
+namespace FlaskManager.Flask_Components
 {
-    public class FlaskKeys
+    class FlaskKeys
     {
         public Keys[] k;
         public FlaskKeys(Keys k1, Keys k2, Keys k3, Keys k4, Keys k5)
