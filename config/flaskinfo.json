@@ -109,6 +109,7 @@
 		
 		"FlaskEffectReducedDuration":0,
 		"FlaskExtraCharges":0,
+		"FlaskFullRechargeOnCrit":0,
 		"FlaskFullRechargeOnTakeCrit":0,
 		"FlaskPartialInstantRecovery":0,
 		"FlaskIncreasedRecoverySpeed":0,
