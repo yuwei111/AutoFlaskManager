@@ -388,14 +388,15 @@ namespace FlaskManager.Flask_Manager
         private bool FindDrinkFlask(FlaskAction type1, FlaskAction type2, string reason, int minRequiredCharge = 0, bool shouldDrinkAll = false)
         {
             bool hasDrunk = false;
-            var flaskList = playerFlaskList.FindAll(x => x.CurrentCharges >= minRequiredCharge && (x.FlaskAction1 == type1 || x.FlaskAction2 == type2));
+            var flaskList = playerFlaskList.FindAll(x => x.CurrentCharges >= minRequiredCharge &&
+                                (x.FlaskAction1 == type1 || x.FlaskAction2 == type2) && x.isEnabled);
             var useCharges = 0;
             foreach (var flask in flaskList)
             {
                 // Life/Mana/Hybrid flasks doesn't work if charges are less than number of charges per use.
                 // Utility flask can work until charges reaches 0.
                 useCharges = (flask.FlaskAction1 > FlaskAction.HYBRID) ? 0 : flask.UseCharges;
-                if (flask.isEnabled && flask.CurrentCharges >= useCharges)
+                if (flask.CurrentCharges >= useCharges)
                 {
                     keyboard.setLatency(GameController.Game.IngameState.CurLatency);
                     if (!keyboard.KeyPressRelease(keyInfo.k[flask.Slot]))
@@ -470,19 +471,42 @@ namespace FlaskManager.Flask_Manager
         }
         #endregion 
         #region Auto Health Flasks
-        private bool InstantLifeFlask()
+        private bool InstantLifeFlask(Life PlayerHealth)
         {
-            return false;
+            bool ret = false;
+            if (PlayerHealth.HPPercentage * 100 < Settings.instantPerHPFlask.Value)
+            {
+                var flaskList = playerFlaskList.FindAll(x => x.isInstant == x.isEnabled == true &&
+                          (x.FlaskAction1 == FlaskAction.LIFE || x.FlaskAction1 == FlaskAction.HYBRID));
+                foreach(PlayerFlask flask in flaskList)
+                {
+                    if (flask.CurrentCharges >= flask.UseCharges)
+                    {
+                        keyboard.setLatency(GameController.Game.IngameState.CurLatency);
+                        if (!keyboard.KeyPressRelease(keyInfo.k[flask.Slot]))
+                            LogError("Warning: High latency ( more than 1000 millisecond ), plugin will fail to work properly.", errmsg_time);
+                        flask.UpdateFlaskChargesInfo();
+                        if (Settings.debugMode.Value)
+                            LogMessage("Just Drank Instant Flask on key " + keyInfo.k[flask.Slot] + " cuz of Very Low Life", logmsg_time);
+                        ret = true;
+                    }
+                    else
+                    {
+                        flask.UpdateFlaskChargesInfo();
+                    }
+                }
+            }
+            return ret;
         }
         private void LifeLogic()
         {
             if (!GameController.Game.IngameState.Data.LocalPlayer.IsValid || !Settings.autoFlask.Value)
                 return;
 
-            var LocalPlayer = GameController.Game.IngameState.Data.LocalPlayer;
-            var PlayerHealth = LocalPlayer.GetComponent<Life>();
+            Entity LocalPlayer = GameController.Game.IngameState.Data.LocalPlayer;
+            Life PlayerHealth = LocalPlayer.GetComponent<Life>();
             lastLifeUsed += 100f;
-            if (InstantLifeFlask())
+            if (InstantLifeFlask(PlayerHealth))
                 return;
             if (lastLifeUsed < Settings.HPDelay.Value)
                 return;
@@ -501,8 +525,8 @@ namespace FlaskManager.Flask_Manager
             if (!Settings.autoFlask.Value || !GameController.Game.IngameState.Data.LocalPlayer.IsValid)
                 return;
 
-            var LocalPlayer = GameController.Game.IngameState.Data.LocalPlayer;
-            var PlayerHealth = LocalPlayer.GetComponent<Life>();
+            Entity LocalPlayer = GameController.Game.IngameState.Data.LocalPlayer;
+            Life PlayerHealth = LocalPlayer.GetComponent<Life>();
             lastManaUsed += 100f;
             if (lastManaUsed < Settings.ManaDelay.Value)
                 return;
