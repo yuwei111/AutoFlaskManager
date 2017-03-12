@@ -18,6 +18,7 @@ namespace FlaskManager.Flask_Components
         public int CurrentCharges;
         public int UseCharges;
         public int MaxCharges;
+        public bool isInstant;
         public ItemRarity flaskRarity;
 
         private FlaskManagerSettings Settings;

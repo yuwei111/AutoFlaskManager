@@ -293,6 +293,7 @@ namespace FlaskManager.Flask_Manager
                     PlayerFlask newFlask = new PlayerFlask();
 
                     newFlask.SetSettings(Settings);
+                    newFlask.isInstant = false;
                     newFlask.Slot = flask.InventPosX;
                     newFlask.Item = flaskItem;
                     newFlask.MaxCharges = flaskCharges.ChargesMax;
@@ -331,6 +332,9 @@ namespace FlaskManager.Flask_Manager
                     {
                         if (mod.Name.ToLower().Contains("flaskchargesused"))
                             newFlask.UseCharges = (int)Math.Floor(newFlask.UseCharges + ((double)(newFlask.UseCharges) * mod.Value1 / 100));
+
+                        if (mod.Name.ToLower().Contains("instant"))
+                            newFlask.isInstant = true;
 
                         // We have already decided action2 for unique flasks.
                         if (flaskMods.ItemRarity == ItemRarity.Unique)
@@ -385,9 +389,13 @@ namespace FlaskManager.Flask_Manager
         {
             bool hasDrunk = false;
             var flaskList = playerFlaskList.FindAll(x => x.CurrentCharges >= minRequiredCharge && (x.FlaskAction1 == type1 || x.FlaskAction2 == type2));
+            var useCharges = 0;
             foreach (var flask in flaskList)
             {
-                if (flask.isEnabled && flask.CurrentCharges >= flask.UseCharges)
+                // Life/Mana/Hybrid flasks doesn't work if charges are less than number of charges per use.
+                // Utility flask can work until charges reaches 0.
+                useCharges = (flask.FlaskAction1 > FlaskAction.HYBRID) ? 0 : flask.UseCharges;
+                if (flask.isEnabled && flask.CurrentCharges >= useCharges)
                 {
                     keyboard.setLatency(GameController.Game.IngameState.CurLatency);
                     if (!keyboard.KeyPressRelease(keyInfo.k[flask.Slot]))
@@ -462,42 +470,48 @@ namespace FlaskManager.Flask_Manager
         }
         #endregion 
         #region Auto Health Flasks
+        private bool InstantLifeFlask()
+        {
+            return false;
+        }
         private void LifeLogic()
         {
+            if (!GameController.Game.IngameState.Data.LocalPlayer.IsValid || !Settings.autoFlask.Value)
+                return;
+
             var LocalPlayer = GameController.Game.IngameState.Data.LocalPlayer;
             var PlayerHealth = LocalPlayer.GetComponent<Life>();
             lastLifeUsed += 100f;
+            if (InstantLifeFlask())
+                return;
             if (lastLifeUsed < Settings.HPDelay.Value)
                 return;
-            if (Settings.autoFlask.Value && LocalPlayer.IsValid)
+            if (PlayerHealth.HPPercentage * 100 < Settings.perHPFlask.Value)
             {
-                if (PlayerHealth.HPPercentage * 100 < Settings.perHPFlask.Value)
-                {
-                    if (FindDrinkFlask(FlaskAction.LIFE, FlaskAction.IGNORE, "Low life"))
-                        lastLifeUsed = 0f;
-                    else if (FindDrinkFlask(FlaskAction.HYBRID, FlaskAction.IGNORE, "Low life"))
-                        lastLifeUsed = 0f;
-                }
+                if (FindDrinkFlask(FlaskAction.LIFE, FlaskAction.IGNORE, "Low life"))
+                    lastLifeUsed = 0f;
+                else if (FindDrinkFlask(FlaskAction.HYBRID, FlaskAction.IGNORE, "Low life"))
+                    lastLifeUsed = 0f;
             }
         }
         #endregion
         #region Auto Mana Flasks
         private void ManaLogic()
         {
+            if (!Settings.autoFlask.Value || !GameController.Game.IngameState.Data.LocalPlayer.IsValid)
+                return;
+
             var LocalPlayer = GameController.Game.IngameState.Data.LocalPlayer;
             var PlayerHealth = LocalPlayer.GetComponent<Life>();
             lastManaUsed += 100f;
             if (lastManaUsed < Settings.ManaDelay.Value)
                 return;
-            if (Settings.autoFlask.Value && LocalPlayer.IsValid)
+            if (PlayerHealth.MPPercentage * 100 < Settings.PerManaFlask.Value)
             {
-                if (PlayerHealth.MPPercentage * 100 < Settings.PerManaFlask.Value)
-                {
-                    if (FindDrinkFlask(FlaskAction.MANA, FlaskAction.IGNORE, "Low Mana"))
-                        lastManaUsed = 0f;
-                    else if (FindDrinkFlask(FlaskAction.HYBRID, FlaskAction.IGNORE, "Low Mana"))
-                        lastManaUsed = 0f;
-                }
+                if (FindDrinkFlask(FlaskAction.MANA, FlaskAction.IGNORE, "Low Mana"))
+                    lastManaUsed = 0f;
+                else if (FindDrinkFlask(FlaskAction.HYBRID, FlaskAction.IGNORE, "Low Mana"))
+                    lastManaUsed = 0f;
             }
         }
         #endregion

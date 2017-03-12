@@ -17,6 +17,7 @@ namespace FlaskManager.Flask_Manager
             //HP/MANA
             autoFlask = false;
             perHPFlask = new RangeNode<int>(60, 0, 100);
+            instantPerHPFlask = new RangeNode<int>(30, 0, 100);
             HPDelay = new RangeNode<float>(1000f, 0f, 5000f);
             ManaDelay = new RangeNode<float>(1000f, 0f, 5000f);
             PerManaFlask = new RangeNode<float>(25f, 0, 100);
@@ -85,11 +86,13 @@ namespace FlaskManager.Flask_Manager
         public ToggleNode autoFlask { get; set; }
         [Menu("Min Life % Auto HP Flask", 11, 10)]
         public RangeNode<int> perHPFlask { get; set; }
-        [Menu("HP Flask Delay (millisecond)", 12, 10)]
+        [Menu("Min Life % Auto Instant HP Flask", 12, 10)]
+        public RangeNode<int> instantPerHPFlask { get; set; }
+        [Menu("HP Flask Delay (millisecond)", 13, 10)]
         public RangeNode<float> HPDelay { get; set; }
-        [Menu("Min Mana % Auto Mana Flask", 13, 10)]
+        [Menu("Min Mana % Auto Mana Flask", 14, 10)]
         public RangeNode<float> PerManaFlask { get; set; }
-        [Menu("Mana Flask Delay (millisecond)", 14, 10)]
+        [Menu("Mana Flask Delay (millisecond)", 15, 10)]
         public RangeNode<float> ManaDelay { get; set; }
         #endregion
 
