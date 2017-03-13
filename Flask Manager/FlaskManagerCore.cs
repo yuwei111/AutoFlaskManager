@@ -361,6 +361,20 @@ namespace FlaskManager.Flask_Manager
                             _WarnFlaskSpeed = false;
                         }
                     }
+
+                    if (Settings.disableLifeSecUse.Value)
+                    {
+                        if (newFlask.FlaskAction1 == FlaskAction.LIFE || newFlask.FlaskAction1 == FlaskAction.HYBRID)
+                            newFlask.FlaskAction2 = FlaskAction.NONE;
+                    }
+
+                    if ( Settings.treatOffenAsDef.Value)
+                    {
+                        if (newFlask.FlaskAction1 == FlaskAction.OFFENSE)
+                            newFlask.FlaskAction1 = FlaskAction.DEFENSE;
+                        if (newFlask.FlaskAction2 == FlaskAction.OFFENSE)
+                            newFlask.FlaskAction2 = FlaskAction.DEFENSE;
+                    }
                     newFlask.EnableDisableFlask();
                     playerFlaskList.Add(newFlask);
                 }
