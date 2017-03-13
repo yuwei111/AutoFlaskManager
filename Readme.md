@@ -26,6 +26,10 @@ This is a flaskmanager plugin for POEHUD.
 There is an POEHUD/AutoFlaskManager update what should I do?
 ```
 Delete the old folder before downloading and installing the new one. OR things will fail.
+```
+It's drinking from instant Life flask rather than normal life flask.
+```
+Always put Instant Life Flask in your Last flask slot.
 
 ```
 There is a POE game update, what should I do? who will change the offsets.
