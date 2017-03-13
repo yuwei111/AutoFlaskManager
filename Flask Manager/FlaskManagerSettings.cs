@@ -143,6 +143,8 @@ namespace FlaskManager.Flask_Manager
         public ToggleNode defensiveDrinkAll { get; set; }
         [Menu("Defensive Flask Delay (millisecond)", 44, 40)]
         public RangeNode<float> DefensiveDelay { get; set; }
+        [Menu("Treat Offensive Flasks As Defensive", 45, 40)]
+        public ToggleNode treatOffenAsDef { get; set; }
         #endregion
 
         #region Offensive Flask Menu
@@ -156,8 +158,6 @@ namespace FlaskManager.Flask_Manager
         public ToggleNode offensiveDrinkAll { get; set; }
         [Menu("Offensive Flask Delay (millisecond)", 54, 50)]
         public RangeNode<float> OffensiveDelay { get; set; }
-        [Menu("Treat Offensive Flasks As Defensive", 55, 40)]
-        public ToggleNode treatOffenAsDef { get; set; }
         #endregion
 
         #region Unnique Flask Menu
