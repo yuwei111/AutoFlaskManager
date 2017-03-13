@@ -637,7 +637,7 @@ namespace FlaskManager.Flask_Manager
                 if (PlayerHealth.HPPercentage * 100 < Settings.hPDefensive.Value ||
                     PlayerHealth.ESPercentage * 100 < Settings.eSDefensive.Value)
                 {
-                    if (FindDrinkFlask(FlaskAction.DEFENSE, FlaskAction.DEFENSE, "Defensive Action", 0, true))
+                    if (FindDrinkFlask(FlaskAction.DEFENSE, FlaskAction.DEFENSE, "Defensive Action", 0, Settings.defensiveDrinkAll.Value))
                         lastDefUsed = 0f;
                 }
             }
@@ -656,7 +656,7 @@ namespace FlaskManager.Flask_Manager
                 if (PlayerHealth.HPPercentage * 100 < Settings.hpOffensive.Value ||
                     PlayerHealth.ESPercentage * 100 < Settings.esOffensive.Value)
                 {
-                    if (FindDrinkFlask(FlaskAction.OFFENSE, FlaskAction.OFFENSE, "Offensive Action", 0, true))
+                    if (FindDrinkFlask(FlaskAction.OFFENSE, FlaskAction.OFFENSE, "Offensive Action", 0, Settings.offensiveDrinkAll.Value))
                         lastOffUsed = 0f;
                 }
             }
