@@ -405,13 +405,9 @@ namespace FlaskManager.Flask_Manager
             bool hasDrunk = false;
             var flaskList = playerFlaskList.FindAll(x => x.CurrentCharges >= minRequiredCharge &&
                                 (x.FlaskAction1 == type1 || x.FlaskAction2 == type2) && x.isEnabled);
-            var useCharges = 0;
             foreach (var flask in flaskList)
             {
-                // Life/Mana/Hybrid flasks doesn't work if charges are less than number of charges per use.
-                // Utility flask can work until charges reaches 0.
-                useCharges = (flask.FlaskAction1 > FlaskAction.HYBRID) ? 0 : flask.UseCharges;
-                if (flask.CurrentCharges >= useCharges)
+                if (flask.CurrentCharges >= flask.UseCharges)
                 {
                     keyboard.setLatency(GameController.Game.IngameState.CurLatency);
                     if (!keyboard.KeyPressRelease(keyInfo.k[flask.Slot]))
