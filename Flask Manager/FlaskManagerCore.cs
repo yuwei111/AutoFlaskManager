@@ -283,10 +283,10 @@ namespace FlaskManager.Flask_Manager
             playerFlaskList.Clear();
             try
             {
-                int totalFlasksEquipped = (int)(flaskRoot.ChildCount);
-                for (int j = 0; j < totalFlasksEquipped; j++)
+                var flasksEquipped = flaskRoot.Children;
+                for (int j = 0; j < flasksEquipped.Count; j++)
                 {
-                    InventoryItemIcon flask = flaskRoot.Children[j].AsObject<InventoryItemIcon>();
+                    InventoryItemIcon flask = flasksEquipped[j].AsObject<InventoryItemIcon>();
                     Entity flaskItem = flask.Item;
                     Charges flaskCharges = flaskItem.GetComponent<Charges>();
                     Mods flaskMods = flaskItem.GetComponent<Mods>();
