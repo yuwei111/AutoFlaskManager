@@ -48,6 +48,7 @@ namespace FlaskManager.Flask_Manager
             esOffensive = new RangeNode<int>(50, 0, 100);
             OffensiveDelay = new RangeNode<float>(3000f, 0f, 10000f);
             offensiveDrinkAll = true;
+            offensiveOnlyWhenAttacking = false;
             treatOffenAsDef = false;
             //Unique Flask
             uniqFlaskEnable = false;
@@ -154,9 +155,11 @@ namespace FlaskManager.Flask_Manager
         public RangeNode<int> hpOffensive { get; set; }
         [Menu("Min ES % Auto Offensive Flask", 52, 50)]
         public RangeNode<int> esOffensive { get; set; }
-        [Menu("Drink All Offensive Flasks Together", 53, 40)]
+        [Menu("Drink All Offensive Flasks Together", 53, 50)]
         public ToggleNode offensiveDrinkAll { get; set; }
-        [Menu("Offensive Flask Delay (millisecond)", 54, 50)]
+        [Menu("Drink Offensive Flasks Only On Attack", 54, 50)]
+        public ToggleNode offensiveOnlyWhenAttacking { get; set; }
+        [Menu("Offensive Flask Delay (millisecond)", 55, 50)]
         public RangeNode<float> OffensiveDelay { get; set; }
         #endregion
 

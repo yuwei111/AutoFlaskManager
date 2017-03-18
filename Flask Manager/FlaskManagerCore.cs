@@ -283,10 +283,10 @@ namespace FlaskManager.Flask_Manager
             playerFlaskList.Clear();
             try
             {
-                int totalFlasksEquipped = (int)(flaskRoot.ChildCount);
-                for (int j = 0; j < totalFlasksEquipped; j++)
+                var flasksEquipped = flaskRoot.Children;
+                for (int j = 0; j < flasksEquipped.Count; j++)
                 {
-                    InventoryItemIcon flask = flaskRoot.Children[j].AsObject<InventoryItemIcon>();
+                    InventoryItemIcon flask = flasksEquipped[j].AsObject<InventoryItemIcon>();
                     Entity flaskItem = flask.Item;
                     Charges flaskCharges = flaskItem.GetComponent<Charges>();
                     Mods flaskMods = flaskItem.GetComponent<Mods>();
@@ -365,11 +365,11 @@ namespace FlaskManager.Flask_Manager
                     if (Settings.disableLifeSecUse.Value)
                     {
                         if (newFlask.FlaskAction1 == FlaskAction.LIFE || newFlask.FlaskAction1 == FlaskAction.HYBRID)
-                            if ( newFlask.FlaskAction2 == FlaskAction.OFFENSE || newFlask.FlaskAction2 == FlaskAction.DEFENSE)
+                            if (newFlask.FlaskAction2 == FlaskAction.OFFENSE || newFlask.FlaskAction2 == FlaskAction.DEFENSE)
                                 newFlask.FlaskAction2 = FlaskAction.NONE;
                     }
 
-                    if ( Settings.treatOffenAsDef.Value)
+                    if (Settings.treatOffenAsDef.Value)
                     {
                         if (newFlask.FlaskAction1 == FlaskAction.OFFENSE)
                             newFlask.FlaskAction1 = FlaskAction.DEFENSE;
@@ -489,7 +489,7 @@ namespace FlaskManager.Flask_Manager
             {
                 var flaskList = playerFlaskList.FindAll(x => x.isInstant == x.isEnabled == true &&
                           (x.FlaskAction1 == FlaskAction.LIFE || x.FlaskAction1 == FlaskAction.HYBRID));
-                foreach(PlayerFlask flask in flaskList)
+                foreach (PlayerFlask flask in flaskList)
                 {
                     if (flask.CurrentCharges >= flask.UseCharges)
                     {
@@ -659,10 +659,12 @@ namespace FlaskManager.Flask_Manager
         {
             var LocalPlayer = GameController.Game.IngameState.Data.LocalPlayer;
             var PlayerHealth = LocalPlayer.GetComponent<Life>();
+            var IsAttacking = (LocalPlayer.GetComponent<Actor>().ActionId & 2) > 0;
+            var OnlyWhenAttacking = Settings.offensiveOnlyWhenAttacking ? IsAttacking : true;
             lastOffUsed += 100f;
             if (lastOffUsed < Settings.OffensiveDelay.Value)
                 return;
-            if (Settings.offFlaskEnable.Value && LocalPlayer.IsValid)
+            if (Settings.offFlaskEnable.Value && LocalPlayer.IsValid && OnlyWhenAttacking)
             {
                 if (PlayerHealth.HPPercentage * 100 < Settings.hpOffensive.Value ||
                     PlayerHealth.ESPercentage * 100 < Settings.esOffensive.Value)
