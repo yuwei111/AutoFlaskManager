@@ -703,7 +703,8 @@ namespace FlaskManager.Flask_Manager
                     return;
                 }
 
-            if (isTown || isHideout || GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Life>().HasBuff("grace_period"))
+            var playerLife = GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Life>();
+            if (playerLife == null || isTown || isHideout || playerLife.CurHP <= 0 || playerLife.HasBuff("grace_period"))
                 return;
 
             SpeedFlaskLogic();
