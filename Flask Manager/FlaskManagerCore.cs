@@ -461,7 +461,7 @@ namespace FlaskManager.Flask_Manager
                         LogError("Error: Cannot find cports.exe, you must die now!", errmsg_time);
                     }
                 }
-                if (Math.Round(PlayerHealth.ESPercentage, 3) * 100 < (Settings.percentESQuit.Value))
+                if (PlayerHealth.MaxES > 0 && (Math.Round(PlayerHealth.ESPercentage, 3) * 100 < (Settings.percentESQuit.Value)))
                 {
                     try
                     {
@@ -646,7 +646,7 @@ namespace FlaskManager.Flask_Manager
             if (Settings.defFlaskEnable.Value && LocalPlayer.IsValid)
             {
                 if (PlayerHealth.HPPercentage * 100 < Settings.hPDefensive.Value ||
-                    PlayerHealth.ESPercentage * 100 < Settings.eSDefensive.Value)
+                    (PlayerHealth.MaxES > 0 && PlayerHealth.ESPercentage * 100 < Settings.eSDefensive.Value))
                 {
                     if (FindDrinkFlask(FlaskAction.DEFENSE, FlaskAction.DEFENSE, "Defensive Action", 0, Settings.defensiveDrinkAll.Value))
                         lastDefUsed = 0f;
@@ -667,7 +667,7 @@ namespace FlaskManager.Flask_Manager
             if (Settings.offFlaskEnable.Value && LocalPlayer.IsValid && OnlyWhenAttacking)
             {
                 if (PlayerHealth.HPPercentage * 100 < Settings.hpOffensive.Value ||
-                    PlayerHealth.ESPercentage * 100 < Settings.esOffensive.Value)
+                    (PlayerHealth.MaxES > 0 && PlayerHealth.ESPercentage * 100 < Settings.esOffensive.Value))
                 {
                     if (FindDrinkFlask(FlaskAction.OFFENSE, FlaskAction.OFFENSE, "Offensive Action", 0, Settings.offensiveDrinkAll.Value))
                         lastOffUsed = 0f;
@@ -687,8 +687,7 @@ namespace FlaskManager.Flask_Manager
             if (flaskRoot == null)
                 return;
 
-            var totalFlask = (int)(flaskRoot.ChildCount);
-            if (totalFlask > 0 && totalFlask != playerFlaskList.Count)
+            if (flaskRoot.Children.Count > 0 && flaskRoot.Children.Count != playerFlaskList.Count)
             {
                 if (Settings.debugMode.Value)
                     LogMessage("Invalid Flask Count, Recalculating it.", logmsg_time);
@@ -699,6 +698,8 @@ namespace FlaskManager.Flask_Manager
             for (int j = 0; j < playerFlaskList.Count; j++)
                 if (!playerFlaskList[j].Item.IsValid)
                 {
+                    if (Settings.debugMode.Value)
+                        LogMessage("Invalid Flask Data, Recalculating it.", logmsg_time);
                     GettingAllFlaskInfo(flaskRoot);
                     return;
                 }
