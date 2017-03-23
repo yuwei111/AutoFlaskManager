@@ -631,7 +631,7 @@ namespace FlaskManager.Flask_Manager
                 !PlayerHealth.HasBuff("flask_bonus_movement_speed") &&
                 !PlayerHealth.HasBuff("flask_utility_sprint"))
             {
-                FindDrinkFlask(FlaskAction.SPEEDRUN, FlaskAction.SPEEDRUN, "Moving Around", Settings.quicksilverUseWhen.Value);
+                FindDrinkFlask(FlaskAction.SPEEDRUN, FlaskAction.SPEEDRUN, "Moving Around", Settings.quicksilverUseWhenCharges.Value);
             }
         }
         #endregion
@@ -660,19 +660,24 @@ namespace FlaskManager.Flask_Manager
             var LocalPlayer = GameController.Game.IngameState.Data.LocalPlayer;
             var PlayerHealth = LocalPlayer.GetComponent<Life>();
             var IsAttacking = (LocalPlayer.GetComponent<Actor>().ActionId & 2) > 0;
-            var OnlyWhenAttacking = Settings.offensiveOnlyWhenAttacking ? IsAttacking : true;
             lastOffUsed += 100f;
+            if (!Settings.offFlaskEnable.Value || !LocalPlayer.IsValid)
+                return;
+            if (!Settings.offensiveWhenAttacking.Value && !Settings.offensiveWhenLifeES.Value)
+            {
+                LogError("Atleast Select 1 offensive flask Method Life/ES OR When Attacking. OR Disable offensive flask.", errmsg_time);
+                return;
+            }
             if (lastOffUsed < Settings.OffensiveDelay.Value)
                 return;
-            if (Settings.offFlaskEnable.Value && LocalPlayer.IsValid && OnlyWhenAttacking)
-            {
-                if (PlayerHealth.HPPercentage * 100 < Settings.hpOffensive.Value ||
-                    (PlayerHealth.MaxES > 0 && PlayerHealth.ESPercentage * 100 < Settings.esOffensive.Value))
-                {
-                    if (FindDrinkFlask(FlaskAction.OFFENSE, FlaskAction.OFFENSE, "Offensive Action", 0, Settings.offensiveDrinkAll.Value))
-                        lastOffUsed = 0f;
-                }
-            }
+            if (Settings.offensiveWhenAttacking.Value && !IsAttacking)
+                return;
+            if (Settings.offensiveWhenLifeES.Value && (PlayerHealth.HPPercentage * 100 > Settings.hpOffensive.Value &&
+                    (PlayerHealth.MaxES <= 0 || PlayerHealth.ESPercentage * 100 > Settings.esOffensive.Value)))
+                return;
+
+            if (FindDrinkFlask(FlaskAction.OFFENSE, FlaskAction.OFFENSE, "Offensive Action", Settings.OffensiveUseWhenCharges.Value, Settings.offensiveDrinkAll.Value))
+                lastOffUsed = 0f;
         }
         #endregion
 

@@ -35,7 +35,7 @@ namespace FlaskManager.Flask_Manager
             //Quicksilver
             quicksilverEnable = false;
             quicksilverDurration = new RangeNode<float>(500f, 0f, 5000f);
-            quicksilverUseWhen = new RangeNode<int>(0, 0, 100);
+            quicksilverUseWhenCharges = new RangeNode<int>(0, 0, 100);
             //Defensive Flask
             defFlaskEnable = false;
             hPDefensive = new RangeNode<int>(50, 0, 100);
@@ -48,8 +48,10 @@ namespace FlaskManager.Flask_Manager
             esOffensive = new RangeNode<int>(50, 0, 100);
             OffensiveDelay = new RangeNode<float>(3000f, 0f, 10000f);
             offensiveDrinkAll = true;
-            offensiveOnlyWhenAttacking = false;
+            offensiveWhenAttacking = false;
+            offensiveWhenLifeES = true;
             treatOffenAsDef = false;
+            OffensiveUseWhenCharges = new RangeNode<int>(0, 0, 100);
             //Unique Flask
             uniqFlaskEnable = false;
             // Settings
@@ -106,17 +108,17 @@ namespace FlaskManager.Flask_Manager
         #region Ailment Flask Menu
         [Menu("Remove Ailment Flask", 20)]
         public ToggleNode remAilment { get; set; }
-        [Menu("Remove Frozen Ailment", 21, 20)]
+        [Menu("Remove Frozen", 21, 20)]
         public ToggleNode remFrozen { get; set; }
-        [Menu("Remove Burning Ailment", 22, 20)]
+        [Menu("Remove Burning", 22, 20)]
         public ToggleNode remBurning { get; set; }
-        [Menu("Remove Shocked Ailment", 23, 20)]
+        [Menu("Remove Shocked", 23, 20)]
         public ToggleNode remShocked { get; set; }
-        [Menu("Remove Curse Ailment", 24, 20)]
+        [Menu("Remove Curse", 24, 20)]
         public ToggleNode remCurse { get; set; }
-        [Menu("Remove Poison Ailment", 25, 20)]
+        [Menu("Remove Poison", 25, 20)]
         public ToggleNode remPoison { get; set; }
-        [Menu("Remove Corrupting/Bleed Ailment", 26, 20)]
+        [Menu("Remove Corrupting/Bleed", 26, 20)]
         public ToggleNode remBleed { get; set; }
         [Menu("Corrupting Blood Stacks", 27, 20)]
         public RangeNode<int> corrptCount { get; set; }
@@ -129,38 +131,42 @@ namespace FlaskManager.Flask_Manager
         public ToggleNode quicksilverEnable { get; set; }
         [Menu("Use After Moving Post (millisecond)", 31, 30)]
         public RangeNode<float> quicksilverDurration { get; set; }
-        [Menu("Use When Greater than X (0 to disable it)", 32, 30)]
-        public RangeNode<int> quicksilverUseWhen { get; set; }
+        [Menu("Use When Charges Greater than X (0 to disable it)", 32, 30)]
+        public RangeNode<int> quicksilverUseWhenCharges { get; set; }
         #endregion
 
         #region Defensive Flask Menu
         [Menu("Defensive Flask", 40)]
         public ToggleNode defFlaskEnable { get; set; }
-        [Menu("Min Life % Auto Defensive Flask", 41, 40)]
+        [Menu("Min Life %", 41, 40)]
         public RangeNode<int> hPDefensive { get; set; }
-        [Menu("Min ES % Auto Defensive Flask", 42, 40)]
+        [Menu("Min ES %", 42, 40)]
         public RangeNode<int> eSDefensive { get; set; }
-        [Menu("Drink All Defensive Flasks Together", 43, 40)]
-        public ToggleNode defensiveDrinkAll { get; set; }
-        [Menu("Defensive Flask Delay (millisecond)", 44, 40)]
+        [Menu("Delay (millisecond)", 43, 40)]
         public RangeNode<float> DefensiveDelay { get; set; }
-        [Menu("Treat Offensive Flasks As Defensive", 45, 40)]
+        [Menu("Treat Offensive Flasks As Defensive", 44, 40)]
         public ToggleNode treatOffenAsDef { get; set; }
+        [Menu("Drink All Flasks Together", 45, 40)]
+        public ToggleNode defensiveDrinkAll { get; set; }
         #endregion
 
         #region Offensive Flask Menu
         [Menu("Offensive Flask", 50)]
         public ToggleNode offFlaskEnable { get; set; }
-        [Menu("Min Life % Auto Offensive Flask", 51, 50)]
+        [Menu("Drink On Life/ES", 51, 50)]
+        public ToggleNode offensiveWhenLifeES { get; set; }
+        [Menu("Min Life %", 52, 51)]
         public RangeNode<int> hpOffensive { get; set; }
-        [Menu("Min ES % Auto Offensive Flask", 52, 50)]
+        [Menu("Min ES %", 53, 51)]
         public RangeNode<int> esOffensive { get; set; }
-        [Menu("Drink All Offensive Flasks Together", 53, 50)]
-        public ToggleNode offensiveDrinkAll { get; set; }
-        [Menu("Drink Offensive Flasks Only On Attack", 54, 50)]
-        public ToggleNode offensiveOnlyWhenAttacking { get; set; }
-        [Menu("Offensive Flask Delay (millisecond)", 55, 50)]
+        [Menu("Drink On Skill Use", 54, 50)]
+        public ToggleNode offensiveWhenAttacking { get; set; }
+        [Menu("Delay (millisecond)", 55, 50)]
         public RangeNode<float> OffensiveDelay { get; set; }
+        [Menu("Use When Charges Greater than X (0 to disable it)", 56, 50)]
+        public RangeNode<int> OffensiveUseWhenCharges { get; set; }
+        [Menu("Drink All Flasks Together", 57, 50)]
+        public ToggleNode offensiveDrinkAll { get; set; }
         #endregion
 
         #region Unnique Flask Menu
