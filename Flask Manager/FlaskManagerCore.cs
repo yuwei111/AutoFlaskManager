@@ -671,8 +671,8 @@ namespace FlaskManager.Flask_Manager
             if (lastOffUsed < Settings.OffensiveDelay.Value)
                 return;
 
-            if (Settings.offensiveWhenAttacking.Value && Settings.debugMode.Value)
-                LogMessage("isAttacking: " + IsAttacking + "ActionId: " + LocalPlayer.GetComponent<Actor>().ActionId, logmsg_time);
+            //if (Settings.offensiveWhenAttacking.Value && Settings.debugMode.Value)
+            //    LogMessage("isAttacking: " + IsAttacking + "ActionId: " + LocalPlayer.GetComponent<Actor>().ActionId, logmsg_time);
 
             if (Settings.offensiveWhenAttacking.Value && !IsAttacking)
                 return;
