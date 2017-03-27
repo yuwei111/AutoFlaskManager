@@ -19,7 +19,6 @@ $RECYCLE.BIN/
 *.lnk
 
 # Compiled Files
-*.pdb
 *.ini
 # =========================
 # Operating System Files
