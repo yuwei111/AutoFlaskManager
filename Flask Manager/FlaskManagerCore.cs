@@ -403,26 +403,21 @@ namespace FlaskManager.Flask_Manager
         private bool FindDrinkFlask(FlaskAction type1, FlaskAction type2, string reason, int minRequiredCharge = 0, bool shouldDrinkAll = false)
         {
             bool hasDrunk = false;
-            var flaskList = playerFlaskList.FindAll(x => x.CurrentCharges >= minRequiredCharge &&
-                                (x.FlaskAction1 == type1 || x.FlaskAction2 == type2) && x.isEnabled);
+            var flaskList = playerFlaskList.FindAll(x => (x.FlaskAction1 == type1 || x.FlaskAction2 == type2) && x.isEnabled);
             foreach (var flask in flaskList)
             {
-                if (flask.CurrentCharges >= flask.UseCharges)
+                flask.UpdateFlaskChargesInfo();
+                if (flask.CurrentCharges >= flask.UseCharges && flask.CurrentCharges >= minRequiredCharge)
                 {
                     keyboard.setLatency(GameController.Game.IngameState.CurLatency);
                     if (!keyboard.KeyPressRelease(keyInfo.k[flask.Slot]))
                         LogError("Warning: High latency ( more than 1000 millisecond ), plugin will fail to work properly.", errmsg_time);
-                    flask.UpdateFlaskChargesInfo();
                     if (Settings.debugMode.Value)
                         LogMessage("Just Drank Flask on key " + keyInfo.k[flask.Slot] + " cuz of " + reason, logmsg_time);
                     // if there are multiple flasks, drinking 1 of them at a time is enough.
                     hasDrunk = true;
                     if (!shouldDrinkAll)
                         return hasDrunk;
-                }
-                else
-                {
-                    flask.UpdateFlaskChargesInfo();
                 }
 
             }
