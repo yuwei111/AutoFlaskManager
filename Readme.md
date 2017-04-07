@@ -20,6 +20,9 @@ This is a flaskmanager plugin for POEHUD.
 - Once you downloaded it, extract it on the desktop
 - copy cports.exe from the desktop/extracted folder and paste it where PoeHud.exe is.
 
+# Manual AutoQuit
+- Press F4 to manually autoquit.
+
 # F.A.Qs
 
 ```
