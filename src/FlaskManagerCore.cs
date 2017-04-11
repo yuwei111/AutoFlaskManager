@@ -236,21 +236,24 @@ namespace FlaskManager
         {
             try
             {
+                Entity flaskItem;
+                Charges flaskCharges;
+                Mods flaskMods;
+                float tmpUseCharges;
                 for (int j = 0; j < 5; j++)
                 {
                     //InventoryItemIcon flask = flasksEquipped[j].AsObject<InventoryItemIcon>();
-                    Entity flaskItem = GameController.Game.IngameState.IngameUi.InventoryPanel[InventoryIndex.Flask][j, 0, 0];
+                    flaskItem = GameController.Game.IngameState.IngameUi.InventoryPanel[InventoryIndex.Flask][j, 0, 0];
                     if (flaskItem == null)
                     {
                         playerFlaskList[j].isValid = false;
                         continue;
                     }
 
-                    Charges flaskCharges = flaskItem.GetComponent<Charges>();
-                    Mods flaskMods = flaskItem.GetComponent<Mods>();
-
+                    flaskCharges = flaskItem.GetComponent<Charges>();
+                    flaskMods = flaskItem.GetComponent<Mods>();
                     playerFlaskList[j].isInstant = false;
-                    playerFlaskList[j].UseCharges = flaskCharges.ChargesPerUse;
+                    tmpUseCharges = flaskCharges.ChargesPerUse;
                     playerFlaskList[j].CurrentCharges = flaskCharges.NumCharges;
                     playerFlaskList[j].flaskRarity = flaskMods.ItemRarity;
                     playerFlaskList[j].FlaskName = GameController.Files.BaseItemTypes.Translate(flaskItem.Path).BaseName;
@@ -279,12 +282,15 @@ namespace FlaskManager
                         }
                     }
 
+                    if (Settings.chargeReduction.Value > 0)
+                        tmpUseCharges = ((100 - Settings.chargeReduction.Value) / 100) * tmpUseCharges;
+
                     //Checking flask mods.
                     FlaskAction action2 = FlaskAction.NONE;
                     foreach (var mod in flaskMods.ItemMods)
                     {
                         if (mod.Name.ToLower().Contains("flaskchargesused"))
-                            playerFlaskList[j].UseCharges = (int)Math.Floor(playerFlaskList[j].UseCharges + ((double)(playerFlaskList[j].UseCharges) * mod.Value1 / 100));
+                            tmpUseCharges = ((100 + (float)mod.Value1) / 100) * tmpUseCharges;
 
                         if (mod.Name.ToLower().Contains("instant"))
                             playerFlaskList[j].isInstant = true;
@@ -329,6 +335,7 @@ namespace FlaskManager
                         if (playerFlaskList[j].FlaskAction2 == FlaskAction.OFFENSE)
                             playerFlaskList[j].FlaskAction2 = FlaskAction.DEFENSE;
                     }
+                    playerFlaskList[j].UseCharges = (int)Math.Floor(tmpUseCharges);
                     playerFlaskList[j].isValid = true;
                 }
             }
