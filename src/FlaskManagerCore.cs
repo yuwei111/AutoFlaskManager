@@ -234,8 +234,6 @@ namespace FlaskManager
         #region GettingFlaskDetails
         private bool GettingAllFlaskInfo()
         {
-            if (Settings.debugMode.Value)
-                LogMessage("Getting Inventory Flasks info.", logmsg_time);
             try
             {
                 for (int j = 0; j < 5; j++)
