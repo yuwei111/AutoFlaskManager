@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace FlaskManager.Helpers
+namespace FlaskManager
 {
     class KeyboardHelper
     {
@@ -42,7 +42,7 @@ namespace FlaskManager.Helpers
             int lat = (int)(CurLatency);
             if (lat < 1000)
             {
-                Thread.Sleep((int)(lat));
+                Thread.Sleep(lat);
                 return true;
             }
             else
@@ -50,8 +50,6 @@ namespace FlaskManager.Helpers
                 Thread.Sleep(1000);
                 return false;
             }
-            // working as a double key.
-            //KeyUp(key);
         }
         private void Write(string text, params object[] args)
         {

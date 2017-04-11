@@ -1,7 +1,7 @@
 ﻿using PoeHUD.Hud.Settings;
 using PoeHUD.Plugins;
 
-namespace FlaskManager.Flask_Manager
+namespace FlaskManager
 {
     class FlaskManagerSettings : SettingsBase
     {
@@ -10,10 +10,6 @@ namespace FlaskManager.Flask_Manager
             #region Default Settings
             //plugin
             Enable = false;
-            //Auto Quit
-            isPercentQuit = false;
-            percentHPQuit = new RangeNode<float>(35f, 0f, 100f);
-            percentESQuit = new RangeNode<float>(35f, 0, 100);
             //HP/MANA
             autoFlask = false;
             perHPFlask = new RangeNode<int>(60, 0, 100);
@@ -79,21 +75,12 @@ namespace FlaskManager.Flask_Manager
             #endregion
         }
 
-        #region Auto Quit Menu
-        [Menu("Auto % HP/ES to Quit", 1)]
-        public ToggleNode isPercentQuit { get; set; }
-        [Menu("Min % Life to Auto Quit", 2, 1)]
-        public RangeNode<float> percentHPQuit { get; set; }
-        [Menu("Min % ES Auto Quit", 3, 1)]
-        public RangeNode<float> percentESQuit { get; set; }
-        #endregion
-
         #region HP Mana Flask Menu
         [Menu("HP/MANA % Auto Flask", 10)]
         public ToggleNode autoFlask { get; set; }
         [Menu("Min Life % Auto HP Flask", 11, 10)]
         public RangeNode<int> perHPFlask { get; set; }
-        [Menu("Min Life % Auto Instant HP Flask", 12, 10)]
+        [Menu("Min Life % Auto Instant HP Flask (put instant flask in last slot)", 12, 10)]
         public RangeNode<int> instantPerHPFlask { get; set; }
         [Menu("HP Flask Delay (millisecond)", 13, 10)]
         public RangeNode<float> HPDelay { get; set; }
@@ -217,5 +204,6 @@ namespace FlaskManager.Flask_Manager
         [Menu("About", 126)]
         public ToggleNode about { get; set; }
         #endregion
+
     }
 }

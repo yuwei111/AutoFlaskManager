@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace FlaskManager.Flask_Components
+namespace FlaskManager.FlaskComponents
 {
     class FlaskKeys
     {

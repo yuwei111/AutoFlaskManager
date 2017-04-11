@@ -1,4 +1,4 @@
-﻿namespace FlaskManager.Flask_Components
+﻿namespace FlaskManager.FlaskComponents
 {
     public enum FlaskAction : int
     {

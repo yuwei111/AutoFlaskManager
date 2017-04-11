@@ -4,19 +4,19 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{228C9E70-0E59-464F-9CB2-DF384D84962A}</ProjectGuid>
+    <ProjectGuid>{C947CD0C-45D7-4064-908F-D40D762D49C3}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>FlaskManager</RootNamespace>
     <AssemblyName>FlaskManager</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>.\</OutputPath>
+    <OutputPath>..\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -26,30 +26,30 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <OutputPath>..\</OutputPath>
+    <DefineConstants>
+    </DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <PlatformTarget>x64</PlatformTarget>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\..\..\..\packages\Newtonsoft.Json.9.0.1\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="SharpDX">
-      <HintPath>..\..\..\..\..\..\lib\SharpDX.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="SharpDX.Desktop">
-      <HintPath>..\..\..\..\..\..\lib\SharpDX.Desktop.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\lib\SharpDX.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="SharpDX.Direct3D9">
-      <HintPath>..\..\..\..\..\..\lib\SharpDX.Direct3D9.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\lib\SharpDX.Direct3D9.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="SharpDX.Mathematics">
-      <HintPath>..\..\..\..\..\..\lib\SharpDX.Mathematics.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\lib\SharpDX.Mathematics.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -63,26 +63,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Flask Components\FlaskActions.cs" />
-    <Compile Include="Flask Components\FlaskInformation.cs" />
-    <Compile Include="Flask Components\FlaskKeys.cs" />
-    <Compile Include="Flask Components\PlayerFlask.cs" />
-    <Compile Include="Flask Manager\FlaskManagerCore.cs" />
-    <Compile Include="Flask Manager\FlaskManagerSettings.cs" />
-    <Compile Include="Helpers\KeyboardHelper.cs" />
-    <Compile Include="Helpers\PoeProcessHandler.cs" />
+    <Compile Include="FlaskComponents\FlaskActions.cs" />
+    <Compile Include="FlaskComponents\FlaskInformation.cs" />
+    <Compile Include="FlaskComponents\FlaskKeys.cs" />
+    <Compile Include="FlaskComponents\PlayerFlask.cs" />
+    <Compile Include="FlaskManagerCore.cs" />
+    <Compile Include="FlaskManagerSettings.cs" />
+    <Compile Include="KeyboardHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\PoeHUD.csproj">
+    <ProjectReference Include="..\..\..\..\..\..\PoeHUD.csproj">
       <Project>{e86368b2-ae1e-4489-a749-e29a0ab48f83}</Project>
       <Name>PoeHUD</Name>
       <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="config\flaskbind.json" />
-    <None Include="config\flaskinfo.json" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
