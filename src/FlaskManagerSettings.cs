@@ -70,6 +70,9 @@ namespace FlaskManager
             flaskSlot3Enable = true;
             flaskSlot4Enable = true;
             flaskSlot5Enable = true;
+
+            //Charges Reduction from Items/Tree (0 to disable it)
+            chargeReduction = new RangeNode<float>(0f, 0f, 100f);
             //About
             about = true;
             #endregion
@@ -203,6 +206,9 @@ namespace FlaskManager
 
         [Menu("About", 126)]
         public ToggleNode about { get; set; }
+
+        [Menu("Total Charges Reduction in % from items/tree", 127)]
+        public RangeNode<float> chargeReduction { get; set; }
         #endregion
 
     }
