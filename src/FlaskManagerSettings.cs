@@ -204,11 +204,11 @@ namespace FlaskManager
         [Menu("Use Flask Slot 5", 125, 120)]
         public ToggleNode flaskSlot5Enable { get; set; }
 
-        [Menu("Total Charges Reduction in % from items/tree", 126)]
-        public RangeNode<float> chargeReduction { get; set; }
-
-        [Menu("About", 127)]
+        [Menu("About", 126)]
         public ToggleNode about { get; set; }
+
+        [Menu("Total Charges Reduction in % from items/tree", 127)]
+        public RangeNode<float> chargeReduction { get; set; }
         #endregion
 
     }

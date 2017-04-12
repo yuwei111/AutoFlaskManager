@@ -244,7 +244,7 @@ namespace FlaskManager
                 {
                     //InventoryItemIcon flask = flasksEquipped[j].AsObject<InventoryItemIcon>();
                     flaskItem = GameController.Game.IngameState.IngameUi.InventoryPanel[InventoryIndex.Flask][j, 0, 0];
-                    if (flaskItem == null)
+                    if (flaskItem == null || flaskItem.Address == 0)
                     {
                         playerFlaskList[j].isValid = false;
                         continue;
