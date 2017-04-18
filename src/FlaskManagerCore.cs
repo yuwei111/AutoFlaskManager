@@ -184,7 +184,7 @@ namespace FlaskManager
                 isTown = area.CurrentArea.IsTown;
                 foreach (var flask in playerFlaskList)
                 {
-                    flask.TotalTimeUsed = 0;
+                    flask.TotalTimeUsed = (flask.isInstant) ? 100000 : 0;
                 }
             }
         }
@@ -392,7 +392,7 @@ namespace FlaskManager
                         LogError("Warning: High latency ( more than 1000 millisecond ), plugin will fail to work properly.", errmsg_time);
                     if (Settings.debugMode.Value)
                         LogMessage("Just Drank Flask on key " + keyInfo.k[flask.Slot] + " cuz of " + reason, logmsg_time);
-                    flask.TotalTimeUsed += 1;
+                    flask.TotalTimeUsed = (flask.isInstant) ? 100000 : flask.TotalTimeUsed + 1;
                     // if there are multiple flasks, drinking 1 of them at a time is enough.
                     hasDrunk = true;
                     if (!shouldDrinkAll)
