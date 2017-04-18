@@ -36,7 +36,7 @@ Delete the old folder before downloading and installing the new one. OR things w
 ```
 It's drinking from instant Life flask rather than normal life flask.
 ```
-Always put Instant Life Flask in your Last flask slot.
+Always put Instant Life Flask in your Last flask slot. And if last slot is already instant, put it in seconds last and so on...
 
 ```
 There is a POE game update, what should I do? who will change the offsets.
