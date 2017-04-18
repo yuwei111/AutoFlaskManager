@@ -11,6 +11,7 @@ namespace FlaskManager.FlaskComponents
         public bool isInstant = false;
         public int UseCharges = 1000;
         public int CurrentCharges = 0;
+        public long TotalTimeUsed = 0;
 
         public ItemRarity flaskRarity = ItemRarity.Normal;
         public FlaskAction FlaskAction1 = FlaskAction.IGNORE;

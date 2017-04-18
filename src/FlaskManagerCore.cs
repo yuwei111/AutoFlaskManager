@@ -182,6 +182,10 @@ namespace FlaskManager
                 LogMessage("Area has been changed. Loading flasks info.", logmsg_time);
                 isHideout = area.CurrentArea.IsHideout;
                 isTown = area.CurrentArea.IsTown;
+                foreach (var flask in playerFlaskList)
+                {
+                    flask.TotalTimeUsed = 0;
+                }
             }
         }
         private void OnFlaskManagerToggle()
@@ -377,6 +381,7 @@ namespace FlaskManager
         {
             bool hasDrunk = false;
             var flaskList = playerFlaskList.FindAll(x => (x.FlaskAction1 == type1 || x.FlaskAction2 == type2) && x.isEnabled && x.isValid);
+            flaskList.Sort( (x,y) => x.TotalTimeUsed.CompareTo(y.TotalTimeUsed));
             foreach (var flask in flaskList)
             {
                 UpdateFlaskChargesInfo(flask.Slot);
@@ -387,6 +392,7 @@ namespace FlaskManager
                         LogError("Warning: High latency ( more than 1000 millisecond ), plugin will fail to work properly.", errmsg_time);
                     if (Settings.debugMode.Value)
                         LogMessage("Just Drank Flask on key " + keyInfo.k[flask.Slot] + " cuz of " + reason, logmsg_time);
+                    flask.TotalTimeUsed += 1;
                     // if there are multiple flasks, drinking 1 of them at a time is enough.
                     hasDrunk = true;
                     if (!shouldDrinkAll)
