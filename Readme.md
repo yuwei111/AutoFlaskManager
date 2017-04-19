@@ -21,7 +21,7 @@ This is a flaskmanager plugin for POEHUD.
 ```
 Auto Quit is too slow/Auto Quit isn't working.
 ```
-Make sure you have copied cports.exe where poehud.exe is located.
+Make sure you have copied cports.exe to c:\Windows\System32
 Make sure you are using Predictive Notework mode: inside poe->options->ui->network mode.
 Also, do the following experiment and let me know the output.
 - go out of town
