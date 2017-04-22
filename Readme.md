@@ -1,9 +1,9 @@
 # Introduction
 
-This is a flaskmanager plugin for POEHUD.
+This is a highly customizable and intuitive Flask Manager plugin for POEHUD  
+###### *Note: Plugins are only supported on the x64 branch of PoEHUD*
 
-# Installing AutoFlask in PoeHUD
-
+# Installing AutoFlask in PoeHUD  
 - Hit Clone or Download -> Download as Zip
 - Extract the Folder from the zip file
 - Move the autoflaskmanger-master folder to the plugins folder in the poehud directory
@@ -13,63 +13,63 @@ This is a flaskmanager plugin for POEHUD.
 - Disable the "About" option to turn off the Splash.
 - Fiddle with the plugin settings to your satisfaction.
 - Note: As per normal HUD operation a red underline means disabled.
-# AutoQuit
+
+# AutoQuit  
 - AutoQuit is moved to another plugin (https://github.com/zaafar/AutoQuit)
 
-# F.A.Qs
+# F.A.Qs  
+###### *Please skim through the FAQ to see if there is a solution to your issue. If not, please feel free to join the official [AutoFlaskManager Support](https://discord.gg/Ad3BquN) channel on discord and someone will be glad to assist you as soon as possible.*
+###### *If the issue is still not resolved, please feel free to post a ticket on the Issues page with as much information as possible and try to include a detailed description as well as screenshots of the issue to ensure it is resolved as soon as possible.*  
+
+
 
 ```
 Auto Quit is too slow/Auto Quit isn't working.
 ```
-Make sure you have copied cports.exe to c:\Windows\System32
-
-Make sure you are using Predictive Notework mode: inside poe->options->ui->network mode.
-
-Also, do the following experiment and let me know the output.
-- go out of town
-- put auto-quit to 80% or something
-- turn on debug mode and try to die
-- then exit poehud and look into "autoflaskmanagerDebug.log" to see when is actual auto-quit happening?
-
+- Make sure you have copied cports.exe to _*c:\Windows\System32*_
+- Make sure you are using Predictive Network mode (_*PoE Options->UI->Network Mode*_ must be set from the log-in page).
+- Make sure you've extracted the AutoQuit plugin, as well as AutoFlaskManager to _*\Plugins\*_ and that they're enabled in the menu
+- If all else fails, the following steps are typically the best way to prepare yourself for requesting support which can then be used to diagnose the issue.
+  1. Open the PoEHUD menu by clicking the three red lines at the top left while in-game
+  2. Ensure AutoQuit and Flask Manager are enabled in the plugins section, and inspect the settings to make sure they're properly set
+  3. Turn on debug mode ( _*Flask Manager->UI Settings*_ )
+  4. Press F4 to force autoquit to attempt to quit
+  5. Exit the game and open ErrorLog.txt in _*\Path of Exile\ErrorLog.txt*_
+  6. If the issue isn't obvious, or remedied; take any applicable screenshots (settings menu opened to AutoQuit, and the error message if possible) and request assistance with the information you've obtained by going to the official [AutoQuit](https://github.com/zaafar/AutoQuit) Issues page, or the discord [support](https://discord.gg/Ad3BquN) channel
 ```
 There is an POEHUD/AutoFlaskManager update what should I do?
 ```
-Delete the old folder before downloading and installing the new one. OR things will fail.
-```
-It's drinking from instant Life flask rather than normal life flask.
-```
-Always put Instant Life Flask in your Last flask slot. And if last slot is already instant, put it in seconds last and so on...
+Delete the old folder before downloading and installing the new one. OR things will fail.  
+###### *You can take a screenshot of your settings, or write them down to make the update easier*
 
 ```
 There is a POE game update, what should I do? who will change the offsets.
 ```
-Wait for POEHUD to be updated. If POEHUD works, this will work too. No need to change offsets as it automatically ask POEHUD for all the offsets.
+Wait for POEHUD to be updated. If POEHUD works, this will work too. No need to change offsets as they are automatically obtained from PoEHUD.
 
 ```
 Does this plugin work with 32bit version of HUD?
 ```
-NO, 32bit PoeHUD is being phased out, as the game itself shifts to 64bit operation exclusively.
+NO, 32bit PoeHUD is being phased out as the game itself shifts to 64bit operation exclusively.
 
 ```
-How come This plugin doesn't have or do feature XYZ that orriginal AutoAHK had?
+How come this plugin doesn't have or do 'feature XYZ' that original AutoAHK had?
 ```
 Because either its not flask related (ie DPS calculator, monsters remaining, etc) or it's not useful anymore.
-We have no plans of implementing it, feel free to implement it if u want.
+We have no plans of implementing it in the near future. Feel free to make a fork of the project and implement it if you want.
 
 ```
 Does this Plugin support languages other than English?
 ```
-NO, you are welcome to translate the source and fork it.
+Not at this time, however, anyone is welcome to translate the source and fork it.
 
 ```
-My AutoFlask Manager is not working/I have binded the flask to other keys.
+My AutoFlask Manager is not working (I have binded the flask to other keys).
 ```
-Change the keys info in flaskbind.json which is in config folder of this flask manager.
+Change the keys info in flaskbind.json in the _*\Flask Manager\Config\*_ folder.
 
-You can look into following file
-- Documents\My Games\Path of Exile\production_Config.ini
-
-Look for following lines in the file
+You can look in _*Documents\My Games\Path of Exile\production_Config.ini*_  
+Search for following lines in the file:
 - use_flask_in_slot1=49
 - use_flask_in_slot2=50
 - use_flask_in_slot3=51
@@ -79,17 +79,17 @@ Look for following lines in the file
 and add those numbers in the flaskbind.json respectively.
 
 ```
-Flask Manager is too fask, and drink all my flask in 1 go.
+Flask Manager is too fast, and all of my flasks are being consumed at once.
 ```
-You need to increase the delays of the flask manager. It's in milisecond, so you need to change it to 3000 to 5000 or anything you think is good enough.
+You need to increase the delay of the flask manager. It's in milliseconds, so 1000 = 1 second.  
+Try increasing it in intervals of 250-500ms until the flask consumption suits your character's needs.
 
 ```
 What is debug mode/debug log. How can I enable/use it?
 ```
-
-- Debug mode is only to provide debugging output to us.
-- You need to enable the debug mode from the autoflaskmanager settings menu of poehud to enable this feature.
-- This mode create a file in poehud.exe folder named as autoflaskmanagerdebug.log containing the debug logs.
+- Debug mode is only to provide debugging output to help us provide support.
+- You need to enable the debug mode from the Flask Manager settings in the PoEHUD menu to enable this feature.
+- This mode creates a file in poehud.exe folder named as autoflaskmanagerdebug.log containing the debug logs.
 - This file is updated/written after you close the game or close the poehud.exe.
 - With this file also provide us with screenshots/use case and descriptions.
 
@@ -108,6 +108,8 @@ This will greatly reduce the duration of a speed mod. Use utility flasks for spe
 There seems to be a logic error causing the plugin to not function correctly, will you look into it?
 ```
 Yes, please provide details about usage case, screenshots and a debug log.
+
+---------
 
 # Setting Up POEHUD in plugin Development environment
 - Download x64 POEHUD version as only x64 support plugins.
