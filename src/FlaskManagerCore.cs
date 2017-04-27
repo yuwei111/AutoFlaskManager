@@ -172,7 +172,6 @@ namespace FlaskManager
             playerFlaskList = new List<PlayerFlask>(5);
             debugDebuff = new Dictionary<string, float>();
             OnFlaskManagerToggle();
-            GameController.Area.OnAreaChange += area => OnAreaChange(area);
             Settings.Enable.OnValueChanged += OnFlaskManagerToggle;
         }
         private void OnAreaChange(AreaController area)
@@ -196,6 +195,7 @@ namespace FlaskManager
                 {
                     if (Settings.debugMode.Value)
                         LogMessage("Enabling FlaskManager.", logmsg_time);
+                    GameController.Area.OnAreaChange += area => OnAreaChange(area);
                     moveCounter = 0f;
                     lastManaUsed = 100000f;
                     lastLifeUsed = 100000f;
@@ -217,6 +217,7 @@ namespace FlaskManager
                 {
                     if (Settings.debugMode.Value)
                         LogMessage("Disabling FlaskManager.", logmsg_time);
+                    GameController.Area.OnAreaChange -= OnAreaChange;
                     playerFlaskList.Clear();
                 }
             }
