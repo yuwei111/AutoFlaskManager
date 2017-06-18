@@ -1,176 +1,174 @@
-﻿using FlaskManager.FlaskComponents;
-using PoeHUD.Hud.Health;
-using PoeHUD.Plugins;
-using SharpDX;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using PoeHUD.Models.Enums;
+using System.Threading;
+using FlaskManager.FlaskComponents;
 using Newtonsoft.Json;
 using PoeHUD.Controllers;
-using System.Threading;
-using PoeHUD.Poe;
-using PoeHUD.Poe.EntityComponents;
+using PoeHUD.Hud.Health;
+using PoeHUD.Models.Enums;
+using PoeHUD.Plugins;
 using PoeHUD.Poe.Components;
+using PoeHUD.Poe.EntityComponents;
+using SharpDX;
 
 namespace FlaskManager
 {
-    class FlaskManagerCore : BaseSettingsPlugin<FlaskManagerSettings>
+    internal class FlaskManagerCore : BaseSettingsPlugin<FlaskManagerSettings>
     {
-        private readonly int logmsg_time = 3;
-        private readonly int errmsg_time = 10;
-        private KeyboardHelper keyboard;
-        private Dictionary<string, float> debugDebuff;
+        private const int LogmsgTime = 3;
+        private const int ErrmsgTime = 10;
+        private KeyboardHelper _keyboard;
+        private Dictionary<string, float> _debugDebuff;
 
-        private bool isTown;
-        private bool isHideout;
-        private bool _WarnFlaskSpeed;
-        private DebuffPanelConfig debuffInfo;
-        private FlaskInformation flaskInfo;
-        private FlaskKeys keyInfo;
-        private List<PlayerFlask> playerFlaskList;
+        private bool _isTown;
+        private bool _isHideout;
+        private bool _warnFlaskSpeed;
+        private DebuffPanelConfig _debuffInfo;
+        private FlaskInformation _flaskInfo;
+        private FlaskKeys _keyInfo;
+        private List<PlayerFlask> _playerFlaskList;
 
-        private float moveCounter;
-        private float lastManaUsed;
-        private float lastLifeUsed;
-        private float lastDefUsed;
-        private float lastOffUsed;
+        private float _moveCounter;
+        private float _lastManaUsed;
+        private float _lastLifeUsed;
+        private float _lastDefUsed;
+        private float _lastOffUsed;
 
         #region FlaskManagerInit
         public void SplashPage()
         {
-            if (Settings.about.Value)
+            if (!Settings.About.Value) return;
+            var x = (GameController.Window.GetWindowRectangle().Width / 2) - 237;
+            var y = (GameController.Window.GetWindowRectangle().Height / 2) - 197;
+            var container = new RectangleF(x, y, 475, 395);
+            if (File.Exists(PluginDirectory + @"\splash\AutoFlaskManagerCredits.png"))
+                Graphics.DrawPluginImage(PluginDirectory + @"\splash\AutoFlaskManagerCredits.png", container);
+            else
             {
-                float X = (GameController.Window.GetWindowRectangle().Width / 2) - (475 / 2);
-                float Y = (GameController.Window.GetWindowRectangle().Height / 2) - (395 / 2);
-                RectangleF container = new RectangleF(X, Y, 475, 395);
-                if (File.Exists(PluginDirectory + @"\splash\AutoFlaskManagerCredits.png"))
-                    Graphics.DrawPluginImage(PluginDirectory + @"\splash\AutoFlaskManagerCredits.png", container);
-                else
-                {
-                    LogMessage("Cannot find splash image, disable About.", logmsg_time);
-                }
+                LogMessage("Cannot find splash image, disable About.", LogmsgTime);
             }
-            return;
         }
         public void BuffUi()
         {
-            if (Settings.buffUiEnable.Value && !isTown)
+            if (!Settings.BuffUiEnable.Value || _isTown) return;
+            var x = GameController.Window.GetWindowRectangle().Width * Settings.BuffPositionX.Value * .01f;
+            var y = GameController.Window.GetWindowRectangle().Height * Settings.BuffPositionY.Value * .01f;
+            var position = new Vector2(x, y);
+            float maxWidth = 0;
+            float maxheight = 0;
+            foreach (var buff in GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Life>().Buffs)
             {
-                float X = GameController.Window.GetWindowRectangle().Width * Settings.buff_PositionX.Value * .01f;
-                float Y = GameController.Window.GetWindowRectangle().Height * Settings.buff_PositionY.Value * .01f;
-                Vector2 position = new Vector2(X, Y);
-                float maxWidth = 0;
-                float maxheight = 0;
-                var textColor = Color.WhiteSmoke;
-                foreach (var buff in GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Life>().Buffs)
-                {
-                    var isInfinity = float.IsInfinity(buff.Timer);
-                    var isFlaskBuff = buff.Name.ToLower().Contains("flask");
-                    if (!Settings.enableFlaskAuraBuff.Value && (isInfinity || isFlaskBuff))
-                        continue;
+                var isInfinity = float.IsInfinity(buff.Timer);
+                var isFlaskBuff = buff.Name.ToLower().Contains("flask");
+                if (!Settings.EnableFlaskAuraBuff.Value && (isInfinity || isFlaskBuff))
+                    continue;
 
-                    if (isFlaskBuff)
-                        textColor = Color.SpringGreen;
-                    else if (isInfinity)
-                        textColor = Color.Purple;
-                    else
-                        textColor = Color.WhiteSmoke;
+                Color textColor;
+                if (isFlaskBuff)
+                    textColor = Color.SpringGreen;
+                else if (isInfinity)
+                    textColor = Color.Purple;
+                else
+                    textColor = Color.WhiteSmoke;
 
-                    var size = Graphics.DrawText(buff.Name + ":" + buff.Timer, Settings.buff_TextSize.Value, position, textColor);
-                    position.Y += size.Height;
-                    maxheight += size.Height;
-                    maxWidth = Math.Max(maxWidth, size.Width);
-                }
-                var background = new RectangleF(X, Y, maxWidth, maxheight);
-                Graphics.DrawFrame(background, 5, Color.Black);
-                Graphics.DrawImage("lightBackground.png", background);
+                var size = Graphics.DrawText(buff.Name + ":" + buff.Timer, Settings.BuffTextSize.Value, position, textColor);
+                position.Y += size.Height;
+                maxheight += size.Height;
+                maxWidth = Math.Max(maxWidth, size.Width);
             }
-            return;
+            var background = new RectangleF(x, y, maxWidth, maxheight);
+            Graphics.DrawFrame(background, 5, Color.Black);
+            Graphics.DrawImage("lightBackground.png", background);
         }
         public void FlaskUi()
         {
-            if (Settings.flaskUiEnable.Value)
+            if (!Settings.FlaskUiEnable.Value) return;
+            var x = GameController.Window.GetWindowRectangle().Width * Settings.FlaskPositionX.Value * .01f;
+            var y = GameController.Window.GetWindowRectangle().Height * Settings.FlaskPositionY.Value * .01f;
+            var position = new Vector2(x, y);
+            float maxWidth = 0;
+            float maxheight = 0;
+            var textColor = Color.WhiteSmoke;
+
+            foreach (var flasks in _playerFlaskList.ToArray())
             {
-                float X = GameController.Window.GetWindowRectangle().Width * Settings.flask_PositionX.Value * .01f;
-                float Y = GameController.Window.GetWindowRectangle().Height * Settings.flask_PositionY.Value * .01f;
-                Vector2 position = new Vector2(X, Y);
-                float maxWidth = 0;
-                float maxheight = 0;
-                Color textColor = Color.WhiteSmoke;
-
-                foreach (var flasks in playerFlaskList.ToArray())
+                if (!flasks.IsValid)
+                    continue;
+                if (!flasks.IsEnabled)
+                    textColor = Color.Red;
+                else switch (flasks.FlaskRarity)
                 {
-                    if (!flasks.isValid)
-                        continue;
-                    if (!flasks.isEnabled)
-                        textColor = Color.Red;
-                    else if (flasks.flaskRarity == ItemRarity.Magic)
+                    case ItemRarity.Magic:
                         textColor = Color.CornflowerBlue;
-                    else if (flasks.flaskRarity == ItemRarity.Unique)
+                        break;
+                    case ItemRarity.Unique:
                         textColor = Color.Chocolate;
-                    else
+                        break;
+                    case ItemRarity.Normal:
+                        break;
+                    case ItemRarity.Rare:
+                        break;
+                    default:
                         textColor = Color.WhiteSmoke;
-
-                    var size = Graphics.DrawText(flasks.FlaskName, Settings.flask_TextSize.Value, position, textColor);
-                    position.Y += size.Height;
-                    maxheight += size.Height;
-                    maxWidth = Math.Max(maxWidth, size.Width);
+                        break;
                 }
-                var background = new RectangleF(X, Y, maxWidth, maxheight);
-                Graphics.DrawFrame(background, 5, Color.Black);
-                Graphics.DrawImage("lightBackground.png", background);
+
+                var size = Graphics.DrawText(flasks.FlaskName, Settings.FlaskTextSize.Value, position, textColor);
+                position.Y += size.Height;
+                maxheight += size.Height;
+                maxWidth = Math.Max(maxWidth, size.Width);
             }
-            return;
+            var background = new RectangleF(x, y, maxWidth, maxheight);
+            Graphics.DrawFrame(background, 5, Color.Black);
+            Graphics.DrawImage("lightBackground.png", background);
         }
         public override void Render()
         {
             base.Render();
-            if (Settings.Enable.Value)
-            {
-                FlaskUi();
-                BuffUi();
-                SplashPage();
-            }
+            if (!Settings.Enable.Value) return;
+            FlaskUi();
+            BuffUi();
+            SplashPage();
         }
         public override void OnClose()
         {
             base.OnClose();
-            if (Settings.debugMode.Value)
-                foreach (var key in debugDebuff)
-                {
-                    File.AppendAllText(PluginDirectory + @"/debug.log", DateTime.Now + " " + key.Key + " : " + key.Value + Environment.NewLine);
-                }
+            if (!Settings.DebugMode.Value) return;
+            foreach (var key in _debugDebuff)
+            {
+                File.AppendAllText(PluginDirectory + @"/debug.log", DateTime.Now + " " + key.Key + " : " + key.Value + Environment.NewLine);
+            }
         }
         public override void Initialise()
         {
             PluginName = "Flask Manager";
             var bindFilename = PluginDirectory + @"/config/flaskbind.json";
             var flaskFilename = PluginDirectory + @"/config/flaskinfo.json";
-            var debufFilename = "config/debuffPanel.json";
+            const string debufFilename = "config/debuffPanel.json";
             if (!File.Exists(bindFilename))
             {
-                LogError("Cannot find " + bindFilename + " file. This plugin will exit.", errmsg_time);
+                LogError("Cannot find " + bindFilename + " file. This plugin will exit.", ErrmsgTime);
                 return;
             }
             if (!File.Exists(flaskFilename))
             {
-                LogError("Cannot find " + flaskFilename + " file. This plugin will exit.", errmsg_time);
+                LogError("Cannot find " + flaskFilename + " file. This plugin will exit.", ErrmsgTime);
                 return;
             }
             if (!File.Exists(debufFilename))
             {
-                LogError("Cannot find " + debufFilename + " file. This plugin will exit.", errmsg_time);
+                LogError("Cannot find " + debufFilename + " file. This plugin will exit.", ErrmsgTime);
                 return;
             }
-            string keyString = File.ReadAllText(bindFilename);
-            string flaskString = File.ReadAllText(flaskFilename);
-            string json = File.ReadAllText(debufFilename);
-            keyInfo = JsonConvert.DeserializeObject<FlaskKeys>(keyString);
-            debuffInfo = JsonConvert.DeserializeObject<DebuffPanelConfig>(json);
-            flaskInfo = JsonConvert.DeserializeObject<FlaskInformation>(flaskString);
-            playerFlaskList = new List<PlayerFlask>(5);
-            debugDebuff = new Dictionary<string, float>();
+            var keyString = File.ReadAllText(bindFilename);
+            var flaskString = File.ReadAllText(flaskFilename);
+            var json = File.ReadAllText(debufFilename);
+            _keyInfo = JsonConvert.DeserializeObject<FlaskKeys>(keyString);
+            _debuffInfo = JsonConvert.DeserializeObject<DebuffPanelConfig>(json);
+            _flaskInfo = JsonConvert.DeserializeObject<FlaskInformation>(flaskString);
+            _playerFlaskList = new List<PlayerFlask>(5);
+            _debugDebuff = new Dictionary<string, float>();
             OnFlaskManagerToggle();
             Settings.Enable.OnValueChanged += OnFlaskManagerToggle;
         }
@@ -178,12 +176,12 @@ namespace FlaskManager
         {
             if (Settings.Enable.Value)
             {
-                LogMessage("Area has been changed. Loading flasks info.", logmsg_time);
-                isHideout = area.CurrentArea.IsHideout;
-                isTown = area.CurrentArea.IsTown;
-                foreach (var flask in playerFlaskList)
+                LogMessage("Area has been changed. Loading flasks info.", LogmsgTime);
+                _isHideout = area.CurrentArea.IsHideout;
+                _isTown = area.CurrentArea.IsTown;
+                foreach (var flask in _playerFlaskList)
                 {
-                    flask.TotalTimeUsed = (flask.isInstant) ? 100000 : 0;
+                    flask.TotalTimeUsed = (flask.IsInstant) ? 100000 : 0;
                 }
             }
         }
@@ -193,38 +191,38 @@ namespace FlaskManager
             {
                 if (Settings.Enable.Value)
                 {
-                    if (Settings.debugMode.Value)
-                        LogMessage("Enabling FlaskManager.", logmsg_time);
-                    GameController.Area.OnAreaChange += area => OnAreaChange(area);
-                    moveCounter = 0f;
-                    lastManaUsed = 100000f;
-                    lastLifeUsed = 100000f;
-                    lastDefUsed = 100000f;
-                    lastOffUsed = 100000f;
-                    isTown = true;
-                    isHideout = false;
-                    _WarnFlaskSpeed = true;
-                    keyboard = new KeyboardHelper(GameController);
-                    playerFlaskList.Clear();
-                    for (int i = 0; i < 5; i++)
-                        playerFlaskList.Add(new PlayerFlask(i));
+                    if (Settings.DebugMode.Value)
+                        LogMessage("Enabling FlaskManager.", LogmsgTime);
+                    GameController.Area.OnAreaChange += OnAreaChange;
+                    _moveCounter = 0f;
+                    _lastManaUsed = 100000f;
+                    _lastLifeUsed = 100000f;
+                    _lastDefUsed = 100000f;
+                    _lastOffUsed = 100000f;
+                    _isTown = true;
+                    _isHideout = false;
+                    _warnFlaskSpeed = true;
+                    _keyboard = new KeyboardHelper(GameController);
+                    _playerFlaskList.Clear();
+                    for (var i = 0; i < 5; i++)
+                        _playerFlaskList.Add(new PlayerFlask(i));
 
                     //We are creating our plugin thread inside PoEHUD!
-                    Thread flaskThread = new Thread(FlaskThread) { IsBackground = true };
+                    var flaskThread = new Thread(FlaskThread) { IsBackground = true };
                     flaskThread.Start();
                 }
                 else
                 {
-                    if (Settings.debugMode.Value)
-                        LogMessage("Disabling FlaskManager.", logmsg_time);
+                    if (Settings.DebugMode.Value)
+                        LogMessage("Disabling FlaskManager.", LogmsgTime);
                     GameController.Area.OnAreaChange -= OnAreaChange;
-                    playerFlaskList.Clear();
+                    _playerFlaskList.Clear();
                 }
             }
             catch (Exception)
             {
 
-                LogError("Error Starting FlaskManager Thread.", errmsg_time);
+                LogError("Error Starting FlaskManager Thread.", ErrmsgTime);
             }
         }
         private void FlaskThread()
@@ -241,119 +239,114 @@ namespace FlaskManager
         {
             try
             {
-                Entity flaskItem;
-                Charges flaskCharges;
-                Mods flaskMods;
-                float tmpUseCharges;
-                for (int j = 0; j < 5; j++)
+                for (var j = 0; j < 5; j++)
                 {
                     //InventoryItemIcon flask = flasksEquipped[j].AsObject<InventoryItemIcon>();
-                    flaskItem = GameController.Game.IngameState.IngameUi.InventoryPanel[InventoryIndex.Flask][j, 0, 0];
+                    var flaskItem = GameController.Game.IngameState.IngameUi.InventoryPanel[InventoryIndex.Flask][j, 0, 0];
                     if (flaskItem == null || flaskItem.Address == 0)
                     {
-                        playerFlaskList[j].isValid = false;
+                        _playerFlaskList[j].IsValid = false;
                         continue;
                     }
 
-                    flaskCharges = flaskItem.GetComponent<Charges>();
-                    flaskMods = flaskItem.GetComponent<Mods>();
-                    playerFlaskList[j].isInstant = false;
-                    tmpUseCharges = flaskCharges.ChargesPerUse;
-                    playerFlaskList[j].CurrentCharges = flaskCharges.NumCharges;
-                    playerFlaskList[j].flaskRarity = flaskMods.ItemRarity;
-                    playerFlaskList[j].FlaskName = GameController.Files.BaseItemTypes.Translate(flaskItem.Path).BaseName;
-                    playerFlaskList[j].FlaskAction2 = FlaskAction.NONE;
-                    playerFlaskList[j].FlaskAction1 = FlaskAction.NONE;
+                    var flaskCharges = flaskItem.GetComponent<Charges>();
+                    var flaskMods = flaskItem.GetComponent<Mods>();
+                    _playerFlaskList[j].IsInstant = false;
+                    float tmpUseCharges = flaskCharges.ChargesPerUse;
+                    _playerFlaskList[j].CurrentCharges = flaskCharges.NumCharges;
+                    _playerFlaskList[j].FlaskRarity = flaskMods.ItemRarity;
+                    _playerFlaskList[j].FlaskName = GameController.Files.BaseItemTypes.Translate(flaskItem.Path).BaseName;
+                    _playerFlaskList[j].FlaskAction2 = FlaskActions.None;
+                    _playerFlaskList[j].FlaskAction1 = FlaskActions.None;
 
                     //Checking flask action based on flask name type.
-                    if (!flaskInfo.FlaskTypes.TryGetValue(playerFlaskList[j].FlaskName, out playerFlaskList[j].FlaskAction1))
-                        LogError("Error: " + playerFlaskList[j].FlaskName + " name not found. Report this error message.", errmsg_time);
+                    if (!_flaskInfo.FlaskTypes.TryGetValue(_playerFlaskList[j].FlaskName, out _playerFlaskList[j].FlaskAction1))
+                        LogError("Error: " + _playerFlaskList[j].FlaskName + " name not found. Report this error message.", ErrmsgTime);
 
                     //Checking for unique flasks.
                     if (flaskMods.ItemRarity == ItemRarity.Unique)
                     {
-                        playerFlaskList[j].FlaskName = flaskMods.UniqueName;
-                        if (Settings.uniqFlaskEnable.Value)
+                        _playerFlaskList[j].FlaskName = flaskMods.UniqueName;
+                        if (Settings.UniqFlaskEnable.Value)
                         {
                             //Enabling Unique flask action 2.
-                            if (!flaskInfo.UniqueFlaskNames.TryGetValue(playerFlaskList[j].FlaskName, out playerFlaskList[j].FlaskAction2))
-                                LogError("Error: " + playerFlaskList[j].FlaskName + " unique name not found. Report this error message.", errmsg_time);
+                            if (!_flaskInfo.UniqueFlaskNames.TryGetValue(_playerFlaskList[j].FlaskName, out _playerFlaskList[j].FlaskAction2))
+                                LogError("Error: " + _playerFlaskList[j].FlaskName + " unique name not found. Report this error message.", ErrmsgTime);
                         }
                         else
                         {
                             //Disabling Unique Flask actions.
-                            playerFlaskList[j].FlaskAction1 = FlaskAction.NONE;
-                            playerFlaskList[j].FlaskAction2 = FlaskAction.NONE;
+                            _playerFlaskList[j].FlaskAction1 = FlaskActions.None;
+                            _playerFlaskList[j].FlaskAction2 = FlaskActions.None;
                         }
                     }
 
-                    if (Settings.chargeReduction.Value > 0)
-                        tmpUseCharges = ((100 - Settings.chargeReduction.Value) / 100) * tmpUseCharges;
+                    if (Settings.ChargeReduction.Value > 0)
+                        tmpUseCharges = ((100 - Settings.ChargeReduction.Value) / 100) * tmpUseCharges;
 
                     //Checking flask mods.
-                    FlaskAction action2 = FlaskAction.NONE;
                     foreach (var mod in flaskMods.ItemMods)
                     {
                         if (mod.Name.ToLower().Contains("flaskchargesused"))
                             tmpUseCharges = ((100 + (float)mod.Value1) / 100) * tmpUseCharges;
 
                         if (mod.Name.ToLower().Contains("instant"))
-                            playerFlaskList[j].isInstant = true;
+                            _playerFlaskList[j].IsInstant = true;
 
                         // We have already decided action2 for unique flasks.
                         if (flaskMods.ItemRarity == ItemRarity.Unique)
                             continue;
 
-                        if (!flaskInfo.FlaskMods.TryGetValue(mod.Name, out action2))
-                            LogError("Error: " + mod.Name + " mod not found. Is it unique flask? If not, report this error message.", errmsg_time);
-                        else if (action2 != FlaskAction.IGNORE)
-                            playerFlaskList[j].FlaskAction2 = action2;
+                        if (!_flaskInfo.FlaskMods.TryGetValue(mod.Name, out FlaskActions action2))
+                            LogError("Error: " + mod.Name + " mod not found. Is it unique flask? If not, report this error message.", ErrmsgTime);
+                        else if (action2 != FlaskActions.Ignore)
+                            _playerFlaskList[j].FlaskAction2 = action2;
                     }
 
                     // Speedrun mod on mana/life flask wouldn't work when full mana/life is full respectively,
                     // So we will ignore speedrun mod from mana/life flask. Other mods
                     // on mana/life flasks will work.
-                    if (playerFlaskList[j].FlaskAction2 == FlaskAction.SPEEDRUN &&
-                        (playerFlaskList[j].FlaskAction1 == FlaskAction.LIFE ||
-                         playerFlaskList[j].FlaskAction1 == FlaskAction.MANA ||
-                         playerFlaskList[j].FlaskAction1 == FlaskAction.HYBRID))
+                    if (_playerFlaskList[j].FlaskAction2 == FlaskActions.Speedrun &&
+                        (_playerFlaskList[j].FlaskAction1 == FlaskActions.Life ||
+                         _playerFlaskList[j].FlaskAction1 == FlaskActions.Mana ||
+                         _playerFlaskList[j].FlaskAction1 == FlaskActions.Hybrid))
                     {
-                        playerFlaskList[j].FlaskAction2 = FlaskAction.NONE;
-                        if (_WarnFlaskSpeed)
+                        _playerFlaskList[j].FlaskAction2 = FlaskActions.None;
+                        if (_warnFlaskSpeed)
                         {
-                            LogError("Warning: Speed Run mod is ignored on mana/life/hybrid flasks. Use Alt Orbs on those flasks.", errmsg_time);
-                            _WarnFlaskSpeed = false;
+                            LogError("Warning: Speed Run mod is ignored on mana/life/hybrid flasks. Use Alt Orbs on those flasks.", ErrmsgTime);
+                            _warnFlaskSpeed = false;
                         }
                     }
 
-                    if (Settings.disableLifeSecUse.Value)
+                    if (Settings.DisableLifeSecUse.Value)
                     {
-                        if (playerFlaskList[j].FlaskAction1 == FlaskAction.LIFE || playerFlaskList[j].FlaskAction1 == FlaskAction.HYBRID)
-                            if (playerFlaskList[j].FlaskAction2 == FlaskAction.OFFENSE || playerFlaskList[j].FlaskAction2 == FlaskAction.DEFENSE)
-                                playerFlaskList[j].FlaskAction2 = FlaskAction.NONE;
+                        if (_playerFlaskList[j].FlaskAction1 == FlaskActions.Life || _playerFlaskList[j].FlaskAction1 == FlaskActions.Hybrid)
+                            if (_playerFlaskList[j].FlaskAction2 == FlaskActions.Offense || _playerFlaskList[j].FlaskAction2 == FlaskActions.Defense)
+                                _playerFlaskList[j].FlaskAction2 = FlaskActions.None;
                     }
 
-                    if (Settings.treatOffenAsDef.Value)
+                    if (Settings.TreatOffenAsDef.Value)
                     {
-                        if (playerFlaskList[j].FlaskAction1 == FlaskAction.OFFENSE)
-                            playerFlaskList[j].FlaskAction1 = FlaskAction.DEFENSE;
-                        if (playerFlaskList[j].FlaskAction2 == FlaskAction.OFFENSE)
-                            playerFlaskList[j].FlaskAction2 = FlaskAction.DEFENSE;
+                        if (_playerFlaskList[j].FlaskAction1 == FlaskActions.Offense)
+                            _playerFlaskList[j].FlaskAction1 = FlaskActions.Defense;
+                        if (_playerFlaskList[j].FlaskAction2 == FlaskActions.Offense)
+                            _playerFlaskList[j].FlaskAction2 = FlaskActions.Defense;
                     }
-                    playerFlaskList[j].UseCharges = (int)Math.Floor(tmpUseCharges);
-                    playerFlaskList[j].isValid = true;
+                    _playerFlaskList[j].UseCharges = (int)Math.Floor(tmpUseCharges);
+                    _playerFlaskList[j].IsValid = true;
                 }
             }
             catch (Exception e)
             {
-                if (Settings.debugMode.Value)
+                if (Settings.DebugMode.Value)
                 {
-                    LogError("Warning: Error getting all flask Informations.", errmsg_time);
-                    LogError(e.Message + e.StackTrace, errmsg_time);
+                    LogError("Warning: Error getting all flask Informations.", ErrmsgTime);
+                    LogError(e.Message + e.StackTrace, ErrmsgTime);
                 }
-                playerFlaskList.Clear();
-                for (int i = 0; i < 5; i++)
-                    playerFlaskList.Add(new PlayerFlask(i));
+                _playerFlaskList.Clear();
+                for (var i = 0; i < 5; i++)
+                    _playerFlaskList.Add(new PlayerFlask(i));
                 return false;
             }
             return true;
@@ -364,13 +357,13 @@ namespace FlaskManager
         {
             try
             {
-                playerFlaskList[slot].CurrentCharges = GameController.Game.IngameState.
+                _playerFlaskList[slot].CurrentCharges = GameController.Game.IngameState.
                     IngameUi.InventoryPanel[InventoryIndex.Flask][slot, 0, 0].
                     GetComponent<Charges>().NumCharges;
             }
             catch (Exception)
             {
-                playerFlaskList[slot].CurrentCharges = 0;
+                _playerFlaskList[slot].CurrentCharges = 0;
             }
         }
         //Parameters:
@@ -378,35 +371,31 @@ namespace FlaskManager
         // reason: is just for debugging output to see where does the drinking flask request came from
         // minRequiredCharges: Min number of charges a flask must have to consider it a valid flask to drink.
         // shouldDrinkAll: if you want to drink all the flasks of type1,type2 (true) or just first in the list(false).
-        private bool FindDrinkFlask(FlaskAction type1, FlaskAction type2, string reason, int minRequiredCharge = 0, bool shouldDrinkAll = false)
+        private bool FindDrinkFlask(FlaskActions type1, FlaskActions type2, string reason, int minRequiredCharge = 0, bool shouldDrinkAll = false)
         {
-            bool hasDrunk = false;
-            var flaskList = playerFlaskList.FindAll(x => (x.FlaskAction1 == type1 || x.FlaskAction2 == type2) && x.isEnabled && x.isValid);
+            var hasDrunk = false;
+            var flaskList = _playerFlaskList.FindAll(x => (x.FlaskAction1 == type1 || x.FlaskAction2 == type2) && x.IsEnabled && x.IsValid);
             flaskList.Sort( (x,y) => x.TotalTimeUsed.CompareTo(y.TotalTimeUsed));
             foreach (var flask in flaskList)
             {
                 UpdateFlaskChargesInfo(flask.Slot);
-                if (flask.CurrentCharges >= flask.UseCharges && flask.CurrentCharges >= minRequiredCharge)
-                {
-                    keyboard.setLatency(GameController.Game.IngameState.CurLatency);
-                    if (!keyboard.KeyPressRelease(keyInfo.k[flask.Slot]))
-                        LogError("Warning: High latency ( more than 1000 millisecond ), plugin will fail to work properly.", errmsg_time);
-                    if (Settings.debugMode.Value)
-                        LogMessage("Just Drank Flask on key " + keyInfo.k[flask.Slot] + " cuz of " + reason, logmsg_time);
-                    flask.TotalTimeUsed = (flask.isInstant) ? 100000 : flask.TotalTimeUsed + 1;
-                    // if there are multiple flasks, drinking 1 of them at a time is enough.
-                    hasDrunk = true;
-                    if (!shouldDrinkAll)
-                        return hasDrunk;
-                }
-
+                if (flask.CurrentCharges < flask.UseCharges || flask.CurrentCharges < minRequiredCharge) continue;
+                _keyboard.SetLatency(GameController.Game.IngameState.CurLatency);
+                if (!_keyboard.KeyPressRelease(_keyInfo.K[flask.Slot]))
+                    LogError("Warning: High latency ( more than 1000 millisecond ), plugin will fail to work properly.", ErrmsgTime);
+                if (Settings.DebugMode.Value)
+                    LogMessage("Just Drank Flask on key " + _keyInfo.K[flask.Slot] + " cuz of " + reason, LogmsgTime);
+                flask.TotalTimeUsed = (flask.IsInstant) ? 100000 : flask.TotalTimeUsed + 1;
+                // if there are multiple flasks, drinking 1 of them at a time is enough.
+                hasDrunk = true;
+                if (!shouldDrinkAll)
+                    return true;
             }
             return hasDrunk;
         }
-        private bool HasDebuff(Dictionary<string, int> dictionary, string buffName, bool isHostile)
+        private static bool HasDebuff(IReadOnlyDictionary<string, int> dictionary, string buffName, bool isHostile)
         {
-            int filterId;
-            if (dictionary.TryGetValue(buffName, out filterId))
+            if (dictionary.TryGetValue(buffName, out int filterId))
             {
                 return filterId == 0 || isHostile == (filterId == 1);
             }
@@ -415,23 +404,23 @@ namespace FlaskManager
         #endregion
 
         #region Auto Health Flasks
-        private bool InstantLifeFlask(Life PlayerHealth)
+        private bool InstantLifeFlask(Life playerHealth)
         {
-            bool ret = false;
-            if (PlayerHealth.HPPercentage * 100 < Settings.instantPerHPFlask.Value)
+            var ret = false;
+            if (playerHealth.HPPercentage * 100 < Settings.InstantPerHpFlask.Value)
             {
-                var flaskList = playerFlaskList.FindAll(x => x.isInstant == x.isEnabled == x.isValid == true &&
-                          (x.FlaskAction1 == FlaskAction.LIFE || x.FlaskAction1 == FlaskAction.HYBRID));
-                foreach (PlayerFlask flask in flaskList)
+                var flaskList = _playerFlaskList.FindAll(x => x.IsInstant == x.IsEnabled == x.IsValid &&
+                          (x.FlaskAction1 == FlaskActions.Life || x.FlaskAction1 == FlaskActions.Hybrid));
+                foreach (var flask in flaskList)
                 {
                     if (flask.CurrentCharges >= flask.UseCharges)
                     {
-                        keyboard.setLatency(GameController.Game.IngameState.CurLatency);
-                        if (!keyboard.KeyPressRelease(keyInfo.k[flask.Slot]))
-                            LogError("Warning: High latency ( more than 1000 millisecond ), plugin will fail to work properly.", errmsg_time);
+                        _keyboard.SetLatency(GameController.Game.IngameState.CurLatency);
+                        if (!_keyboard.KeyPressRelease(_keyInfo.K[flask.Slot]))
+                            LogError("Warning: High latency ( more than 1000 millisecond ), plugin will fail to work properly.", ErrmsgTime);
                         UpdateFlaskChargesInfo(flask.Slot);
-                        if (Settings.debugMode.Value)
-                            LogMessage("Just Drank Instant Flask on key " + keyInfo.k[flask.Slot] + " cuz of Very Low Life", logmsg_time);
+                        if (Settings.DebugMode.Value)
+                            LogMessage("Just Drank Instant Flask on key " + _keyInfo.K[flask.Slot] + " cuz of Very Low Life", LogmsgTime);
                         ret = true;
                     }
                     else
@@ -444,110 +433,110 @@ namespace FlaskManager
         }
         private void LifeLogic()
         {
-            if (!GameController.Game.IngameState.Data.LocalPlayer.IsValid || !Settings.autoFlask.Value)
+            if (!GameController.Game.IngameState.Data.LocalPlayer.IsValid || !Settings.AutoFlask.Value)
                 return;
 
-            Entity LocalPlayer = GameController.Game.IngameState.Data.LocalPlayer;
-            Life PlayerHealth = LocalPlayer.GetComponent<Life>();
-            lastLifeUsed += 100f;
-            if (InstantLifeFlask(PlayerHealth))
+            var localPlayer = GameController.Game.IngameState.Data.LocalPlayer;
+            var playerHealth = localPlayer.GetComponent<Life>();
+            _lastLifeUsed += 100f;
+            if (InstantLifeFlask(playerHealth))
                 return;
-            if (lastLifeUsed < Settings.HPDelay.Value)
+            if (_lastLifeUsed < Settings.HpDelay.Value)
                 return;
-            if (PlayerHealth.HPPercentage * 100 < Settings.perHPFlask.Value)
+            if (playerHealth.HPPercentage * 100 < Settings.PerHpFlask.Value)
             {
-                if (FindDrinkFlask(FlaskAction.LIFE, FlaskAction.IGNORE, "Low life"))
-                    lastLifeUsed = 0f;
-                else if (FindDrinkFlask(FlaskAction.HYBRID, FlaskAction.IGNORE, "Low life"))
-                    lastLifeUsed = 0f;
+                if (FindDrinkFlask(FlaskActions.Life, FlaskActions.Ignore, "Low life"))
+                    _lastLifeUsed = 0f;
+                else if (FindDrinkFlask(FlaskActions.Hybrid, FlaskActions.Ignore, "Low life"))
+                    _lastLifeUsed = 0f;
             }
         }
         #endregion
         #region Auto Mana Flasks
         private void ManaLogic()
         {
-            if (!Settings.autoFlask.Value || !GameController.Game.IngameState.Data.LocalPlayer.IsValid)
+            if (!Settings.AutoFlask.Value || !GameController.Game.IngameState.Data.LocalPlayer.IsValid)
                 return;
 
-            Entity LocalPlayer = GameController.Game.IngameState.Data.LocalPlayer;
-            Life PlayerHealth = LocalPlayer.GetComponent<Life>();
-            lastManaUsed += 100f;
-            if (lastManaUsed < Settings.ManaDelay.Value)
+            var localPlayer = GameController.Game.IngameState.Data.LocalPlayer;
+            var playerHealth = localPlayer.GetComponent<Life>();
+            _lastManaUsed += 100f;
+            if (_lastManaUsed < Settings.ManaDelay.Value)
                 return;
-            if (PlayerHealth.MPPercentage * 100 < Settings.PerManaFlask.Value)
+            if (playerHealth.MPPercentage * 100 < Settings.PerManaFlask.Value)
             {
-                if (FindDrinkFlask(FlaskAction.MANA, FlaskAction.IGNORE, "Low Mana"))
-                    lastManaUsed = 0f;
-                else if (FindDrinkFlask(FlaskAction.HYBRID, FlaskAction.IGNORE, "Low Mana"))
-                    lastManaUsed = 0f;
+                if (FindDrinkFlask(FlaskActions.Mana, FlaskActions.Ignore, "Low Mana"))
+                    _lastManaUsed = 0f;
+                else if (FindDrinkFlask(FlaskActions.Hybrid, FlaskActions.Ignore, "Low Mana"))
+                    _lastManaUsed = 0f;
             }
         }
         #endregion
         #region Auto Ailment Flasks
         private void AilmentLogic()
         {
-            var LocalPlayer = GameController.Game.IngameState.Data.LocalPlayer;
-            var PlayerHealth = LocalPlayer.GetComponent<Life>();
-            foreach (var buff in PlayerHealth.Buffs)
+            var localPlayer = GameController.Game.IngameState.Data.LocalPlayer;
+            var playerHealth = localPlayer.GetComponent<Life>();
+            foreach (var buff in playerHealth.Buffs)
             {
                 if (float.IsInfinity(buff.Timer))
                     continue;
 
                 var buffName = buff.Name;
 
-                if (Settings.debugMode.Value)
-                    if (debugDebuff.ContainsKey(buffName))
-                        debugDebuff[buffName] = Math.Max(buff.Timer, debugDebuff[buffName]);
+                if (Settings.DebugMode.Value)
+                    if (_debugDebuff.ContainsKey(buffName))
+                        _debugDebuff[buffName] = Math.Max(buff.Timer, _debugDebuff[buffName]);
                     else
-                        debugDebuff[buffName] = buff.Timer;
+                        _debugDebuff[buffName] = buff.Timer;
 
-                if (!Settings.remAilment.Value)
+                if (!Settings.RemAilment.Value)
                     return;
 
-                var tmpResult = false;
-                if (Settings.remPoison.Value && HasDebuff(debuffInfo.Poisoned, buffName, false))
+                bool tmpResult;
+                if (Settings.RemPoison.Value && HasDebuff(_debuffInfo.Poisoned, buffName, false))
                 {
-                    tmpResult = FindDrinkFlask(FlaskAction.IGNORE, FlaskAction.POISON_IMMUNE, "Poisoned");
-                    if (Settings.debugMode.Value)
-                        LogMessage("Poison -> hasDrunkFlask:" + tmpResult, logmsg_time);
+                    tmpResult = FindDrinkFlask(FlaskActions.Ignore, FlaskActions.PoisonImmune, "Poisoned");
+                    if (Settings.DebugMode.Value)
+                        LogMessage("Poison -> hasDrunkFlask:" + tmpResult, LogmsgTime);
                 }
-                else if (Settings.remFrozen.Value && HasDebuff(debuffInfo.ChilledFrozen, buffName, false))
+                else if (Settings.RemFrozen.Value && HasDebuff(_debuffInfo.ChilledFrozen, buffName, false))
                 {
-                    tmpResult = FindDrinkFlask(FlaskAction.IGNORE, FlaskAction.FREEZE_IMMUNE, "Frozen");
-                    if (Settings.debugMode.Value)
-                        LogMessage("Frozen -> hasDrunkFlask:" + tmpResult, logmsg_time);
+                    tmpResult = FindDrinkFlask(FlaskActions.Ignore, FlaskActions.FreezeImmune, "Frozen");
+                    if (Settings.DebugMode.Value)
+                        LogMessage("Frozen -> hasDrunkFlask:" + tmpResult, LogmsgTime);
                 }
-                else if (Settings.remBurning.Value && HasDebuff(debuffInfo.Burning, buffName, false))
+                else if (Settings.RemBurning.Value && HasDebuff(_debuffInfo.Burning, buffName, false))
                 {
-                    tmpResult = FindDrinkFlask(FlaskAction.IGNORE, FlaskAction.IGNITE_IMMUNE, "Burning");
-                    if (Settings.debugMode.Value)
-                        LogMessage("Burning -> hasDrunkFlask:" + tmpResult, logmsg_time);
+                    tmpResult = FindDrinkFlask(FlaskActions.Ignore, FlaskActions.IgniteImmune, "Burning");
+                    if (Settings.DebugMode.Value)
+                        LogMessage("Burning -> hasDrunkFlask:" + tmpResult, LogmsgTime);
                 }
-                else if (Settings.remShocked.Value && HasDebuff(debuffInfo.Shocked, buffName, false))
+                else if (Settings.RemShocked.Value && HasDebuff(_debuffInfo.Shocked, buffName, false))
                 {
-                    tmpResult = FindDrinkFlask(FlaskAction.IGNORE, FlaskAction.SHOCK_IMMUNE, "Shocked");
-                    if (Settings.debugMode.Value)
-                        LogMessage("Shock -> hasDrunkFlask:" + tmpResult, logmsg_time);
+                    tmpResult = FindDrinkFlask(FlaskActions.Ignore, FlaskActions.ShockImmune, "Shocked");
+                    if (Settings.DebugMode.Value)
+                        LogMessage("Shock -> hasDrunkFlask:" + tmpResult, LogmsgTime);
                 }
-                else if (Settings.remCurse.Value && HasDebuff(debuffInfo.WeakenedSlowed, buffName, false))
+                else if (Settings.RemCurse.Value && HasDebuff(_debuffInfo.WeakenedSlowed, buffName, false))
                 {
-                    tmpResult = FindDrinkFlask(FlaskAction.IGNORE, FlaskAction.CURSE_IMMUNE, "Cursed");
-                    if (Settings.debugMode.Value)
-                        LogMessage("Curse -> hasDrunkFlask:" + tmpResult, logmsg_time);
+                    tmpResult = FindDrinkFlask(FlaskActions.Ignore, FlaskActions.CurseImmune, "Cursed");
+                    if (Settings.DebugMode.Value)
+                        LogMessage("Curse -> hasDrunkFlask:" + tmpResult, LogmsgTime);
                 }
-                else if (Settings.remBleed.Value)
+                else if (Settings.RemBleed.Value)
                 {
-                    if (HasDebuff(debuffInfo.Bleeding, buffName, false))
+                    if (HasDebuff(_debuffInfo.Bleeding, buffName, false))
                     {
-                        tmpResult = FindDrinkFlask(FlaskAction.IGNORE, FlaskAction.BLEED_IMMUNE, "Bleeding");
-                        if (Settings.debugMode.Value)
-                            LogMessage("Bleeding -> hasDrunkFlask:" + tmpResult, logmsg_time);
+                        tmpResult = FindDrinkFlask(FlaskActions.Ignore, FlaskActions.BleedImmune, "Bleeding");
+                        if (Settings.DebugMode.Value)
+                            LogMessage("Bleeding -> hasDrunkFlask:" + tmpResult, LogmsgTime);
                     }
-                    else if (HasDebuff(debuffInfo.Corruption, buffName, false) && buff.Charges >= Settings.corrptCount)
+                    else if (HasDebuff(_debuffInfo.Corruption, buffName, false) && buff.Charges >= Settings.CorrptCount)
                     {
-                        tmpResult = FindDrinkFlask(FlaskAction.IGNORE, FlaskAction.BLEED_IMMUNE, "Corruption");
-                        if (Settings.debugMode.Value)
-                            LogMessage("Corruption -> hasDrunkFlask:" + tmpResult, logmsg_time);
+                        tmpResult = FindDrinkFlask(FlaskActions.Ignore, FlaskActions.BleedImmune, "Corruption");
+                        if (Settings.DebugMode.Value)
+                            LogMessage("Corruption -> hasDrunkFlask:" + tmpResult, LogmsgTime);
                     }
                 }
             }
@@ -556,33 +545,33 @@ namespace FlaskManager
         #region Auto Quicksilver Flasks
         private void SpeedFlaskLogic()
         {
-            var LocalPlayer = GameController.Game.IngameState.Data.LocalPlayer;
-            var PlayerHealth = LocalPlayer.GetComponent<Life>();
-            var PlayerMovement = LocalPlayer.GetComponent<Actor>();
-            moveCounter = PlayerMovement.isMoving ? moveCounter += 100f : 0;
-            if (LocalPlayer.IsValid && Settings.quicksilverEnable.Value && moveCounter >= Settings.quicksilverDurration.Value &&
-                !PlayerHealth.HasBuff("flask_bonus_movement_speed") &&
-                !PlayerHealth.HasBuff("flask_utility_sprint"))
+            var localPlayer = GameController.Game.IngameState.Data.LocalPlayer;
+            var playerHealth = localPlayer.GetComponent<Life>();
+            var playerMovement = localPlayer.GetComponent<Actor>();
+            _moveCounter = playerMovement.isMoving ? _moveCounter += 100f : 0;
+            if (localPlayer.IsValid && Settings.QuicksilverEnable.Value && _moveCounter >= Settings.QuicksilverDurration.Value &&
+                !playerHealth.HasBuff("flask_bonus_movement_speed") &&
+                !playerHealth.HasBuff("flask_utility_sprint"))
             {
-                FindDrinkFlask(FlaskAction.SPEEDRUN, FlaskAction.SPEEDRUN, "Moving Around", Settings.quicksilverUseWhenCharges.Value);
+                FindDrinkFlask(FlaskActions.Speedrun, FlaskActions.Speedrun, "Moving Around", Settings.QuicksilverUseWhenCharges.Value);
             }
         }
         #endregion
         #region Defensive Flasks
         private void DefensiveFlask()
         {
-            var LocalPlayer = GameController.Game.IngameState.Data.LocalPlayer;
-            var PlayerHealth = LocalPlayer.GetComponent<Life>();
-            lastDefUsed += 100f;
-            if (lastDefUsed < Settings.DefensiveDelay.Value)
+            var localPlayer = GameController.Game.IngameState.Data.LocalPlayer;
+            var playerHealth = localPlayer.GetComponent<Life>();
+            _lastDefUsed += 100f;
+            if (_lastDefUsed < Settings.DefensiveDelay.Value)
                 return;
-            if (Settings.defFlaskEnable.Value && LocalPlayer.IsValid)
+            if (Settings.DefFlaskEnable.Value && localPlayer.IsValid)
             {
-                if (PlayerHealth.HPPercentage * 100 < Settings.hPDefensive.Value ||
-                    (PlayerHealth.MaxES > 0 && PlayerHealth.ESPercentage * 100 < Settings.eSDefensive.Value))
+                if (playerHealth.HPPercentage * 100 < Settings.HpDefensive.Value ||
+                    (playerHealth.MaxES > 0 && playerHealth.ESPercentage * 100 < Settings.EsDefensive.Value))
                 {
-                    if (FindDrinkFlask(FlaskAction.DEFENSE, FlaskAction.DEFENSE, "Defensive Action", 0, Settings.defensiveDrinkAll.Value))
-                        lastDefUsed = 0f;
+                    if (FindDrinkFlask(FlaskActions.Defense, FlaskActions.Defense, "Defensive Action", 0, Settings.DefensiveDrinkAll.Value))
+                        _lastDefUsed = 0f;
                 }
             }
         }
@@ -590,31 +579,31 @@ namespace FlaskManager
         #region Offensive Flasks
         private void OffensiveFlask()
         {
-            var LocalPlayer = GameController.Game.IngameState.Data.LocalPlayer;
-            var PlayerHealth = LocalPlayer.GetComponent<Life>();
-            var IsAttacking = (LocalPlayer.GetComponent<Actor>().ActionId & 2) > 0;
-            lastOffUsed += 100f;
-            if (!Settings.offFlaskEnable.Value || !LocalPlayer.IsValid)
+            var localPlayer = GameController.Game.IngameState.Data.LocalPlayer;
+            var playerHealth = localPlayer.GetComponent<Life>();
+            var isAttacking = (localPlayer.GetComponent<Actor>().ActionId & 2) > 0;
+            _lastOffUsed += 100f;
+            if (!Settings.OffFlaskEnable.Value || !localPlayer.IsValid)
                 return;
-            if (!Settings.offensiveWhenAttacking.Value && !Settings.offensiveWhenLifeES.Value)
+            if (!Settings.OffensiveWhenAttacking.Value && !Settings.OffensiveWhenLifeEs.Value)
             {
-                LogError("Atleast Select 1 offensive flask Method Life/ES OR When Attacking. OR Disable offensive flask.", errmsg_time);
+                LogError("Atleast Select 1 offensive flask Method Life/ES OR When Attacking. OR Disable offensive flask.", ErrmsgTime);
                 return;
             }
-            if (lastOffUsed < Settings.OffensiveDelay.Value)
+            if (_lastOffUsed < Settings.OffensiveDelay.Value)
                 return;
 
             //if (Settings.offensiveWhenAttacking.Value && Settings.debugMode.Value)
             //    LogMessage("isAttacking: " + IsAttacking + "ActionId: " + LocalPlayer.GetComponent<Actor>().ActionId, logmsg_time);
 
-            if (Settings.offensiveWhenAttacking.Value && !IsAttacking)
+            if (Settings.OffensiveWhenAttacking.Value && !isAttacking)
                 return;
-            if (Settings.offensiveWhenLifeES.Value && (PlayerHealth.HPPercentage * 100 > Settings.hpOffensive.Value &&
-                    (PlayerHealth.MaxES <= 0 || PlayerHealth.ESPercentage * 100 > Settings.esOffensive.Value)))
+            if (Settings.OffensiveWhenLifeEs.Value && (playerHealth.HPPercentage * 100 > Settings.HpOffensive.Value &&
+                    (playerHealth.MaxES <= 0 || playerHealth.ESPercentage * 100 > Settings.EsOffensive.Value)))
                 return;
 
-            if (FindDrinkFlask(FlaskAction.OFFENSE, FlaskAction.OFFENSE, "Offensive Action", Settings.OffensiveUseWhenCharges.Value, Settings.offensiveDrinkAll.Value))
-                lastOffUsed = 0f;
+            if (FindDrinkFlask(FlaskActions.Offense, FlaskActions.Offense, "Offensive Action", Settings.OffensiveUseWhenCharges.Value, Settings.OffensiveDrinkAll.Value))
+                _lastOffUsed = 0f;
         }
         #endregion
 
@@ -623,20 +612,20 @@ namespace FlaskManager
             if (!GameController.Game.IngameState.Data.LocalPlayer.IsValid)
                 return;
 
-            playerFlaskList[0].isEnabled = Settings.flaskSlot1Enable.Value;
-            playerFlaskList[1].isEnabled = Settings.flaskSlot2Enable.Value;
-            playerFlaskList[2].isEnabled = Settings.flaskSlot3Enable.Value;
-            playerFlaskList[3].isEnabled = Settings.flaskSlot4Enable.Value;
-            playerFlaskList[4].isEnabled = Settings.flaskSlot5Enable.Value;
+            _playerFlaskList[0].IsEnabled = Settings.FlaskSlot1Enable.Value;
+            _playerFlaskList[1].IsEnabled = Settings.FlaskSlot2Enable.Value;
+            _playerFlaskList[2].IsEnabled = Settings.FlaskSlot3Enable.Value;
+            _playerFlaskList[3].IsEnabled = Settings.FlaskSlot4Enable.Value;
+            _playerFlaskList[4].IsEnabled = Settings.FlaskSlot5Enable.Value;
             if (!GettingAllFlaskInfo())
             {
-                if (Settings.debugMode.Value)
-                    LogMessage("Error getting Flask Details, trying again.", logmsg_time);
+                if (Settings.DebugMode.Value)
+                    LogMessage("Error getting Flask Details, trying again.", LogmsgTime);
                 return;
             }
 
             var playerLife = GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Life>();
-            if (playerLife == null || isTown || isHideout || playerLife.CurHP <= 0 || playerLife.HasBuff("grace_period"))
+            if (playerLife == null || _isTown || _isHideout || playerLife.CurHP <= 0 || playerLife.HasBuff("grace_period"))
                 return;
 
             SpeedFlaskLogic();
@@ -645,7 +634,6 @@ namespace FlaskManager
             AilmentLogic();
             DefensiveFlask();
             OffensiveFlask();
-            return;
         }
     }
 }

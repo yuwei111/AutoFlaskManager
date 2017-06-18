@@ -6,40 +6,42 @@ using System.Windows.Forms;
 
 namespace FlaskManager
 {
-    class KeyboardHelper
+    internal class KeyboardHelper
     {
-        private readonly GameController gameHandle;
-        private float CurLatency;
+        private readonly GameController _gameHandle;
+        private float _curLatency;
 
         public KeyboardHelper(GameController g)
         {
-            gameHandle = g;
+            _gameHandle = g;
         }
 
-        public void setLatency(float latency)
+        public void SetLatency(float latency)
         {
-            CurLatency = latency;
+            _curLatency = latency;
         }
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = false)]
-        private static extern IntPtr SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
+        private static extern IntPtr SendMessage(IntPtr hWnd, int msg, int wParam, int lParam);
+/*
         [return: MarshalAs(UnmanagedType.Bool)]
         [DllImport("user32.dll", SetLastError = true)]
         private static extern bool PostMessage(IntPtr hWnd, uint msg, UIntPtr wParam, UIntPtr lParam);
+*/
         [DllImport("User32.dll")]
         public static extern short GetAsyncKeyState(Keys vKey);
-        public void KeyDown(Keys Key)
+        public void KeyDown(Keys key)
         {
-            SendMessage(gameHandle.Window.Process.MainWindowHandle, 0x100, (int)Key, 0);
+            SendMessage(_gameHandle.Window.Process.MainWindowHandle, 0x100, (int)key, 0);
         }
-        public void KeyUp(Keys Key)
+        public void KeyUp(Keys key)
         {
-            SendMessage(gameHandle.Window.Process.MainWindowHandle, 0x101, (int)Key, 0);
+            SendMessage(_gameHandle.Window.Process.MainWindowHandle, 0x101, (int)key, 0);
         }
         public bool KeyPressRelease(Keys key)
         {
             KeyDown(key);
-            int lat = (int)(CurLatency);
+            var lat = (int)(_curLatency);
             if (lat < 1000)
             {
                 Thread.Sleep(lat);
@@ -51,12 +53,14 @@ namespace FlaskManager
                 return false;
             }
         }
+/*
         private void Write(string text, params object[] args)
         {
             foreach (var character in string.Format(text, args))
             {
-                PostMessage(gameHandle.Window.Process.MainWindowHandle, 0x0102, new UIntPtr(character), UIntPtr.Zero);
+                PostMessage(_gameHandle.Window.Process.MainWindowHandle, 0x0102, new UIntPtr(character), UIntPtr.Zero);
             }
         }
+*/
     }
 }

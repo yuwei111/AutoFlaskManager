@@ -2,20 +2,20 @@
 
 namespace FlaskManager.FlaskComponents
 {
-    class PlayerFlask
+    internal class PlayerFlask
     {
         public string FlaskName = "";
         public readonly int Slot;
-        public bool isEnabled = false;
-        public bool isValid = false;
-        public bool isInstant = false;
+        public bool IsEnabled = false;
+        public bool IsValid = false;
+        public bool IsInstant = false;
         public int UseCharges = 1000;
         public int CurrentCharges = 0;
         public long TotalTimeUsed = 0;
 
-        public ItemRarity flaskRarity = ItemRarity.Normal;
-        public FlaskAction FlaskAction1 = FlaskAction.IGNORE;
-        public FlaskAction FlaskAction2 = FlaskAction.IGNORE;
+        public ItemRarity FlaskRarity = ItemRarity.Normal;
+        public FlaskActions FlaskAction1 = FlaskActions.Ignore;
+        public FlaskActions FlaskAction2 = FlaskActions.Ignore;
         public PlayerFlask(int slot)
         {
             Slot = slot;
