@@ -1,38 +1,38 @@
 ﻿namespace FlaskManager.FlaskComponents
 {
-    public enum FlaskAction : int
+    public enum FlaskActions
     {
-        IGNORE = 0,         // ignore mods and don't give error
-        NONE,               // flask isn't initilized.
-        LIFE,               //life, Blood of the Karui
-        MANA,               //mana, Doedre's Elixir, 
+        Ignore = 0,         // ignore mods and don't give error
+        None,               // flask isn't initilized.
+        Life,               //life, Blood of the Karui
+        Mana,               //mana, Doedre's Elixir, 
                             //Zerphi's Last Breath, Lavianga's Spirit
 
-        HYBRID,             //hybrid flasks,
+        Hybrid,             //hybrid flasks,
 
-        DEFENSE,            //bismuth, jade, stibnite, granite,
+        Defense,            //bismuth, jade, stibnite, granite,
                             //amethyst, ruby, sapphire, topaz,
                             // aquamarine, quartz, Sin's Rebirth, 
                             //Coruscating Elixir, Forbidden Taste,Rumi's Concoction
                             //MODS: iron skin, reflexes, gluttony,
                             // craving, resistance
 
-        UTILITY,            //Doedre's Elixir, Zerphi's Last Breath, Lavianga's Spirit
+        Utility,            //Doedre's Elixir, Zerphi's Last Breath, Lavianga's Spirit
 
-        SPEEDRUN,           //quick silver, MOD: adrenaline,
+        Speedrun,           //quick silver, MOD: adrenaline,
 
-        OFFENSE,            //silver, sulphur, basalt, diamond,Taste of Hate, 
+        Offense,            //silver, sulphur, basalt, diamond,Taste of Hate, 
                             //Kiara's Determination, Lion's Roar, The Overflowing Chalice, 
                             //The Sorrow of the Divine,Rotgut, Witchfire Brew, Atziri's Promise, 
                             //Dying Sun,Vessel of Vinktar
                             //MOD: Fending
 
-        POISON_IMMUNE,      // MOD: curing
-        FREEZE_IMMUNE,      // MOD: heat
-        IGNITE_IMMUNE,      // MOD: dousing
-        SHOCK_IMMUNE,       // MOD: grounding
-        BLEED_IMMUNE,       // MOD: staunching
-        CURSE_IMMUNE,       // MOD: warding
-        UNIQUE_FLASK,       // All the milk shakes
+        PoisonImmune,      // MOD: curing
+        FreezeImmune,      // MOD: heat
+        IgniteImmune,      // MOD: dousing
+        ShockImmune,       // MOD: grounding
+        BleedImmune,       // MOD: staunching
+        CurseImmune,       // MOD: warding
+        UniqueFlask,       // All the milk shakes
     }
 }
