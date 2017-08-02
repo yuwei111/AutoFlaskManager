@@ -579,15 +579,16 @@ namespace FlaskManager
         #region Offensive Flasks
         private void OffensiveFlask()
         {
+            _keyboard = new KeyboardHelper(GameController);
             var localPlayer = GameController.Game.IngameState.Data.LocalPlayer;
             var playerHealth = localPlayer.GetComponent<Life>();
             var isAttacking = (localPlayer.GetComponent<Actor>().ActionId & 2) > 0;
             _lastOffUsed += 100f;
             if (!Settings.OffFlaskEnable.Value || !localPlayer.IsValid)
                 return;
-            if (!Settings.OffensiveWhenAttacking.Value && !Settings.OffensiveWhenLifeEs.Value)
+            if (!Settings.OffensiveWhenAttacking.Value && !Settings.OffensiveWhenLifeEs.Value && !Settings.UseWhileKeyPressed)
             {
-                LogError("Atleast Select 1 offensive flask Method Life/ES OR When Attacking. OR Disable offensive flask.", ErrmsgTime);
+                LogError("Atleast Select 1 offensive flask Method Life/ES OR When Attacking OR When Use While Key Pressed. OR Disable offensive flask.", ErrmsgTime);
                 return;
             }
             if (_lastOffUsed < Settings.OffensiveDelay.Value)
@@ -598,6 +599,10 @@ namespace FlaskManager
 
             if (Settings.OffensiveWhenAttacking.Value && !isAttacking)
                 return;
+
+            if (Settings.UseWhileKeyPressed.Value && !KeyboardHelper.IsKeyDown((int)Settings.KeyPressed.Value))
+                return;
+
             if (Settings.OffensiveWhenLifeEs.Value && (playerHealth.HPPercentage * 100 > Settings.HpOffensive.Value &&
                     (playerHealth.MaxES <= 0 || playerHealth.ESPercentage * 100 > Settings.EsOffensive.Value)))
                 return;

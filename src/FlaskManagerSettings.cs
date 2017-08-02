@@ -1,5 +1,6 @@
 ﻿using PoeHUD.Hud.Settings;
 using PoeHUD.Plugins;
+using System.Windows.Forms;
 
 namespace FlaskManager
 {
@@ -43,6 +44,8 @@ namespace FlaskManager
             HpOffensive = new RangeNode<int>(50, 0, 100);
             EsOffensive = new RangeNode<int>(50, 0, 100);
             OffensiveDelay = new RangeNode<float>(3000f, 0f, 10000f);
+            UseWhileKeyPressed = false;
+            KeyPressed = Keys.T;
             OffensiveDrinkAll = true;
             OffensiveWhenAttacking = false;
             OffensiveWhenLifeEs = true;
@@ -151,11 +154,15 @@ namespace FlaskManager
         public RangeNode<int> EsOffensive { get; set; }
         [Menu("Drink On Skill Use", 54, 50)]
         public ToggleNode OffensiveWhenAttacking { get; set; }
-        [Menu("Delay (millisecond)", 55, 50)]
+        [Menu("Drink On Skill Key Use", 55, 50)]
+        public ToggleNode UseWhileKeyPressed { get; set; }
+        [Menu("Skill Key Hotkey", 56, 50)]
+        public HotkeyNode KeyPressed { get; set; }
+        [Menu("Delay (millisecond)", 57, 50)]
         public RangeNode<float> OffensiveDelay { get; set; }
-        [Menu("Use When Charges Greater than X (0 to disable it)", 56, 50)]
+        [Menu("Use When Charges Greater than X (0 to disable it)", 58, 50)]
         public RangeNode<int> OffensiveUseWhenCharges { get; set; }
-        [Menu("Drink All Flasks Together", 57, 50)]
+        [Menu("Drink All Flasks Together", 59, 50)]
         public ToggleNode OffensiveDrinkAll { get; set; }
         #endregion
 
@@ -207,7 +214,7 @@ namespace FlaskManager
         [Menu("About", 126)]
         public ToggleNode About { get; set; }
 
-        [Menu("Total Charges Reduction in % from items/tree", 127)]
+        [Menu("Total Charges Reduction %", 127)]
         public RangeNode<float> ChargeReduction { get; set; }
         #endregion
 
