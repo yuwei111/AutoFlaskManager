@@ -285,6 +285,7 @@ namespace FlaskManager
                         tmpUseCharges = ((100 - Settings.ChargeReduction.Value) / 100) * tmpUseCharges;
 
                     //Checking flask mods.
+                    FlaskActions action2 = FlaskActions.Ignore;
                     foreach (var mod in flaskMods.ItemMods)
                     {
                         if (mod.Name.ToLower().Contains("flaskchargesused"))
@@ -297,7 +298,7 @@ namespace FlaskManager
                         if (flaskMods.ItemRarity == ItemRarity.Unique)
                             continue;
 
-                        if (!_flaskInfo.FlaskMods.TryGetValue(mod.Name, out FlaskActions action2))
+                        if (!_flaskInfo.FlaskMods.TryGetValue(mod.Name, out action2))
                             LogError("Error: " + mod.Name + " mod not found. Is it unique flask? If not, report this error message.", ErrmsgTime);
                         else if (action2 != FlaskActions.Ignore)
                             _playerFlaskList[j].FlaskAction2 = action2;
@@ -395,7 +396,8 @@ namespace FlaskManager
         }
         private static bool HasDebuff(IReadOnlyDictionary<string, int> dictionary, string buffName, bool isHostile)
         {
-            if (dictionary.TryGetValue(buffName, out int filterId))
+            int filterId = 0;
+            if (dictionary.TryGetValue(buffName, out filterId))
             {
                 return filterId == 0 || isHostile == (filterId == 1);
             }

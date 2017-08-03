@@ -154,7 +154,7 @@ namespace FlaskManager
         public RangeNode<int> EsOffensive { get; set; }
         [Menu("Drink On Skill Use", 54, 50)]
         public ToggleNode OffensiveWhenAttacking { get; set; }
-        [Menu("Drink On Skill Key Use", 55, 50)]
+        [Menu("Drink On Key Use", 55, 50)]
         public ToggleNode UseWhileKeyPressed { get; set; }
         [Menu("Skill Key Hotkey", 56, 50)]
         public HotkeyNode KeyPressed { get; set; }
