@@ -285,6 +285,7 @@ namespace FlaskManager
                         tmpUseCharges = ((100 - Settings.ChargeReduction.Value) / 100) * tmpUseCharges;
 
                     //Checking flask mods.
+                    FlaskActions action2 = FlaskActions.Ignore;
                     foreach (var mod in flaskMods.ItemMods)
                     {
                         if (mod.Name.ToLower().Contains("flaskchargesused"))
@@ -297,7 +298,7 @@ namespace FlaskManager
                         if (flaskMods.ItemRarity == ItemRarity.Unique)
                             continue;
 
-                        if (!_flaskInfo.FlaskMods.TryGetValue(mod.Name, out FlaskActions action2))
+                        if (!_flaskInfo.FlaskMods.TryGetValue(mod.Name, out action2))
                             LogError("Error: " + mod.Name + " mod not found. Is it unique flask? If not, report this error message.", ErrmsgTime);
                         else if (action2 != FlaskActions.Ignore)
                             _playerFlaskList[j].FlaskAction2 = action2;
@@ -395,7 +396,8 @@ namespace FlaskManager
         }
         private static bool HasDebuff(IReadOnlyDictionary<string, int> dictionary, string buffName, bool isHostile)
         {
-            if (dictionary.TryGetValue(buffName, out int filterId))
+            int filterId = 0;
+            if (dictionary.TryGetValue(buffName, out filterId))
             {
                 return filterId == 0 || isHostile == (filterId == 1);
             }
@@ -585,9 +587,9 @@ namespace FlaskManager
             _lastOffUsed += 100f;
             if (!Settings.OffFlaskEnable.Value || !localPlayer.IsValid)
                 return;
-            if (!Settings.OffensiveWhenAttacking.Value && !Settings.OffensiveWhenLifeEs.Value)
+            if (!Settings.OffensiveWhenAttacking.Value && !Settings.OffensiveWhenLifeEs.Value && !Settings.UseWhileKeyPressed)
             {
-                LogError("Atleast Select 1 offensive flask Method Life/ES OR When Attacking. OR Disable offensive flask.", ErrmsgTime);
+                LogError("Atleast Select 1 offensive flask Method Life/ES OR When Attacking OR When Use While Key Pressed. OR Disable offensive flask.", ErrmsgTime);
                 return;
             }
             if (_lastOffUsed < Settings.OffensiveDelay.Value)
@@ -598,6 +600,10 @@ namespace FlaskManager
 
             if (Settings.OffensiveWhenAttacking.Value && !isAttacking)
                 return;
+
+            if (Settings.UseWhileKeyPressed.Value && !KeyboardHelper.IsKeyDown((int)Settings.KeyPressed.Value))
+                return;
+
             if (Settings.OffensiveWhenLifeEs.Value && (playerHealth.HPPercentage * 100 > Settings.HpOffensive.Value &&
                     (playerHealth.MaxES <= 0 || playerHealth.ESPercentage * 100 > Settings.EsOffensive.Value)))
                 return;
