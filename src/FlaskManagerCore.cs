@@ -581,7 +581,6 @@ namespace FlaskManager
         #region Offensive Flasks
         private void OffensiveFlask()
         {
-            _keyboard = new KeyboardHelper(GameController);
             var localPlayer = GameController.Game.IngameState.Data.LocalPlayer;
             var playerHealth = localPlayer.GetComponent<Life>();
             var isAttacking = (localPlayer.GetComponent<Actor>().ActionId & 2) > 0;
