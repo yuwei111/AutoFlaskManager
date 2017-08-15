@@ -465,7 +465,7 @@ namespace FlaskManager
             _lastManaUsed += 100f;
             if (_lastManaUsed < Settings.ManaDelay.Value)
                 return;
-            if (playerHealth.MPPercentage * 100 < Settings.PerManaFlask.Value || playerHealth.CurMana < Settings.MinManaFlask.Value)
+            if (playerHealth.MPPercentage * 100 < Settings.PerManaFlask.Value)
             {
                 if (FindDrinkFlask(FlaskActions.Mana, FlaskActions.Ignore, "Low Mana"))
                     _lastManaUsed = 0f;
