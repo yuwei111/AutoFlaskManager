@@ -95,9 +95,9 @@ namespace FlaskManager
         public RangeNode<float> PerManaFlask { get; set; }
         [Menu("Min Mana Auto Mana Flask", 15, 10)]
         public RangeNode<float> MinManaFlask { get; set; }
-        [Menu("Mana Flask Delay (millisecond)", 15, 10)]
+        [Menu("Mana Flask Delay (millisecond)", 16, 10)]
         public RangeNode<float> ManaDelay { get; set; }
-        [Menu("Disable Life/Hybrid Flask Offensive/Defensive Usage", 16, 10)]
+        [Menu("Disable Life/Hybrid Flask Offensive/Defensive Usage", 17, 10)]
         public ToggleNode DisableLifeSecUse { get; set; }
         #endregion
 
