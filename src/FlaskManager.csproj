@@ -37,25 +37,26 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="2Bs0a67M">
+      <HintPath>D:\Path of exile Tools\PoE HUD\2Bs0a67M.exe</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX">
-      <HintPath>..\..\..\..\..\..\..\lib\SharpDX.dll</HintPath>
+      <HintPath>D:\Path of exile Tools\PoE HUD\lib\SharpDX.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="SharpDX.Desktop">
-      <HintPath>..\..\..\..\..\..\..\lib\SharpDX.Desktop.dll</HintPath>
+      <HintPath>D:\Path of exile Tools\PoE HUD\lib\SharpDX.Desktop.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="SharpDX.Direct3D9">
-      <HintPath>..\..\..\..\..\..\..\lib\SharpDX.Direct3D9.dll</HintPath>
+      <HintPath>D:\Path of exile Tools\PoE HUD\lib\SharpDX.Direct3D9.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="SharpDX.Mathematics">
-      <HintPath>..\..\..\..\..\..\..\lib\SharpDX.Mathematics.dll</HintPath>
+      <HintPath>D:\Path of exile Tools\PoE HUD\lib\SharpDX.Mathematics.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -68,7 +69,7 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="Trinet.Core.IO.Ntfs">
-      <HintPath>..\..\..\..\..\..\..\lib\Trinet.Core.IO.Ntfs.dll</HintPath>
+      <HintPath>D:\Path of exile Tools\PoE HUD\lib\Trinet.Core.IO.Ntfs.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
@@ -83,11 +84,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\..\PoeHUD.csproj">
-      <Project>{e86368b2-ae1e-4489-a749-e29a0ab48f83}</Project>
-      <Name>PoeHUD</Name>
-      <Private>False</Private>
-    </ProjectReference>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
