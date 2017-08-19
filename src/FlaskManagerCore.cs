@@ -539,6 +539,11 @@ namespace FlaskManager
                         tmpResult = FindDrinkFlask(FlaskActions.Ignore, FlaskActions.BleedImmune, "Corruption");
                         if (Settings.DebugMode.Value)
                             LogMessage("Corruption -> hasDrunkFlask:" + tmpResult, LogmsgTime);
+                    } else if(HasDebuff(_debuffInfo.Corruption, buffName, false))
+                    {
+                        if (Settings.DebugMode.Value)
+                            LogMessage("Corruption detected -> Current Stack=" + buff.Charges +
+                                " Required Stack=" + Settings.CorrptCount, LogmsgTime);
                     }
                 }
             }
