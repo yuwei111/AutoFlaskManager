@@ -21,8 +21,27 @@ This is a highly customizable and intuitive Flask Manager plugin for POEHUD
 ###### *Please skim through the FAQ to see if there is a solution to your issue. If not, please feel free to join the official [AutoFlaskManager Support](https://discord.gg/Ad3BquN) channel on discord and someone will be glad to assist you as soon as possible.*
 ###### *If the issue is still not resolved, please feel free to post a ticket on the Issues page with as much information as possible and try to include a detailed description as well as screenshots of the issue to ensure it is resolved as soon as possible.*  
 
+```
+how to set offensive flask usage to the right/left mouse button
+```
+- First of all thx to xxsevernajaxx for figuring this out!
+- Go into your autoflask directory and open the config.ini file with a text editor (notepad++ works well) as shown below
+![alt text](http://i.imgur.com/grKGDPP.png "Help Image 1")
+- Find the code where offensive flasks are configured:
 
+![alt text](http://i.imgur.com/m4XLfom.png "Help Image 2")
 
+- Note: you might have something else standing there, replace the code between the blue marked brackets, not the brackets themselfs, only whats in the right box with the following:
+```
+"OffensiveWhenAttacking": false,
+"UseWhileKeyPressed": true,
+"KeyPressed": {
+"Value": 2
+```
+- Now when you use a skill that is bound to your right mouse button autoflask manager will use your offensive flasks (only works if a skill is bound to the respective key from what I can tell)
+
+- If you want to use some other key that is not recognized by default you can check this table to get the button's code:
+http://cherrytree.at/misc/vk.htm
 ```
 Auto Quit is too slow/Auto Quit isn't working.
 ```
