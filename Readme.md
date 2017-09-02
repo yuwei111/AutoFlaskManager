@@ -18,7 +18,7 @@ This is a highly customizable and intuitive Flask Manager plugin for POEHUD
 - AutoQuit is moved to another plugin (https://github.com/zaafar/AutoQuit)
 
 # F.A.Qs  
-###### *Please skim through the FAQ to see if there is a solution to your issue. If not, please feel free to join the official [AutoFlaskManager Support](https://discord.gg/Ad3BquN) channel on discord and someone will be glad to assist you as soon as possible.*
+###### *Please skim through the FAQ to see if there is a solution to your issue. If not, please feel free to join the official [AutoFlaskManager Support](https://discord.gg/sK9JdJH) channel on discord and someone will be glad to assist you as soon as possible.*
 ###### *If the issue is still not resolved, please feel free to post a ticket on the Issues page with as much information as possible and try to include a detailed description as well as screenshots of the issue to ensure it is resolved as soon as possible.*  
 
 ```
@@ -54,7 +54,7 @@ Auto Quit is too slow/Auto Quit isn't working.
   3. Turn on debug mode ( _*Flask Manager->UI Settings*_ )
   4. Press F4 to force autoquit to attempt to quit
   5. Exit the game and open ErrorLog.txt in _*\Path of Exile\ErrorLog.txt*_
-  6. If the issue isn't obvious, or remedied; take any applicable screenshots (settings menu opened to AutoQuit, and the error message if possible) and request assistance with the information you've obtained by going to the official [AutoQuit](https://github.com/zaafar/AutoQuit) Issues page, or the discord [support](https://discord.gg/Ad3BquN) channel
+  6. If the issue isn't obvious, or remedied; take any applicable screenshots (settings menu opened to AutoQuit, and the error message if possible) and request assistance with the information you've obtained by going to the official [AutoQuit](https://github.com/zaafar/AutoQuit) Issues page, or the discord [support](https://discord.gg/sK9JdJH) channel
 ```
 There is an POEHUD/AutoFlaskManager update what should I do?
 ```
