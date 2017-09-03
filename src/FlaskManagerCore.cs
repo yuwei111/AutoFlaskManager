@@ -500,31 +500,31 @@ namespace FlaskManager
                 {
                     tmpResult = FindDrinkFlask(FlaskActions.Ignore, FlaskActions.PoisonImmune, "Poisoned");
                     if (Settings.DebugMode.Value)
-                        LogMessage("Poison -> hasDrunkFlask:" + tmpResult, LogmsgTime);
+                        LogMessage("Poison -> hasDrunkFlask:" + tmpResult + " For Buff:" + buffName, LogmsgTime);
                 }
                 else if (Settings.RemFrozen.Value && HasDebuff(_debuffInfo.ChilledFrozen, buffName, false))
                 {
                     tmpResult = FindDrinkFlask(FlaskActions.Ignore, FlaskActions.FreezeImmune, "Frozen");
                     if (Settings.DebugMode.Value)
-                        LogMessage("Frozen -> hasDrunkFlask:" + tmpResult, LogmsgTime);
+                        LogMessage("Frozen -> hasDrunkFlask:" + tmpResult + " For Buff:" + buffName, LogmsgTime);
                 }
                 else if (Settings.RemBurning.Value && HasDebuff(_debuffInfo.Burning, buffName, false))
                 {
                     tmpResult = FindDrinkFlask(FlaskActions.Ignore, FlaskActions.IgniteImmune, "Burning");
                     if (Settings.DebugMode.Value)
-                        LogMessage("Burning -> hasDrunkFlask:" + tmpResult, LogmsgTime);
+                        LogMessage("Burning -> hasDrunkFlask:" + tmpResult + " For Buff:" + buffName, LogmsgTime);
                 }
                 else if (Settings.RemShocked.Value && HasDebuff(_debuffInfo.Shocked, buffName, false))
                 {
                     tmpResult = FindDrinkFlask(FlaskActions.Ignore, FlaskActions.ShockImmune, "Shocked");
                     if (Settings.DebugMode.Value)
-                        LogMessage("Shock -> hasDrunkFlask:" + tmpResult, LogmsgTime);
+                        LogMessage("Shock -> hasDrunkFlask:" + tmpResult + " For Buff:" + buffName, LogmsgTime);
                 }
                 else if (Settings.RemCurse.Value && HasDebuff(_debuffInfo.WeakenedSlowed, buffName, false))
                 {
                     tmpResult = FindDrinkFlask(FlaskActions.Ignore, FlaskActions.CurseImmune, "Cursed");
                     if (Settings.DebugMode.Value)
-                        LogMessage("Curse -> hasDrunkFlask:" + tmpResult, LogmsgTime);
+                        LogMessage("Curse -> hasDrunkFlask:" + tmpResult + " For Buff:" + buffName, LogmsgTime);
                 }
                 else if (Settings.RemBleed.Value)
                 {
@@ -532,17 +532,17 @@ namespace FlaskManager
                     {
                         tmpResult = FindDrinkFlask(FlaskActions.Ignore, FlaskActions.BleedImmune, "Bleeding");
                         if (Settings.DebugMode.Value)
-                            LogMessage("Bleeding -> hasDrunkFlask:" + tmpResult, LogmsgTime);
+                            LogMessage("Bleeding -> hasDrunkFlask:" + tmpResult + " For Buff:" + buffName, LogmsgTime);
                     }
                     else if (HasDebuff(_debuffInfo.Corruption, buffName, false) && buff.Charges >= Settings.CorrptCount)
                     {
                         tmpResult = FindDrinkFlask(FlaskActions.Ignore, FlaskActions.BleedImmune, "Corruption");
                         if (Settings.DebugMode.Value)
-                            LogMessage("Corruption -> hasDrunkFlask:" + tmpResult, LogmsgTime);
+                            LogMessage("Corruption -> hasDrunkFlask:" + tmpResult + " For Buff:" + buffName, LogmsgTime);
                     } else if(HasDebuff(_debuffInfo.Corruption, buffName, false))
                     {
                         if (Settings.DebugMode.Value)
-                            LogMessage("Corruption detected -> Current Stack=" + buff.Charges +
+                            LogMessage("For Buff:" + buffName + " Corruption detected -> Current Stack=" + buff.Charges +
                                 " Required Stack=" + Settings.CorrptCount, LogmsgTime);
                     }
                 }
