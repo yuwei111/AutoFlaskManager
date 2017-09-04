@@ -502,7 +502,7 @@ namespace FlaskManager
                     if (Settings.DebugMode.Value)
                         LogMessage("Poison -> hasDrunkFlask:" + tmpResult + " For Buff:" + buffName, LogmsgTime);
                 }
-                else if (Settings.RemFrozen.Value && HasDebuff(_debuffInfo.ChilledFrozen, buffName, false))
+                else if (Settings.RemFrozen.Value && HasDebuff(_debuffInfo.Frozen, buffName, false))
                 {
                     tmpResult = FindDrinkFlask(FlaskActions.Ignore, FlaskActions.FreezeImmune, "Frozen");
                     if (Settings.DebugMode.Value)
