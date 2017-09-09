@@ -443,7 +443,7 @@ namespace FlaskManager
             _lastLifeUsed += 100f;
             if (InstantLifeFlask(playerHealth))
                 return;
-            if (_lastLifeUsed < Settings.HpDelay.Value)
+            if (_lastLifeUsed < Settings.HpDelay.Value || playerHealth.HasBuff("flask_effect_life"))
                 return;
             if (playerHealth.HPPercentage * 100 < Settings.PerHpFlask.Value)
             {
