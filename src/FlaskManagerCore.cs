@@ -455,6 +455,33 @@ namespace FlaskManager
         }
         #endregion
         #region Auto Mana Flasks
+		private bool InstantManaFlask(Mana playerHealth)
+        {
+            var ret = false;
+            if (playerHealth.MPPercentage * 100 < Settings.InstantPerMpFlask.Value)
+            {
+                var flaskList = _playerFlaskList.FindAll(x => x.IsInstant == x.IsEnabled == x.IsValid &&
+                          (x.FlaskAction1 == FlaskActions.Mana || x.FlaskAction1 == FlaskActions.Hybrid));
+                foreach (var flask in flaskList)
+                {
+                    if (flask.CurrentCharges >= flask.UseCharges)
+                    {
+                        _keyboard.SetLatency(GameController.Game.IngameState.CurLatency);
+                        if (!_keyboard.KeyPressRelease(_keyInfo.K[flask.Slot]))
+                            LogError("Warning: High latency ( more than 1000 millisecond ), plugin will fail to work properly.", ErrmsgTime);
+                        UpdateFlaskChargesInfo(flask.Slot);
+                        if (Settings.DebugMode.Value)
+                            LogMessage("Just Drank Instant Flask on key " + _keyInfo.K[flask.Slot] + " cuz of Very Low Mana", LogmsgTime);
+                        ret = true;
+                    }
+                    else
+                    {
+                        UpdateFlaskChargesInfo(flask.Slot);
+                    }
+                }
+            }
+            return ret;
+        }
         private void ManaLogic()
         {
             if (!Settings.AutoFlask.Value || !GameController.Game.IngameState.Data.LocalPlayer.IsValid)
@@ -463,7 +490,9 @@ namespace FlaskManager
             var localPlayer = GameController.Game.IngameState.Data.LocalPlayer;
             var playerHealth = localPlayer.GetComponent<Life>();
             _lastManaUsed += 100f;
-            if (_lastManaUsed < Settings.ManaDelay.Value)
+			if (InstantManaFlask(playerHealth))
+                return;
+            if (_lastManaUsed < Settings.ManaDelay.Value || playerHealth.HasBuff("flask_effect_mana"))
                 return;
             if (playerHealth.MPPercentage * 100 < Settings.PerManaFlask.Value || playerHealth.CurMana < Settings.MinManaFlask.Value)
             {

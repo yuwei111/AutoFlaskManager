@@ -18,6 +18,7 @@ namespace FlaskManager
             HpDelay = new RangeNode<float>(1000f, 0f, 5000f);
             ManaDelay = new RangeNode<float>(1000f, 0f, 5000f);
             PerManaFlask = new RangeNode<float>(25f, 0, 100);
+			InstantPerMpFlask = new RangeNode<int>(35, 0, 100);
             MinManaFlask = new RangeNode<float>(50, 0, 100);
             DisableLifeSecUse = false;
             //Ailment Flask
@@ -95,9 +96,11 @@ namespace FlaskManager
         public RangeNode<float> PerManaFlask { get; set; }
         [Menu("Min Mana Auto Mana Flask", 15, 10)]
         public RangeNode<float> MinManaFlask { get; set; }
-        [Menu("Mana Flask Delay (millisecond)", 16, 10)]
+		[Menu("Min Mana % Auto Instant HP Flask (put instant flask in last slot)", 16, 10)]
+        public RangeNode<int> InstantPerMpFlask { get; set; }
+        [Menu("Mana Flask Delay (millisecond)", 17, 10)]
         public RangeNode<float> ManaDelay { get; set; }
-        [Menu("Disable Life/Hybrid Flask Offensive/Defensive Usage", 17, 10)]
+        [Menu("Disable Life/Hybrid Flask Offensive/Defensive Usage", 18, 10)]
         public ToggleNode DisableLifeSecUse { get; set; }
         #endregion
 
