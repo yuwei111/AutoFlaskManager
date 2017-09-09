@@ -19,6 +19,7 @@
   BLEED_IMMUNE = 13,       // MOD: staunching
   CURSE_IMMUNE = 14,       // MOD: warding
   UNIQUE_FLASK = 15,	// This type won't pop.
+  SilverFlask = 16,
 */
 
 {
@@ -89,7 +90,7 @@
     "Sapphire Flask": 5,
     "Amethyst Flask": 5,
     "Topaz Flask": 5,
-    "Silver Flask": 8,
+    "Silver Flask": 16,
     "Aquamarine Flask": 5,
     "Granite Flask": 5,
     "Jade Flask": 5,

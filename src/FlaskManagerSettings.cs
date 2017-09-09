@@ -32,9 +32,14 @@ namespace FlaskManager
             CorrptCount = new RangeNode<int>(10, 1, 20);
             AilmentDur = new RangeNode<int>(0, 0, 5000);
             //Quicksilver
+			SpeedFlaskEnable = false;
             QuicksilverEnable = false;
             QuicksilverDurration = new RangeNode<float>(500f, 0f, 5000f);
             QuicksilverUseWhenCharges = new RangeNode<int>(0, 0, 100);
+			//SilverFlask
+            SilverFlaskEnable = false;
+            SilverFlaskDurration = new RangeNode<float>(500f, 0f, 6000f);
+            SilverFlaskUseWhenCharges = new RangeNode<int>(0, 0, 100);
             //Defensive Flask
             DefFlaskEnable = false;
             HpDefensive = new RangeNode<int>(50, 0, 100);
@@ -126,14 +131,22 @@ namespace FlaskManager
         #endregion
 
         #region Quick Sivler Flask Menu
-        [Menu("QuickSilver Flask", 30)]
+		[Menu("Speed Flask", 30)]
+        public ToggleNode SpeedFlaskEnable { get; set; }
+        [Menu("QuickSilver Flask", 31, 30)]
         public ToggleNode QuicksilverEnable { get; set; }
-        [Menu("Use After Moving Post (millisecond)", 31, 30)]
+        [Menu("Use QuickSilver After Moving Post (millisecond)", 32, 30)]
         public RangeNode<float> QuicksilverDurration { get; set; }
-        [Menu("Use When Charges Greater than X (0 to disable it)", 32, 30)]
+        [Menu("Use QuickSilver When Charges Greater than X (0 to disable it)", 33, 30)]
         public RangeNode<int> QuicksilverUseWhenCharges { get; set; }
+		[Menu("Silver Flask", 34, 30)]
+        public ToggleNode SilverFlaskEnable { get; set; }
+        [Menu("Use Silver Flask After Moving Post (millisecond)", 35, 30)]
+        public RangeNode<float> SilverFlaskDurration { get; set; }
+        [Menu("Use Silver Flask When Charges Greater than X (0 to disable it)", 36, 30)]
+        public RangeNode<int> SilverFlaskUseWhenCharges { get; set; }
         #endregion
-
+			
         #region Defensive Flask Menu
         [Menu("Defensive Flask", 40)]
         public ToggleNode DefFlaskEnable { get; set; }

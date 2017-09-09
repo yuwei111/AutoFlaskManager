@@ -581,6 +581,8 @@ namespace FlaskManager
         #region Auto Quicksilver Flasks
         private void SpeedFlaskLogic()
         {
+		    if (!Settings.SpeedFlaskEnable.Value || !GameController.Game.IngameState.Data.LocalPlayer.IsValid)
+                return;
             var localPlayer = GameController.Game.IngameState.Data.LocalPlayer;
             var playerHealth = localPlayer.GetComponent<Life>();
             var playerMovement = localPlayer.GetComponent<Actor>();
@@ -590,6 +592,11 @@ namespace FlaskManager
                 !playerHealth.HasBuff("flask_utility_sprint"))
             {
                 FindDrinkFlask(FlaskActions.Speedrun, FlaskActions.Speedrun, "Moving Around", Settings.QuicksilverUseWhenCharges.Value);
+            }
+			if (localPlayer.IsValid && Settings.SilverFlaskEnable.Value && _moveCounter >= Settings.SilverFlaskDurration.Value &&
+                !playerHealth.HasBuff("flask_utility_haste"))
+            {
+                FindDrinkFlask(FlaskActions.SilverFlask, FlaskActions.SilverFlask, "Moving Around", Settings.SilverFlaskUseWhenCharges.Value);
             }
         }
         #endregion
@@ -644,6 +651,10 @@ namespace FlaskManager
 
             if (FindDrinkFlask(FlaskActions.Offense, FlaskActions.Offense, "Offensive Action", Settings.OffensiveUseWhenCharges.Value, Settings.OffensiveDrinkAll.Value))
                 _lastOffUsed = 0f;
+
+			if (!playerHealth.HasBuff("flask_utility_haste"))
+				if (FindDrinkFlask(FlaskActions.SilverFlask, FlaskActions.SilverFlask, "Offensive Action", Settings.OffensiveUseWhenCharges.Value, Settings.OffensiveDrinkAll.Value))
+					_lastOffUsed = 0f;
         }
         #endregion
 
