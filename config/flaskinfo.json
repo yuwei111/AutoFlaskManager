@@ -5,11 +5,11 @@
   MANA = 3,
   HYBRID = 4,
   DEFENSE = 5,
-  UTILITY = 6,	// This type won't pop.
+  UTILITY = 6,	// Currently This type won't pop.
   SPEEDRUN = 7,           //quick silver, MOD: adrenaline,
-  OFFENSE = 8,            //silver, sulphur, basalt, diamond,Taste of Hate, 
-            //Kiara's Determination, Lion's Roar, The Overflowing Chalice, 
-            //The Sorrow of the Divine,Rotgut, Witchfire Brew, Atziri's Promise, 
+  OFFENSE = 8,            //sulphur, basalt, diamond,Taste of Hate,
+            //Kiara's Determination, Lion's Roar, The Overflowing Chalice,
+            //The Sorrow of the Divine,Rotgut, Witchfire Brew, Atziri's Promise,
             //Dying Sun,Vessel of Vinktar
             //MOD: Fending
   POISON_IMMUNE = 9,      // MOD: curing
@@ -18,8 +18,10 @@
   SHOCK_IMMUNE = 12,       // MOD: grounding
   BLEED_IMMUNE = 13,       // MOD: staunching
   CURSE_IMMUNE = 14,       // MOD: warding
-  UNIQUE_FLASK = 15,	// This type won't pop.
-  SilverFlask = 16,
+  UNIQUE_FLASK = 15,	// Currently This type won't pop.
+  OFFENSE_AND_SPEEDRUN = 16 // Silver flask
+                            // as Onslaught provide
+                            // movement speed and attack speed
 */
 
 {

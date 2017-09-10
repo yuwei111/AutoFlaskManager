@@ -375,7 +375,9 @@ namespace FlaskManager
         private bool FindDrinkFlask(FlaskActions type1, FlaskActions type2, string reason, int minRequiredCharge = 0, bool shouldDrinkAll = false)
         {
             var hasDrunk = false;
-            var flaskList = _playerFlaskList.FindAll(x => (x.FlaskAction1 == type1 || x.FlaskAction2 == type2) && x.IsEnabled && x.IsValid);
+            var flaskList = _playerFlaskList.FindAll(x => (x.FlaskAction1 == type1 || x.FlaskAction2 == type2 ||
+            x.FlaskAction1 == type2 || x.FlaskAction2 == type1) && x.IsEnabled && x.IsValid);
+
             flaskList.Sort( (x,y) => x.TotalTimeUsed.CompareTo(y.TotalTimeUsed));
             foreach (var flask in flaskList)
             {
@@ -408,7 +410,6 @@ namespace FlaskManager
         #region Auto Health Flasks
         private bool InstantLifeFlask(Life playerHealth)
         {
-            var ret = false;
             if (playerHealth.HPPercentage * 100 < Settings.InstantPerHpFlask.Value)
             {
                 var flaskList = _playerFlaskList.FindAll(x => x.IsInstant == x.IsEnabled == x.IsValid &&
@@ -423,7 +424,7 @@ namespace FlaskManager
                         UpdateFlaskChargesInfo(flask.Slot);
                         if (Settings.DebugMode.Value)
                             LogMessage("Just Drank Instant Flask on key " + _keyInfo.K[flask.Slot] + " cuz of Very Low Life", LogmsgTime);
-                        ret = true;
+                        return true;
                     }
                     else
                     {
@@ -431,7 +432,7 @@ namespace FlaskManager
                     }
                 }
             }
-            return ret;
+            return false;
         }
         private void LifeLogic()
         {
@@ -443,7 +444,7 @@ namespace FlaskManager
             _lastLifeUsed += 100f;
             if (InstantLifeFlask(playerHealth))
                 return;
-            if (_lastLifeUsed < Settings.HpDelay.Value || playerHealth.HasBuff("flask_effect_life"))
+            if (playerHealth.HasBuff("flask_effect_life"))
                 return;
             if (playerHealth.HPPercentage * 100 < Settings.PerHpFlask.Value)
             {
@@ -455,9 +456,8 @@ namespace FlaskManager
         }
         #endregion
         #region Auto Mana Flasks
-		private bool InstantManaFlask(Mana playerHealth)
+        private bool InstantManaFlask(Life playerHealth)
         {
-            var ret = false;
             if (playerHealth.MPPercentage * 100 < Settings.InstantPerMpFlask.Value)
             {
                 var flaskList = _playerFlaskList.FindAll(x => x.IsInstant == x.IsEnabled == x.IsValid &&
@@ -472,7 +472,7 @@ namespace FlaskManager
                         UpdateFlaskChargesInfo(flask.Slot);
                         if (Settings.DebugMode.Value)
                             LogMessage("Just Drank Instant Flask on key " + _keyInfo.K[flask.Slot] + " cuz of Very Low Mana", LogmsgTime);
-                        ret = true;
+                        return true;
                     }
                     else
                     {
@@ -480,7 +480,7 @@ namespace FlaskManager
                     }
                 }
             }
-            return ret;
+            return false;
         }
         private void ManaLogic()
         {
@@ -490,9 +490,9 @@ namespace FlaskManager
             var localPlayer = GameController.Game.IngameState.Data.LocalPlayer;
             var playerHealth = localPlayer.GetComponent<Life>();
             _lastManaUsed += 100f;
-			if (InstantManaFlask(playerHealth))
+            if (InstantManaFlask(playerHealth))
                 return;
-            if (_lastManaUsed < Settings.ManaDelay.Value || playerHealth.HasBuff("flask_effect_mana"))
+            if (playerHealth.HasBuff("flask_effect_mana"))
                 return;
             if (playerHealth.MPPercentage * 100 < Settings.PerManaFlask.Value || playerHealth.CurMana < Settings.MinManaFlask.Value)
             {
@@ -581,22 +581,33 @@ namespace FlaskManager
         #region Auto Quicksilver Flasks
         private void SpeedFlaskLogic()
         {
-		    if (!Settings.SpeedFlaskEnable.Value || !GameController.Game.IngameState.Data.LocalPlayer.IsValid)
+            if (!Settings.SpeedFlaskEnable.Value)
                 return;
+
             var localPlayer = GameController.Game.IngameState.Data.LocalPlayer;
             var playerHealth = localPlayer.GetComponent<Life>();
             var playerMovement = localPlayer.GetComponent<Actor>();
             _moveCounter = playerMovement.isMoving ? _moveCounter += 100f : 0;
+            var hasDrunkQuickSilver = false;
+
             if (localPlayer.IsValid && Settings.QuicksilverEnable.Value && _moveCounter >= Settings.QuicksilverDurration.Value &&
                 !playerHealth.HasBuff("flask_bonus_movement_speed") &&
                 !playerHealth.HasBuff("flask_utility_sprint"))
             {
-                FindDrinkFlask(FlaskActions.Speedrun, FlaskActions.Speedrun, "Moving Around", Settings.QuicksilverUseWhenCharges.Value);
+                hasDrunkQuickSilver = FindDrinkFlask(FlaskActions.Speedrun, FlaskActions.Speedrun, "Moving Around", Settings.QuicksilverUseWhenCharges.Value);
             }
-			if (localPlayer.IsValid && Settings.SilverFlaskEnable.Value && _moveCounter >= Settings.SilverFlaskDurration.Value &&
+
+            // Given preference to QuickSilver cuz it give +40 and Silver give +20
+            LogMessage(Settings.ShouldDrinkSilverQuickSilverTogether.Value.ToString() + "hasDone=" + hasDrunkQuickSilver.ToString(), 0);
+            if (!Settings.ShouldDrinkSilverQuickSilverTogether.Value &&
+                (hasDrunkQuickSilver || playerHealth.HasBuff("flask_bonus_movement_speed")
+                || playerHealth.HasBuff("flask_utility_sprint")))
+                return;
+
+            if (localPlayer.IsValid && Settings.SilverFlaskEnable.Value && _moveCounter >= Settings.SilverFlaskDurration.Value &&
                 !playerHealth.HasBuff("flask_utility_haste"))
             {
-                FindDrinkFlask(FlaskActions.SilverFlask, FlaskActions.SilverFlask, "Moving Around", Settings.SilverFlaskUseWhenCharges.Value);
+                FindDrinkFlask(FlaskActions.OFFENSE_AND_SPEEDRUN, FlaskActions.OFFENSE_AND_SPEEDRUN, "Moving Around", Settings.SilverFlaskUseWhenCharges.Value);
             }
         }
         #endregion
@@ -606,6 +617,9 @@ namespace FlaskManager
             var localPlayer = GameController.Game.IngameState.Data.LocalPlayer;
             var playerHealth = localPlayer.GetComponent<Life>();
             _lastDefUsed += 100f;
+            var secondAction = FlaskActions.Ignore;
+            if (Settings.TreatOffenAsDef.Value)
+                secondAction = FlaskActions.OFFENSE_AND_SPEEDRUN;
             if (_lastDefUsed < Settings.DefensiveDelay.Value)
                 return;
             if (Settings.DefFlaskEnable.Value && localPlayer.IsValid)
@@ -613,7 +627,7 @@ namespace FlaskManager
                 if (playerHealth.HPPercentage * 100 < Settings.HpDefensive.Value ||
                     (playerHealth.MaxES > 0 && playerHealth.ESPercentage * 100 < Settings.EsDefensive.Value))
                 {
-                    if (FindDrinkFlask(FlaskActions.Defense, FlaskActions.Defense, "Defensive Action", 0, Settings.DefensiveDrinkAll.Value))
+                    if (FindDrinkFlask(FlaskActions.Defense, secondAction, "Defensive Action", 0, Settings.DefensiveDrinkAll.Value))
                         _lastDefUsed = 0f;
                 }
             }
@@ -649,12 +663,9 @@ namespace FlaskManager
                     (playerHealth.MaxES <= 0 || playerHealth.ESPercentage * 100 > Settings.EsOffensive.Value)))
                 return;
 
-            if (FindDrinkFlask(FlaskActions.Offense, FlaskActions.Offense, "Offensive Action", Settings.OffensiveUseWhenCharges.Value, Settings.OffensiveDrinkAll.Value))
+            if (FindDrinkFlask(FlaskActions.Offense, FlaskActions.OFFENSE_AND_SPEEDRUN, "Offensive Action", Settings.OffensiveUseWhenCharges.Value, Settings.OffensiveDrinkAll.Value))
                 _lastOffUsed = 0f;
 
-			if (!playerHealth.HasBuff("flask_utility_haste"))
-				if (FindDrinkFlask(FlaskActions.SilverFlask, FlaskActions.SilverFlask, "Offensive Action", Settings.OffensiveUseWhenCharges.Value, Settings.OffensiveDrinkAll.Value))
-					_lastOffUsed = 0f;
         }
         #endregion
 
