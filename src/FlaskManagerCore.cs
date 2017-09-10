@@ -578,7 +578,7 @@ namespace FlaskManager
             }
         }
         #endregion
-        #region Auto Quicksilver Flasks
+        #region Auto Speed Flasks
         private void SpeedFlaskLogic()
         {
             if (!Settings.SpeedFlaskEnable.Value)
@@ -598,7 +598,6 @@ namespace FlaskManager
             }
 
             // Given preference to QuickSilver cuz it give +40 and Silver give +20
-            LogMessage(Settings.ShouldDrinkSilverQuickSilverTogether.Value.ToString() + "hasDone=" + hasDrunkQuickSilver.ToString(), 0);
             if (!Settings.ShouldDrinkSilverQuickSilverTogether.Value &&
                 (hasDrunkQuickSilver || playerHealth.HasBuff("flask_bonus_movement_speed")
                 || playerHealth.HasBuff("flask_utility_sprint")))
