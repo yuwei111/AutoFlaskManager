@@ -15,9 +15,8 @@ namespace FlaskManager
             AutoFlask = false;
             PerHpFlask = new RangeNode<int>(60, 0, 100);
             InstantPerHpFlask = new RangeNode<int>(35, 0, 100);
-            HpDelay = new RangeNode<float>(1000f, 0f, 5000f);
-            ManaDelay = new RangeNode<float>(1000f, 0f, 5000f);
             PerManaFlask = new RangeNode<float>(25f, 0, 100);
+			InstantPerMpFlask = new RangeNode<int>(35, 0, 100);
             MinManaFlask = new RangeNode<float>(50, 0, 100);
             DisableLifeSecUse = false;
             //Ailment Flask
@@ -31,9 +30,15 @@ namespace FlaskManager
             CorrptCount = new RangeNode<int>(10, 1, 20);
             AilmentDur = new RangeNode<int>(0, 0, 5000);
             //Quicksilver
+			SpeedFlaskEnable = false;
+            ShouldDrinkSilverQuickSilverTogether = true;
             QuicksilverEnable = false;
             QuicksilverDurration = new RangeNode<float>(500f, 0f, 5000f);
             QuicksilverUseWhenCharges = new RangeNode<int>(0, 0, 100);
+			//SilverFlask
+            SilverFlaskEnable = false;
+            SilverFlaskDurration = new RangeNode<float>(500f, 0f, 6000f);
+            SilverFlaskUseWhenCharges = new RangeNode<int>(0, 0, 100);
             //Defensive Flask
             DefFlaskEnable = false;
             HpDefensive = new RangeNode<int>(50, 0, 100);
@@ -89,15 +94,14 @@ namespace FlaskManager
         public RangeNode<int> PerHpFlask { get; set; }
         [Menu("Min Life % Auto Instant HP Flask (put instant flask in last slot)", 12, 10)]
         public RangeNode<int> InstantPerHpFlask { get; set; }
-        [Menu("HP Flask Delay (millisecond)", 13, 10)]
-        public RangeNode<float> HpDelay { get; set; }
+
         [Menu("Min Mana % Auto Mana Flask", 14, 10)]
         public RangeNode<float> PerManaFlask { get; set; }
         [Menu("Min Mana Auto Mana Flask", 15, 10)]
         public RangeNode<float> MinManaFlask { get; set; }
-        [Menu("Mana Flask Delay (millisecond)", 16, 10)]
-        public RangeNode<float> ManaDelay { get; set; }
-        [Menu("Disable Life/Hybrid Flask Offensive/Defensive Usage", 17, 10)]
+		[Menu("Min Mana % Auto Instant HP Flask (put instant flask in last slot)", 16, 10)]
+        public RangeNode<int> InstantPerMpFlask { get; set; }
+        [Menu("Disable Life/Hybrid Flask Offensive/Defensive Usage", 18, 10)]
         public ToggleNode DisableLifeSecUse { get; set; }
         #endregion
 
@@ -122,15 +126,27 @@ namespace FlaskManager
         public RangeNode<int> AilmentDur { get; set; }
         #endregion
 
-        #region Quick Sivler Flask Menu
-        [Menu("QuickSilver Flask", 30)]
-        public ToggleNode QuicksilverEnable { get; set; }
-        [Menu("Use After Moving Post (millisecond)", 31, 30)]
-        public RangeNode<float> QuicksilverDurration { get; set; }
-        [Menu("Use When Charges Greater than X (0 to disable it)", 32, 30)]
-        public RangeNode<int> QuicksilverUseWhenCharges { get; set; }
-        #endregion
+        #region Speed Flask Menu
+		[Menu("Speed Flask", 30)]
+        public ToggleNode SpeedFlaskEnable { get; set; }
 
+        [Menu("QuickSilver Flask", 31, 30)]
+        public ToggleNode QuicksilverEnable { get; set; }
+        [Menu("Use QuickSilver After Moving Post (millisecond)", 32, 30)]
+        public RangeNode<float> QuicksilverDurration { get; set; }
+        [Menu("Use QuickSilver When Charges Greater than X (0 to disable it)", 33, 30)]
+        public RangeNode<int> QuicksilverUseWhenCharges { get; set; }
+
+        [Menu("Silver Flask", 34, 30)]
+        public ToggleNode SilverFlaskEnable { get; set; }
+        [Menu("Use Silver Flask After Moving Post (millisecond)", 35, 30)]
+        public RangeNode<float> SilverFlaskDurration { get; set; }
+        [Menu("Use Silver Flask When Charges Greater than X (0 to disable it)", 36, 30)]
+        public RangeNode<int> SilverFlaskUseWhenCharges { get; set; }
+        [Menu("Drink Silver/QuickSilver Together", 37, 30)]
+        public ToggleNode ShouldDrinkSilverQuickSilverTogether { get; set; }
+        #endregion
+			
         #region Defensive Flask Menu
         [Menu("Defensive Flask", 40)]
         public ToggleNode DefFlaskEnable { get; set; }

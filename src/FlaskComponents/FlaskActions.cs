@@ -34,5 +34,6 @@
         BleedImmune,       // MOD: staunching
         CurseImmune,       // MOD: warding
         UniqueFlask,       // All the milk shakes
+        OFFENSE_AND_SPEEDRUN,//Silver Flask, for SpeedFlaskLogic and OffensiveFlask
     }
 }
