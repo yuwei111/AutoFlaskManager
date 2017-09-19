@@ -434,6 +434,33 @@ namespace FlaskManager
             }
             return false;
         }
+        private bool NonInstantLifeFlask(Life playerHealth)
+        {
+            if (playerHealth.HPPercentage * 100 < Settings.InstantPerHpFlask.Value)
+            {
+                var flaskList = _playerFlaskList.FindAll(x => x.IsEnabled == x.IsValid &&
+                          (x.FlaskAction1 == FlaskActions.Life || x.FlaskAction1 == FlaskActions.Hybrid) &&
+                          x.IsInstant == false );
+                foreach (var flask in flaskList)
+                {
+                    if (flask.CurrentCharges >= flask.UseCharges)
+                    {
+                        _keyboard.SetLatency(GameController.Game.IngameState.CurLatency);
+                        if (!_keyboard.KeyPressRelease(_keyInfo.K[flask.Slot]))
+                            LogError("Warning: High latency ( more than 1000 millisecond ), plugin will fail to work properly.", ErrmsgTime);
+                        UpdateFlaskChargesInfo(flask.Slot);
+                        if (Settings.DebugMode.Value)
+                            LogMessage("Just Drank Instant Flask on key " + _keyInfo.K[flask.Slot] + " cuz of Low Life", LogmsgTime);
+                        return true;
+                    }
+                    else
+                    {
+                        UpdateFlaskChargesInfo(flask.Slot);
+                    }
+                }
+            }
+            return false;
+        }
         private void LifeLogic()
         {
             if (!GameController.Game.IngameState.Data.LocalPlayer.IsValid || !Settings.AutoFlask.Value)
@@ -448,10 +475,8 @@ namespace FlaskManager
                 return;
             if (playerHealth.HPPercentage * 100 < Settings.PerHpFlask.Value)
             {
-                if (FindDrinkFlask(FlaskActions.Life, FlaskActions.Ignore, "Low life"))
-                    _lastLifeUsed = 0f;
-                else if (FindDrinkFlask(FlaskActions.Hybrid, FlaskActions.Ignore, "Low life"))
-                    _lastLifeUsed = 0f;
+                if (NonInstantLifeFlask(playerHealth))
+                    _lastManaUsed = 0f;
             }
         }
         #endregion
@@ -482,6 +507,30 @@ namespace FlaskManager
             }
             return false;
         }
+        private bool NonInstantManaFlask(Life playerHealth)
+        {
+            var flaskList = _playerFlaskList.FindAll(x => x.IsEnabled == x.IsValid &&
+                          (x.FlaskAction1 == FlaskActions.Mana || x.FlaskAction1 == FlaskActions.Hybrid) &&
+                          x.IsInstant == false );
+            foreach (var flask in flaskList)
+            {
+                if (flask.CurrentCharges >= flask.UseCharges)
+                {
+                    _keyboard.SetLatency(GameController.Game.IngameState.CurLatency);
+                    if (!_keyboard.KeyPressRelease(_keyInfo.K[flask.Slot]))
+                        LogError("Warning: High latency ( more than 1000 millisecond ), plugin will fail to work properly.", ErrmsgTime);
+                    UpdateFlaskChargesInfo(flask.Slot);
+                    if (Settings.DebugMode.Value)
+                        LogMessage("Just Drank Normal Flask on key " + _keyInfo.K[flask.Slot] + " cuz of Low Mana", LogmsgTime);
+                    return true;
+                }
+                else
+                {
+                    UpdateFlaskChargesInfo(flask.Slot);
+                }
+            }
+            return false;
+        }
         private void ManaLogic()
         {
             if (!Settings.AutoFlask.Value || !GameController.Game.IngameState.Data.LocalPlayer.IsValid)
@@ -496,9 +545,7 @@ namespace FlaskManager
                 return;
             if (playerHealth.MPPercentage * 100 < Settings.PerManaFlask.Value || playerHealth.CurMana < Settings.MinManaFlask.Value)
             {
-                if (FindDrinkFlask(FlaskActions.Mana, FlaskActions.Ignore, "Low Mana"))
-                    _lastManaUsed = 0f;
-                else if (FindDrinkFlask(FlaskActions.Hybrid, FlaskActions.Ignore, "Low Mana"))
+                if (NonInstantManaFlask(playerHealth))
                     _lastManaUsed = 0f;
             }
         }
