@@ -334,13 +334,6 @@ namespace FlaskManager
                         if (_playerFlaskList[j].FlaskAction2 == FlaskActions.Offense)
                             _playerFlaskList[j].FlaskAction2 = FlaskActions.Defense;
                     }
-                    if (Settings.TreatOffenSilverAsDef.Value)
-                    {
-                        if (_playerFlaskList[j].FlaskAction1 == FlaskActions.OFFENSE_AND_SPEEDRUN)
-                            _playerFlaskList[j].FlaskAction1 = FlaskActions.Defense;
-                        if (_playerFlaskList[j].FlaskAction2 == FlaskActions.OFFENSE_AND_SPEEDRUN)
-                            _playerFlaskList[j].FlaskAction2 = FlaskActions.Defense;
-                    }
                     _playerFlaskList[j].UseCharges = (int)Math.Floor(tmpUseCharges);
                     _playerFlaskList[j].IsValid = true;
                 }
@@ -624,11 +617,8 @@ namespace FlaskManager
             var playerHealth = localPlayer.GetComponent<Life>();
             _lastDefUsed += 100f;
             var secondAction = FlaskActions.Ignore;
-			var thirdAction = FlaskActions.Ignore;
             if (Settings.TreatOffenAsDef.Value)
-                secondAction = FlaskActions.Offense;
-            if (Settings.TreatOffenSilverAsDef.Value)
-                thirdAction = FlaskActions.OFFENSE_AND_SPEEDRUN;
+                secondAction = FlaskActions.OFFENSE_AND_SPEEDRUN;
             if (_lastDefUsed < Settings.DefensiveDelay.Value)
                 return;
             if (Settings.DefFlaskEnable.Value && localPlayer.IsValid)
@@ -637,8 +627,6 @@ namespace FlaskManager
                     (playerHealth.MaxES > 0 && playerHealth.ESPercentage * 100 < Settings.EsDefensive.Value))
                 {
                     if (FindDrinkFlask(FlaskActions.Defense, secondAction, "Defensive Action", 0, Settings.DefensiveDrinkAll.Value))
-                        _lastDefUsed = 0f;
-                    if (FindDrinkFlask(thirdAction, thirdAction, "Defensive Action", 0, Settings.DefensiveDrinkAll.Value))
                         _lastDefUsed = 0f;
                 }
             }
@@ -677,38 +665,8 @@ namespace FlaskManager
             if (FindDrinkFlask(FlaskActions.Offense, FlaskActions.Offense, "Offensive Action", Settings.OffensiveUseWhenCharges.Value, Settings.OffensiveDrinkAll.Value))
                 _lastOffUsed = 0f;
 
-        }
-        #endregion
-		#region Offensive Sliver Flask
-        private void OffensiveSliverFlask()
-        {
-            var localPlayer = GameController.Game.IngameState.Data.LocalPlayer;
-            var playerHealth = localPlayer.GetComponent<Life>();
-            var isAttacking = (localPlayer.GetComponent<Actor>().ActionId & 2) > 0;
-            _lastOffUsed += 100f;
-            if (!Settings.OffSilverFlaskEnable.Value || !localPlayer.IsValid)
-                return;
-            if (!Settings.OffensiveSilverWhenAttacking.Value && !Settings.OffensiveSilverWhenLifeEs.Value && !Settings.UseOffSilverWhileKeyPressed)
-            {
-                LogError("Atleast Select 1 offensive flask Method Life/ES OR When Attacking OR When Use While Key Pressed. OR Disable offensive flask.", ErrmsgTime);
-                return;
-            }
-
-            //if (Settings.OffensiveSilverWhenAttacking.Value && Settings.debugMode.Value)
-            //    LogMessage("isAttacking: " + IsAttacking + "ActionId: " + LocalPlayer.GetComponent<Actor>().ActionId, logmsg_time);
-
-            if (Settings.OffensiveSilverWhenAttacking.Value && !isAttacking)
-                return;
-
-            if (Settings.UseOffSilverWhileKeyPressed.Value && !KeyboardHelper.IsKeyDown((int)Settings.OffSilverKeyPressed.Value))
-                return;
-
-            if (Settings.OffensiveSilverWhenLifeEs.Value && (playerHealth.HPPercentage * 100 > Settings.HpOffensiveSilver.Value &&
-                    (playerHealth.MaxES <= 0 || playerHealth.ESPercentage * 100 > Settings.EsOffensiveSilver.Value)))
-                return;
-
             if (!playerHealth.HasBuff("flask_utility_haste"))
-                if (FindDrinkFlask(FlaskActions.OFFENSE_AND_SPEEDRUN, FlaskActions.OFFENSE_AND_SPEEDRUN, "OffensiveSliverFlask Action", Settings.OffensiveSilverUseWhenCharges.Value))
+                if (FindDrinkFlask(FlaskActions.OFFENSE_AND_SPEEDRUN, FlaskActions.OFFENSE_AND_SPEEDRUN, "Offensive Action", Settings.OffensiveUseWhenCharges.Value, Settings.OffensiveDrinkAll.Value))
                     _lastOffUsed = 0f;
 
         }
@@ -741,7 +699,6 @@ namespace FlaskManager
             AilmentLogic();
             DefensiveFlask();
             OffensiveFlask();
-            OffensiveSliverFlask();
         }
     }
 }

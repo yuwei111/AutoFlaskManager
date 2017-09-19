@@ -57,16 +57,6 @@ namespace FlaskManager
             OffensiveWhenLifeEs = true;
             TreatOffenAsDef = false;
             OffensiveUseWhenCharges = new RangeNode<int>(0, 0, 100);
-            //Offensive Sliver Flask
-            OffSilverFlaskEnable = false;
-            HpOffensiveSilver = new RangeNode<int>(50, 0, 100);
-            EsOffensiveSilver = new RangeNode<int>(50, 0, 100);
-            UseOffSilverWhileKeyPressed = false;
-            OffSilverKeyPressed = Keys.T;
-            OffensiveSilverWhenAttacking = false;
-            OffensiveSilverWhenLifeEs = true;
-            TreatOffenSilverAsDef = false;
-            OffensiveSilverUseWhenCharges = new RangeNode<int>(0, 0, 100);
             //Unique Flask
             UniqFlaskEnable = false;
             // Settings
@@ -168,9 +158,7 @@ namespace FlaskManager
         public RangeNode<float> DefensiveDelay { get; set; }
         [Menu("Treat Offensive Flasks As Defensive", 44, 40)]
         public ToggleNode TreatOffenAsDef { get; set; }
-        [Menu("Treat Offensive Sliver Flask As Defensive", 45, 40)]
-        public ToggleNode TreatOffenSilverAsDef { get; set; }
-        [Menu("Drink All Flasks Together", 46, 40)]
+        [Menu("Drink All Flasks Together", 45, 40)]
         public ToggleNode DefensiveDrinkAll { get; set; }
         #endregion
 
@@ -196,28 +184,9 @@ namespace FlaskManager
         [Menu("Drink All Flasks Together", 59, 50)]
         public ToggleNode OffensiveDrinkAll { get; set; }
         #endregion
-	
-        #region Offensive Sliver Flask Menu
-        [Menu("Offensive Silver Flask", 60)]
-        public ToggleNode OffSilverFlaskEnable { get; set; }
-        [Menu("Drink On Life/ES", 61, 60)]
-        public ToggleNode OffensiveSilverWhenLifeEs { get; set; }
-        [Menu("Min Life %", 62, 61)]
-        public RangeNode<int> HpOffensiveSilver { get; set; }
-        [Menu("Min ES %", 63, 61)]
-        public RangeNode<int> EsOffensiveSilver { get; set; }
-        [Menu("Drink On Skill Use", 64, 60)]
-        public ToggleNode OffensiveSilverWhenAttacking { get; set; }
-        [Menu("Drink On Key Use", 65, 60)]
-        public ToggleNode UseOffSilverWhileKeyPressed { get; set; }
-        [Menu("Skill Key Hotkey", 66, 60)]
-        public HotkeyNode OffSilverKeyPressed { get; set; }
-        [Menu("Use When Charges Greater than X (0 to disable it)", 67, 60)]
-        public RangeNode<int> OffensiveSilverUseWhenCharges { get; set; }
-        #endregion
 
         #region Unnique Flask Menu
-        [Menu("Unique Flask", 70)]
+        [Menu("Unique Flask", 60)]
         public ToggleNode UniqFlaskEnable { get; set; }
         #endregion
 
