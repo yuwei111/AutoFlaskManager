@@ -327,7 +327,7 @@ namespace FlaskManager
                                 _playerFlaskList[j].FlaskAction2 = FlaskActions.None;
                     }
 
-                    if (Settings.TreatOffenAsDef.Value)
+                    if (Settings.DefFlaskEnable.Value && Settings.TreatOffenAsDef.Value)
                     {
                         if (_playerFlaskList[j].FlaskAction1 == FlaskActions.Offense)
                             _playerFlaskList[j].FlaskAction1 = FlaskActions.Defense;
@@ -617,12 +617,16 @@ namespace FlaskManager
             var playerHealth = localPlayer.GetComponent<Life>();
             _lastDefUsed += 100f;
             var secondAction = FlaskActions.Ignore;
-            if (Settings.TreatOffenAsDef.Value)
-                secondAction = FlaskActions.OFFENSE_AND_SPEEDRUN;
+
             if (_lastDefUsed < Settings.DefensiveDelay.Value)
                 return;
+
             if (Settings.DefFlaskEnable.Value && localPlayer.IsValid)
             {
+                //Settings.DefFlaskEnable.Value is intrinsic in this if.
+                if (Settings.TreatOffenAsDef.Value)
+                    secondAction = FlaskActions.OFFENSE_AND_SPEEDRUN;
+
                 if (playerHealth.HPPercentage * 100 < Settings.HpDefensive.Value ||
                     (playerHealth.MaxES > 0 && playerHealth.ESPercentage * 100 < Settings.EsDefensive.Value))
                 {
@@ -638,6 +642,7 @@ namespace FlaskManager
             var localPlayer = GameController.Game.IngameState.Data.LocalPlayer;
             var playerHealth = localPlayer.GetComponent<Life>();
             var isAttacking = (localPlayer.GetComponent<Actor>().ActionId & 2) > 0;
+            var secondAction = FlaskActions.OFFENSE_AND_SPEEDRUN;
             _lastOffUsed += 100f;
             if (!Settings.OffFlaskEnable.Value || !localPlayer.IsValid)
                 return;
@@ -662,7 +667,10 @@ namespace FlaskManager
                     (playerHealth.MaxES <= 0 || playerHealth.ESPercentage * 100 > Settings.EsOffensive.Value)))
                 return;
 
-            if (FindDrinkFlask(FlaskActions.Offense, FlaskActions.OFFENSE_AND_SPEEDRUN, "Offensive Action", Settings.OffensiveUseWhenCharges.Value, Settings.OffensiveDrinkAll.Value))
+            if (Settings.DefFlaskEnable.Value && Settings.TreatOffenAsDef.Value)
+                secondAction = FlaskActions.Ignore;
+
+            if (FindDrinkFlask(FlaskActions.Offense, secondAction, "Offensive Action", Settings.OffensiveUseWhenCharges.Value, Settings.OffensiveDrinkAll.Value))
                 _lastOffUsed = 0f;
 
         }
@@ -670,6 +678,9 @@ namespace FlaskManager
 
         private void FlaskMain()
         {
+            if (!GameController.Window.IsForeground())
+                return;
+
             if (!GameController.Game.IngameState.Data.LocalPlayer.IsValid)
                 return;
 
