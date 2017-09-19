@@ -662,12 +662,8 @@ namespace FlaskManager
                     (playerHealth.MaxES <= 0 || playerHealth.ESPercentage * 100 > Settings.EsOffensive.Value)))
                 return;
 
-            if (FindDrinkFlask(FlaskActions.Offense, FlaskActions.Offense, "Offensive Action", Settings.OffensiveUseWhenCharges.Value, Settings.OffensiveDrinkAll.Value))
+            if (FindDrinkFlask(FlaskActions.Offense, FlaskActions.OFFENSE_AND_SPEEDRUN, "Offensive Action", Settings.OffensiveUseWhenCharges.Value, Settings.OffensiveDrinkAll.Value))
                 _lastOffUsed = 0f;
-
-            if (!playerHealth.HasBuff("flask_utility_haste"))
-                if (FindDrinkFlask(FlaskActions.OFFENSE_AND_SPEEDRUN, FlaskActions.OFFENSE_AND_SPEEDRUN, "Offensive Action", Settings.OffensiveUseWhenCharges.Value, Settings.OffensiveDrinkAll.Value))
-                    _lastOffUsed = 0f;
 
         }
         #endregion
